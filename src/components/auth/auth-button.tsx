@@ -20,7 +20,7 @@ export const AuthButton = React.forwardRef<HTMLButtonElement, AuthButtonProps>(
         {...props}
       >
         {/* Gradient overlay for premium feel */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/10 to-primary/0 opacity-0 hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-white/10 to-primary/0 opacity-0 hover:opacity-100 transition-opacity duration-500" />
         
         {isLoading ? (
           <Loader2 className="mr-2 h-5 w-5 animate-spin" />

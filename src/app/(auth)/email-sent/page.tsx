@@ -30,7 +30,7 @@ export default function EmailSentPage() {
           </AuthButton>
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-4">
-              Didn't receive the email?
+              Didn&apos;t receive the email?
             </p>
             <Button variant="outline" className="w-full">
               Click to resend
