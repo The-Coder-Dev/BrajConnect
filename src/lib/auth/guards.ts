@@ -19,3 +19,22 @@ export async function requireGuest() {
     redirect(DEFAULT_AUTHENTICATED_REDIRECT);
   }
 }
+
+/**
+ * Ensures the user is authenticated.
+ * If no valid session exists, redirects to the sign-in page.
+ * Returns the session and user if authenticated.
+ * Must be called within a Server Component.
+ */
+
+export async function requireAuth() {
+  const sessionData = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!sessionData || !sessionData.session) {
+    redirect("/sign-in");
+  }
+
+  return sessionData;
+}
