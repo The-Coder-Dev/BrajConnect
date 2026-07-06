@@ -33,7 +33,7 @@ export function SignInForm() {
 
   const onSubmit = async (values: SignInInput) => {
     try {
-      const { data, error } = await authClient.signIn.email({
+      const { error } = await authClient.signIn.email({
         email: values.email,
         password: values.password,
         rememberMe: values.rememberMe,
@@ -47,8 +47,9 @@ export function SignInForm() {
       toast.success("Signed in successfully!");
       router.push("/dashboard");
       router.refresh();
-    } catch (err) {
-      toast.error("An unexpected error occurred. Please try again.");
+    } catch (err: unknown) {
+      console.error("Sign in error:", err);
+      toast.error(err instanceof Error ? err.message : "An unexpected error occurred. Please try again.");
     }
   };
 

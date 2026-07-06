@@ -46,10 +46,15 @@ function Button({
   size = "default",
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  // If the button is being rendered as a different element (e.g., using 'render' prop like Next.js Link)
+  // we need to set nativeButton={false} to avoid Base UI semantic warnings.
+  const isCustomRender = "render" in props;
+  
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      {...(isCustomRender ? { nativeButton: false } : {})}
       {...props}
     />
   )

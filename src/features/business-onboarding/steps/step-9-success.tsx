@@ -30,7 +30,7 @@ export function Step9Success() {
       </h1>
       
       <p className="text-lg text-slate-500 mb-10 max-w-md mx-auto leading-relaxed">
-        We've received your business profile. Our team will review the details shortly. You can manage your business from the dashboard while you wait.
+        We&apos;ve received your business profile. Our team will review the details shortly. You can manage your business from the dashboard while you wait.
       </p>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">

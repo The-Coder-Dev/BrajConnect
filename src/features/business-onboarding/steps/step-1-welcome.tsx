@@ -23,11 +23,11 @@ export function Step1Welcome() {
       </div>
       
       <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-slate-900 mb-6 drop-shadow-sm">
-        Let's get your business online.
+        Let&apos;s get your business online.
       </h1>
       
       <p className="text-lg text-slate-500 mb-12 max-w-[420px] mx-auto leading-relaxed">
-        We'll guide you through setting up your business profile so customers can find and connect with you.
+        We&apos;ll guide you through setting up your business profile so customers can find and connect with you.
       </p>
 
       <div className="flex items-center justify-center gap-2 text-sm font-medium text-[#2563EB] bg-blue-50/80 px-4 py-2 rounded-full border border-blue-200/50 shadow-sm backdrop-blur-md">

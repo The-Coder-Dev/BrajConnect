@@ -17,7 +17,7 @@ export function Step6Brand() {
       className="max-w-3xl mx-auto mt-8"
     >
       <AssistantCard>
-        <AssistantQuestion>Let's make your business recognizable.</AssistantQuestion>
+        <AssistantQuestion>Let&apos;s make your business recognizable.</AssistantQuestion>
         
         <p className="text-muted-foreground mb-8">
           Upload high-quality images to help your business stand out. (You can skip this for now)

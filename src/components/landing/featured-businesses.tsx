@@ -14,8 +14,9 @@ const businesses = [
     rating: 4.8,
     reviews: 1245,
     verified: true,
-    image: "/mock/img1.jpg",
-    logo: "/mock/logo1.png"
+    description: "Authentic pure vegetarian satvik food with a divine ambiance.",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+    logo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=150&q=80"
   },
   {
     name: "Brijwasi Royal",
@@ -24,8 +25,9 @@ const businesses = [
     rating: 4.6,
     reviews: 892,
     verified: true,
-    image: "/mock/img2.jpg",
-    logo: "/mock/logo2.png"
+    description: "Premium luxury stays with world-class amenities in the heart of the city.",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+    logo: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=150&q=80"
   },
   {
     name: "Nayati Medicity",
@@ -34,8 +36,9 @@ const businesses = [
     rating: 4.5,
     reviews: 534,
     verified: true,
-    image: "/mock/img3.jpg",
-    logo: "/mock/logo3.png"
+    description: "Multi-super specialty hospital providing advanced healthcare services.",
+    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
+    logo: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=150&q=80"
   },
   {
     name: "Krishna Valley",
@@ -44,8 +47,9 @@ const businesses = [
     rating: 4.3,
     reviews: 128,
     verified: false,
-    image: "/mock/img4.jpg",
-    logo: "/mock/logo4.png"
+    description: "Modern luxury apartments surrounded by spiritual serenity.",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+    logo: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=150&q=80"
   }
 ];
 

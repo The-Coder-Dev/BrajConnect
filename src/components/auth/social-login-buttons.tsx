@@ -13,7 +13,7 @@ export function SocialLoginButtons() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await authClient.signIn.social({
+      const { error } = await authClient.signIn.social({
         provider: "google",
       });
       
@@ -21,8 +21,9 @@ export function SocialLoginButtons() {
         toast.error(error.message || "Failed to sign in with Google.");
         setIsLoading(false);
       }
-    } catch (err) {
-      toast.error("An unexpected error occurred.");
+    } catch (err: unknown) {
+      console.error("Social login error:", err);
+      toast.error(err instanceof Error ? err.message : "An unexpected error occurred.");
       setIsLoading(false);
     }
   };
