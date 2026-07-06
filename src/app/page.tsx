@@ -10,16 +10,21 @@ import { Footer } from "@/components/landing/footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background font-sans selection:bg-blue-100 selection:text-blue-900">
-      <Navbar />
-      <HeroSection />
-      <FeaturedCategories />
-      <FeaturedBusinesses />
+    <main className="relative min-h-screen bg-background font-sans selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
+      {/* Global Background Texture */}
+      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+      
+      <div className="relative z-10">
+        <Navbar />
+        <HeroSection />
+        <FeaturedCategories />
+        <FeaturedBusinesses />
       <WhyBrajConnect />
       <PopularLocations />
       <HowItWorks />
       <CTASection />
       <Footer />
+      </div>
     </main>
   );
 }

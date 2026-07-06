@@ -29,7 +29,7 @@ export function SignUpForm() {
 
   const onSubmit = async (values: SignUpInput) => {
     try {
-      const { data, error } = await authClient.signUp.email({
+      const { error } = await authClient.signUp.email({
         email: values.email,
         password: values.password,
         name: values.name,
@@ -42,8 +42,9 @@ export function SignUpForm() {
 
       toast.success("Account created successfully!");
       router.push("/account-created");
-    } catch (err) {
-      toast.error("An unexpected error occurred. Please try again.");
+    } catch (err: unknown) {
+      console.error("Sign up error:", err);
+      toast.error(err instanceof Error ? err.message : "An unexpected error occurred. Please try again.");
     }
   };
 

@@ -10,24 +10,24 @@ import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useAssistant } from "../context/assistant-context";
 
+const Section = ({ title, onEdit, children }: { title: string, onEdit: () => void, children: React.ReactNode }) => (
+  <div className="py-5 border-b border-slate-200/60 last:border-0">
+    <div className="flex items-center justify-between mb-3">
+      <h4 className="font-semibold text-slate-900">{title}</h4>
+      <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 px-2.5 rounded-lg text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 transition-colors">
+        <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
+      </Button>
+    </div>
+    <div className="text-slate-500 text-sm space-y-1.5">
+      {children}
+    </div>
+  </div>
+);
+
 export function Step8Review() {
   const { getValues } = useFormContext<BusinessSetupInput>();
   const { goToStep } = useAssistant();
   const data = getValues();
-
-  const Section = ({ title, onEdit, children }: { title: string, onEdit: () => void, children: React.ReactNode }) => (
-    <div className="py-5 border-b border-slate-200/60 last:border-0">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-semibold text-slate-900">{title}</h4>
-        <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 px-2.5 rounded-lg text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 transition-colors">
-          <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
-        </Button>
-      </div>
-      <div className="text-slate-500 text-sm space-y-1.5">
-        {children}
-      </div>
-    </div>
-  );
 
   return (
     <motion.div

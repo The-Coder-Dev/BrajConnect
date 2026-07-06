@@ -7,7 +7,7 @@ export async function uploadImage(
   options: UploadOptions
 ): Promise<UploadResult> {
   try {
-    const uploadOptions: Record<string, any> = {
+    const uploadOptions: Record<string, unknown> = {
       folder: options.folder,
     };
 
@@ -29,11 +29,11 @@ export async function uploadImage(
       success: true,
       data: result as CloudinaryResponse,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Cloudinary Upload Error:", error);
     return {
       success: false,
-      error: error.message || "Failed to upload image",
+      error: error instanceof Error ? error.message : "Failed to upload image",
     };
   }
 }

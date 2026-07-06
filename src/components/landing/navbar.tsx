@@ -28,10 +28,10 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
         isScrolled
-          ? "bg-white/80 backdrop-blur-md border-border shadow-sm py-3"
-          : "bg-transparent py-5"
+          ? "bg-white/70 backdrop-blur-xl border-border/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] py-3"
+          : "bg-transparent border-transparent py-5"
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 max-w-[1440px]">
@@ -50,9 +50,10 @@ export function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="relative text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
               >
                 {link.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full rounded-full"></span>
               </Link>
             ))}
           </nav>
@@ -65,7 +66,7 @@ export function Navbar() {
             <Link href="/sign-in" className="text-sm font-medium hover:text-blue-600 transition-colors">
               Login
             </Link>
-            <Button render={<Link href="/sign-up" />} className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 px-6">
+            <Button render={<Link href="/sign-up" />} className="h-11 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-[0_8px_20px_-6px_rgba(37,99,235,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(37,99,235,0.6)] hover:-translate-y-0.5 transition-all duration-300 px-8 text-sm font-medium">
               Register Business
             </Button>
           </div>

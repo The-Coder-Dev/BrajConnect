@@ -1,82 +1,87 @@
 import Link from "next/link";
 import { Building2 } from "lucide-react";
-
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-slate-200 pt-20 pb-10">
-      <div className="container mx-auto px-4 md:px-6 max-w-[1440px]">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
+    <footer className="bg-slate-50 pt-32 pb-12 border-t border-slate-200/60 relative overflow-hidden">
+      {/* Decorative background element */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-linear-to-r from-transparent via-slate-300 to-transparent" />
+      
+      <div className="container mx-auto px-6 md:px-12 max-w-[1440px] relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-8 mb-24">
           
-          <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-6">
-              <div className="bg-blue-600 p-2 rounded-xl text-white">
-                <Building2 className="h-5 w-5" />
+          <div className="lg:col-span-5 pr-8">
+            <Link href="/" className="flex items-center gap-3 mb-8 group inline-flex">
+              <div className="bg-blue-600 p-2.5 rounded-2xl text-white shadow-lg shadow-blue-600/20 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
+                <Building2 className="h-6 w-6" />
               </div>
-              <span className="text-2xl font-bold tracking-tight text-slate-900">
+              <span className="text-3xl font-extrabold tracking-tight text-slate-900">
                 BrajConnect
               </span>
             </Link>
-            <p className="text-slate-500 leading-relaxed mb-8 max-w-sm">
-              The premium business discovery platform connecting customers with trusted local services, shops, and experiences.
+            <p className="text-slate-500 text-lg leading-relaxed mb-10 max-w-md">
+              The premium business discovery platform connecting customers with trusted local services, shops, and experiences across the Braj region.
             </p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-600 hover:text-white transition-colors">
+            <div className="flex items-center gap-5">
+              <a href="#" className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                 <FaFacebook className="h-5 w-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-400 hover:text-white transition-colors">
+              <a href="#" className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-500 hover:bg-sky-500 hover:text-white hover:border-sky-500 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                 <FaTwitter className="h-5 w-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-pink-600 hover:text-white transition-colors">
+              <a href="#" className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-500 hover:bg-pink-600 hover:text-white hover:border-pink-600 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                 <FaInstagram className="h-5 w-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-800 hover:text-white transition-colors">
+              <a href="#" className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-500 hover:bg-blue-800 hover:text-white hover:border-blue-800 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                 <FaLinkedin className="h-5 w-5" />
               </a>
             </div>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-slate-900 mb-6">Quick Links</h4>
-            <ul className="space-y-4">
-              <li><Link href="/" className="text-slate-500 hover:text-blue-600 transition-colors">Home</Link></li>
-              <li><Link href="#about" className="text-slate-500 hover:text-blue-600 transition-colors">About Us</Link></li>
-              <li><Link href="#businesses" className="text-slate-500 hover:text-blue-600 transition-colors">Explore</Link></li>
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Contact</Link></li>
+          <div className="lg:col-span-2 lg:col-start-7">
+            <h4 className="font-bold text-slate-900 mb-8 text-lg">Quick Links</h4>
+            <ul className="space-y-5">
+              <li><Link href="/" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Home</Link></li>
+              <li><Link href="#about" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">About Us</Link></li>
+              <li><Link href="#businesses" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Explore</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Contact</Link></li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-slate-900 mb-6">Categories</h4>
-            <ul className="space-y-4">
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Restaurants</Link></li>
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Hotels</Link></li>
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Hospitals</Link></li>
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Shopping</Link></li>
+          <div className="lg:col-span-2">
+            <h4 className="font-bold text-slate-900 mb-8 text-lg">Categories</h4>
+            <ul className="space-y-5">
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Restaurants</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Hotels</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Hospitals</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Shopping</Link></li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-slate-900 mb-6">Legal</h4>
-            <ul className="space-y-4">
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Terms of Service</Link></li>
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Cookie Policy</Link></li>
-              <li><Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors">Disclaimer</Link></li>
+          <div className="lg:col-span-2">
+            <h4 className="font-bold text-slate-900 mb-8 text-lg">Legal</h4>
+            <ul className="space-y-5">
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Terms of Service</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Privacy Policy</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Cookie Policy</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Disclaimer</Link></li>
             </ul>
           </div>
 
         </div>
 
-        <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-slate-500 text-sm">
+        <div className="pt-10 border-t border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-slate-500 font-medium">
             © {new Date().getFullYear()} BrajConnect. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <span className="text-sm font-medium text-slate-900 flex items-center">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
-              Created with ❤️ By Dev
+            <span className="font-medium text-slate-700 flex items-center bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">
+              <span className="relative flex h-2.5 w-2.5 mr-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              All systems operational
             </span>
           </div>
         </div>
