@@ -65,17 +65,11 @@ export default async function RegisterBusinessPage() {
 
       {/* CTA Section */}
       <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-        <Button size="lg" className="rounded-lg px-8 h-14 text-base font-semibold bg-linear-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 shadow-lg shadow-red-500/20" disabled>
-          Register Your Business
+        <Link href="" className="flex items-center justify-center text-white rounded-lg px-8 h-14 text-base font-semibold bg-linear-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 shadow-lg shadow-red-500/20">
+          Register your business
           <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-        <Button size="lg" variant="outline" className="rounded-lg px-8 h-14 text-base font-semibold border-border/50" render={<Link href="/dashboard" />}>
-          Return to Dashboard
-        </Button>
+        </Link>
       </div>
-      <p className="text-sm text-muted-foreground mt-4">
-        We are currently rolling out the business portal to select partners.
-      </p>
     </div>
   );
 }
