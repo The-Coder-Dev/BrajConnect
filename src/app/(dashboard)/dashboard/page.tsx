@@ -17,7 +17,7 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-4xl font-extrabold tracking-tight">Welcome, {user.name}</h1>
         <p className="text-muted-foreground mt-3 text-lg">
-          Manage your account and explore the BrajConnect ecosystem.
+          Manage your account and explore the BrajConnect.
         </p>
       </div>
 
@@ -61,18 +61,6 @@ export default async function DashboardPage() {
                 </div>
                 <CardTitle className="text-lg">Edit Profile</CardTitle>
                 <CardDescription>Manage your personal details</CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
-
-          <Link href="/dashboard/register-business" className="group h-full">
-            <Card className="rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border-red-100/50 bg-red-50/30 h-full">
-              <CardHeader>
-                <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center mb-3">
-                  <BriefcaseBusiness className="h-5 w-5 text-red-600" />
-                </div>
-                <CardTitle className="text-lg text-red-900">Add Business</CardTitle>
-                <CardDescription className="text-red-700/80">Register on the platform</CardDescription>
               </CardHeader>
             </Card>
           </Link>

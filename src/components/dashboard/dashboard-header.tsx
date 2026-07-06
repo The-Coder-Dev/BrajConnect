@@ -47,7 +47,7 @@ export function DashboardHeader({ user }: { user: any }) {
 
       <Button 
         className="rounded-lg bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-sm shadow-blue-500/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300" 
-        render={<Link href="/dashboard/register-business" />}
+        render={<Link href="/setup/business" />}
       >
         <Building2 className="mr-2 h-4 w-4" />
         Register Your Business
