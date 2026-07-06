@@ -39,7 +39,7 @@ const items = [
   },
   {
     title: "Register Your Business",
-    url: "/dashboard/register-business",
+    url: "/setup/business",
     icon: BriefcaseBusiness,
   },
   {
