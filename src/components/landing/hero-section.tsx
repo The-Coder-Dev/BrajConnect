@@ -36,7 +36,7 @@ export function HeroSection() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-border shadow-sm mb-6"
           >
-            <span className="flex h-2 w-2 rounded-full bg-blue-600"></span>
+            <span className="flex h-2 w-2 rounded-full animate-pulse bg-blue-600"></span>
             <span className="text-sm font-medium text-muted-foreground">The premier business directory in Braj</span>
           </motion.div>
 
