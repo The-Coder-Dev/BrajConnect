@@ -1,36 +1,252 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🚀 Business Listing SaaS
 
-First, run the development server:
+*A modern, scalable and SEO-friendly Business Listing Platform built with Next.js 15, React 19, Better Auth, Drizzle ORM and Supabase.*
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+<br>
+
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38BDF8?style=for-the-badge&logo=tailwindcss)
+![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)
+![Drizzle](https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=for-the-badge)
+![BetterAuth](https://img.shields.io/badge/Better%20Auth-Authentication-black?style=for-the-badge)
+
+</div>
+
+---
+
+# 📖 Overview
+
+Business Listing SaaS is a modern web application that allows businesses to create and manage listings while enabling users to discover local businesses through a fast, responsive and SEO-optimized platform.
+
+The project focuses on clean architecture, scalability and developer experience using the latest technologies from the React ecosystem.
+
+---
+
+# ✨ Features
+
+- 🔐 Secure Authentication
+- 🏢 Business Listing Management
+- 📂 Categories & Subcategories
+- 🔍 Smart Search & Filtering
+- 📍 Location-based Listings
+- ⭐ Featured Businesses
+- 📱 Fully Responsive UI
+- 🌙 Dark / Light Theme
+- ⚡ Optimized Performance
+- 📈 SEO Friendly
+
+---
+
+# 🛠 Tech Stack
+
+| Category | Technology |
+|-----------|------------|
+| Framework | Next.js 15 |
+| UI | React 19 |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 |
+| Components | shadcn/ui |
+| Authentication | Better Auth |
+| Database | Supabase PostgreSQL |
+| ORM | Drizzle ORM |
+| Icons | Lucide React |
+| Deployment | Vercel |
+
+---
+
+# 🏗 Architecture
+
+```mermaid
+graph TD
+
+A[👤 User]
+
+A --> B[Next.js App]
+
+B --> C[Server Actions]
+
+B --> D[Route Handlers]
+
+C --> E[Better Auth]
+
+D --> E
+
+C --> F[(Supabase PostgreSQL)]
+
+D --> F
+
+F --> G[Business Listings]
+
+F --> H[Users]
+
+F --> I[Categories]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# 🔐 Authentication Flow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```mermaid
+sequenceDiagram
 
-## Learn More
+actor User
 
-To learn more about Next.js, take a look at the following resources:
+participant App as Next.js
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+participant Auth as Better Auth
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+participant DB as Supabase
 
-## Deploy on Vercel
+User->>App: Login / Register
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+App->>Auth: Authenticate
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Auth->>DB: Validate User
+
+DB-->>Auth: Success
+
+Auth-->>App: Session Created
+
+App-->>User: Redirect to Dashboard
+```
+
+---
+
+# 🗄 Database Structure
+
+```mermaid
+erDiagram
+
+USERS ||--o{ BUSINESSES : owns
+
+BUSINESSES ||--|| CATEGORIES : belongs_to
+
+BUSINESSES ||--o{ IMAGES : contains
+
+BUSINESSES ||--o{ REVIEWS : receives
+```
+
+---
+
+# 📂 Project Structure
+
+```text
+src
+│
+├── app
+│   ├── (auth)
+│   ├── dashboard
+│   ├── listings
+│   └── api
+│
+├── actions
+├── components
+├── db
+│   ├── schema
+│   ├── migrations
+│   └── index.ts
+│
+├── hooks
+├── lib
+├── providers
+├── services
+├── types
+└── utils
+```
+
+---
+
+# ⚙️ Getting Started
+
+### Clone Repository
+
+```bash
+git clone https://github.com/your-username/business-listing-saas.git
+```
+
+```bash
+cd business-listing-saas
+```
+
+### Install Dependencies
+
+```bash
+pnpm install
+```
+
+### Configure Environment
+
+Create a `.env.local` file.
+
+```env
+DATABASE_URL=
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+### Run Development Server
+
+```bash
+pnpm dev
+```
+
+Open:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🚀 Deployment
+
+The project is optimized for deployment on **Vercel**.
+
+```mermaid
+graph LR
+
+Developer
+
+--> GitHub
+
+--> Vercel
+
+--> Next.js
+
+--> Supabase
+```
+
+---
+
+# 🎯 Future Enhancements
+
+- AI-powered Search
+- Reviews & Ratings
+- Maps Integration
+- Business Verification
+- Analytics Dashboard
+- Subscription Plans
+- Notifications
+- Multi-language Support
+
+---
+
+<div align="center">
+
+### ⭐ If you like this project, consider giving it a star.
+
+Built with ❤️ using **Next.js**, **React**, **Supabase** and **Better Auth**.
+
+</div>
