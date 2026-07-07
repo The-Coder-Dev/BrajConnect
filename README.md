@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Business Listing SaaS
 
-## Getting Started
+A modern, SEO-friendly Business Listing platform built with Next.js 15,
+React 19, Better Auth, Drizzle ORM and Supabase.
 
-First, run the development server:
+Live Demo • Documentation • Roadmap
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+![Next.js](...)
+![React](...)
+![TypeScript](...)
+![License](...)
+![PRs Welcome](...)
+
+<p align="center">
+<img src="/public/error.png" width="100%" />
+</p>
+
+# Features
+⚡ Lightning Fast
+
+🔒 Secure Authentication
+
+🏢 Business Management
+
+📍 Location Search
+
+⭐ Reviews
+
+📊 Analytics
+
+🤖 AI Ready
+
+📱 Responsive
+
+# Tech Stack
+Frontend
+│
+├── Next.js 15
+├── React 19
+├── Tailwind v4
+└── Shadcn UI
+
+Backend
+│
+├── Better Auth
+├── Route Handlers
+└── Server Actions
+
+Database
+│
+├── Supabase
+└── Drizzle ORM
+
+Deployment
+│
+└── Vercel
+
+# Architecture Diagram
+```mermaid
+graph TD
+
+User --> Browser
+
+Browser --> NextJS
+
+NextJS --> BetterAuth
+
+NextJS --> ServerActions
+
+ServerActions --> Supabase
+
+Supabase --> PostgreSQL
+
+Supabase --> Storage
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Project Structure
+src
+│
+├── app
+├── components
+├── actions
+├── db
+│     ├── schema
+│     ├── migrations
+│     └── index.ts
+├── hooks
+├── lib
+├── providers
+└── services
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+# Authentication Flow
+```mermaid
+sequenceDiagram
 
-To learn more about Next.js, take a look at the following resources:
+User->>Next.js: Login
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Next.js->>Better Auth: Authenticate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Better Auth->>Database: Verify
 
-## Deploy on Vercel
+Database-->>Better Auth: Success
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Better Auth-->>User: Session Cookie
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Listing Flow
+
+```mermaid
+graph LR
+
+User
+
+-->
+
+Create Listing
+
+-->
+
+Validation
+
+-->
+
+Database
+
+-->
+
+Business Published
+```
+
+# Search Flow 
+```mermaid
+graph TD
+
+User
+
+-->
+
+Search
+
+-->
+
+Filters
+
+-->
+
+Query
+
+-->
+
+Supabase
+
+-->
+
+Results
+```
+
+# Folder Tree
+
+📦 src
+ ┣ 📂 app
+ ┣ 📂 components
+ ┣ 📂 db
+ ┃ ┣ 📂 schema
+ ┃ ┣ 📂 migrations
+ ┃ ┗ 📜 index.ts
+ ┣ 📂 actions
+ ┣ 📂 hooks
+ ┣ 📂 lib
+ ┣ 📂 providers
+ ┣ 📂 services
+ ┗ 📂 types
+
+ 
