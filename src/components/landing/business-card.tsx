@@ -69,10 +69,8 @@ export function BusinessCard({ name, category, location, rating, reviews, verifi
         </div>
 
         <div className="mt-auto pt-5 flex items-center gap-3 border-t border-slate-100/80">
-          <Button variant="outline" className="flex-1 h-11 rounded-xl border-slate-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-semibold shadow-sm transition-all duration-300">
-            <Link href={`/business/${slug || name.toLowerCase().replace(/\s+/g, '-')}`}>
+          <Button render={<Link href={`/business/${slug || name.toLowerCase().replace(/\s+/g, '-')}`} />} variant="default" className="flex-1 h-11 rounded-xl border-slate-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-semibold shadow-sm transition-all duration-300">
               View Details
-            </Link>
           </Button>
           <Button size="icon" className="h-11 w-11 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white shrink-0 transition-colors shadow-sm">
             <Phone className="h-4 w-4" />

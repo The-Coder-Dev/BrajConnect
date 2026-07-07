@@ -29,7 +29,7 @@ export function BusinessServices({ business = mockBusiness }: { business?: typeo
           const IconComponent = iconMap[service.icon] || Sparkle;
           // Mock data for missing fields if needed
           const description = "Premium quality service tailored for your needs with best-in-class experts.";
-          const duration = service.duration || "45 min";
+          const duration = (service as { duration?: string }).duration || "45 min";
           const badge = index === 0 ? "Popular" : index === 2 ? "New" : null;
           
           return (
