@@ -36,7 +36,7 @@ export function HeroSection() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-border shadow-sm mb-6"
           >
-            <span className="flex h-2 w-2 rounded-full animate-pulse bg-blue-600"></span>
+            <span className="flex h-2 w-2 rounded-full animate-pulse bg-primary"></span>
             <span className="text-sm font-medium text-muted-foreground">The premier business directory in Braj</span>
           </motion.div>
 
@@ -47,7 +47,7 @@ export function HeroSection() {
             className="text-6xl md:text-7xl lg:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.05]"
           >
             Discover trusted local <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-blue-400 drop-shadow-sm">Businesses around you.</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-red-400 drop-shadow-sm">Businesses around you.</span>
           </motion.h1>
 
           <motion.p

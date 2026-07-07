@@ -6,7 +6,7 @@ export function NavbarLogo({ isScrolled, variant = "transparent" }: { isScrolled
   
   return (
     <Link href="/" className="flex items-center gap-2">
-      <div className="bg-blue-600 p-2 rounded-xl text-white">
+      <div className="bg-primary p-2 rounded-xl text-white">
         <Building2 className="h-5 w-5" />
       </div>
       <span className={`text-xl font-bold tracking-tight transition-colors ${isDarkText ? "text-foreground" : "text-black"}`}>

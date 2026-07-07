@@ -74,9 +74,9 @@ export function AppSidebar({ user }: { user: any }) {
     <Sidebar collapsible="icon" className="border-r border-border/50 bg-background shadow-none">
       <SidebarHeader className="py-6 px-4">
         <div className="flex items-center gap-3">
-          <Avatar className="h-9 w-9 rounded-lg bg-blue-50">
+          <Avatar className="h-9 w-9 rounded-lg bg-red-50">
             <AvatarImage src={user.image} alt={user.name} />
-            <AvatarFallback className="rounded-lg text-xs font-semibold text-blue-600">
+            <AvatarFallback className="rounded-lg text-xs font-semibold text-primary">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
@@ -103,11 +103,11 @@ export function AppSidebar({ user }: { user: any }) {
                       tooltip={item.title}
                       className={`rounded-lg transition-all ${
                         isActive 
-                          ? "bg-transparent text-blue-600 font-medium relative after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:w-1 after:h-5 after:bg-blue-600 after:rounded-r-full" 
+                          ? "bg-transparent text-primary font-medium relative after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:w-1 after:h-5 after:bg-primary after:rounded-r-full" 
                           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                       }`}
                     >
-                      <item.icon className={isActive ? "text-blue-600" : ""} />
+                      <item.icon className={isActive ? "text-primary" : ""} />
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -124,7 +124,7 @@ export function AppSidebar({ user }: { user: any }) {
             <SidebarMenuButton 
               onClick={handleSignOut}
               tooltip="Sign out"
-              className="rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all"
+              className="rounded-lg cursor-pointer text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all"
             >
               <LogOut className="h-4 w-4" />
               <span>Sign out</span>
