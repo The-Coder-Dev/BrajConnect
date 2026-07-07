@@ -53,20 +53,7 @@ const businesses = [
   }
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
-};
 
 export function FeaturedBusinesses() {
   return (
@@ -82,21 +69,17 @@ export function FeaturedBusinesses() {
           </Button>
         </div>
 
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+        <div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {businesses.map((business, index) => (
-            <motion.div key={index} variants={item} className="h-full">
+            <div key={index} className="h-full">
               <BusinessCard {...business} />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        <Button variant="outline" className="w-full md:hidden mt-8 border-slate-200 text-slate-700 font-semibold h-12 rounded-xl">
+        <Button className="w-full md:hidden mt-8 border-slate-200 text-slate-700 font-semibold h-12 rounded-xl">
           View All Businesses
         </Button>
       </div>
