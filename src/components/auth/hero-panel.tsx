@@ -8,9 +8,9 @@ export function HeroPanel() {
   return (
     <div className="relative hidden lg:flex flex-1 flex-col overflow-hidden bg-primary">
       {/* Abstract Background Effects */}
-      <div className="absolute -left-20 top-0 h-[500px] w-[500px] rounded-full bg-secondary/30 blur-[120px]" />
-      <div className="absolute -right-20 bottom-0 h-[400px] w-[400px] rounded-full bg-blue-400/20 blur-[100px]" />
-      <div className="absolute right-20 top-20 h-[300px] w-[300px] rounded-full bg-indigo-500/20 blur-[80px]" />
+      <div className="absolute -left-20 top-0 h-[500px] w-[500px] rounded-full bg-red-300/30 blur-[120px]" />
+      <div className="absolute -right-20 bottom-0 h-[400px] w-[400px] rounded-full bg-red-400/20 blur-[100px]" />
+      <div className="absolute right-20 top-20 h-[300px] w-[300px] rounded-full bg-red-500/20 blur-[80px]" />
       
       <div className="relative z-10 flex h-full flex-col justify-center px-16 py-12">
         <motion.div 
