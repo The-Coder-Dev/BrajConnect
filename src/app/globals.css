@@ -48,6 +48,10 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Red - oklch(0.6 0.2 25)  */
+/* Blue - oklch(0.45 0.2 255) */
+
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -55,7 +59,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.45 0.2 255); /* Premium Blue */
+  --primary: oklch(0.6 0.2 25); /* Premium Blue */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.6 0.2 25); /* Premium Red */
   --secondary-foreground: oklch(0.985 0 0);

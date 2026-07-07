@@ -30,7 +30,7 @@ export default function BusinessDetailsPage({ params }: { params: { slug: string
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden">
-      <Navbar />
+      <Navbar variant="solid" />
       
       {/* Top Full-Width Cover Image */}
       <div className="relative w-full h-[250px] sm:h-[300px] lg:h-[350px] bg-slate-100 dark:bg-slate-800">
