@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 export function BottomCta() {
   return (
-    <div className="w-full relative rounded-2xl overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 shadow-[0_8px_30px_rgba(37,99,235,0.2)]">
+    <div className="w-full relative rounded-2xl overflow-hidden bg-linear-to-br from-blue-600 to-blue-800 shadow-[0_8px_30px_rgba(37,99,235,0.2)]">
       
       {/* Decorative background elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />

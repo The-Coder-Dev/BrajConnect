@@ -91,7 +91,7 @@ export function BusinessGallery({ business = mockBusiness }: { business?: typeof
           <DialogDescription className="sr-only">View images of {business.name}</DialogDescription>
           
           {/* Top Bar */}
-          <div className="absolute top-0 inset-x-0 z-50 flex items-center justify-between p-4 bg-gradient-to-b from-black/60 to-transparent">
+          <div className="absolute top-0 inset-x-0 z-50 flex items-center justify-between p-4 bg-linear-to-b from-black/60 to-transparent">
             <div className="text-white/80 font-medium text-[15px] px-2">
               {currentIndex + 1} / {images.length}
             </div>

@@ -43,7 +43,7 @@ export function BusinessReviews({ business = mockBusiness }: { business?: typeof
                 <div className="flex items-center gap-1.5 w-14 text-sm font-medium text-slate-700 dark:text-slate-300">
                   {rating} <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 </div>
-                <Progress value={percentage} className="h-2.5 bg-slate-100 dark:bg-slate-800 flex-1 [&_[data-slot=progress-indicator]]:bg-amber-400" />
+                <Progress value={percentage} className="h-2.5 bg-slate-100 dark:bg-slate-800 flex-1 **:data-[slot=progress-indicator]:bg-amber-400" />
                 <div className="w-12 text-right text-sm text-slate-500 dark:text-slate-400">{count}</div>
               </div>
             );

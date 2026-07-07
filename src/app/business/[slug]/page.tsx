@@ -40,7 +40,7 @@ export default function BusinessDetailsPage({ params }: { params: { slug: string
           alt={`${mockBusiness.name} Cover`}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-black/10" />
       </div>
 
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-12 lg:pb-24">
