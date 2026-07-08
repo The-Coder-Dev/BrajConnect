@@ -110,7 +110,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.6 + i * 0.05 }}
-                className="px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-slate-200/60 text-slate-700 hover:border-blue-400 hover:text-blue-700 hover:bg-blue-50/80 hover:shadow-md transition-all cursor-pointer font-medium"
+                className="px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-slate-200/60 text-slate-700 hover:border-primary hover:text-primary hover:bg-primary/10 hover:shadow-md transition-all cursor-pointer font-medium"
               >
                 {term}
               </motion.button>

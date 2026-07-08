@@ -12,8 +12,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-8 mb-24">
           
           <div className="lg:col-span-5 pr-8">
-            <Link href="/" className="flex items-center gap-3 mb-8 group inline-flex">
-              <div className="bg-blue-600 p-2.5 rounded-2xl text-white shadow-lg shadow-blue-600/20 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
+            <Link href="/" className="flex items-center gap-3 mb-8 group  ">
+              <div className="bg-primary p-2.5 rounded-2xl text-white shadow-lg shadow-blue-600/20 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
                 <Building2 className="h-6 w-6" />
               </div>
               <span className="text-3xl font-extrabold tracking-tight text-slate-900">
@@ -42,30 +42,30 @@ export function Footer() {
           <div className="lg:col-span-2 lg:col-start-7">
             <h4 className="font-bold text-slate-900 mb-8 text-lg">Quick Links</h4>
             <ul className="space-y-5">
-              <li><Link href="/" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Home</Link></li>
-              <li><Link href="#about" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">About Us</Link></li>
-              <li><Link href="#businesses" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Explore</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Contact</Link></li>
+              <li><Link href="/" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Home</Link></li>
+              <li><Link href="#about" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">About Us</Link></li>
+              <li><Link href="#businesses" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Explore</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Contact</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
             <h4 className="font-bold text-slate-900 mb-8 text-lg">Categories</h4>
             <ul className="space-y-5">
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Restaurants</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Hotels</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Hospitals</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Shopping</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Restaurants</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Hotels</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Hospitals</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Shopping</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
             <h4 className="font-bold text-slate-900 mb-8 text-lg">Legal</h4>
             <ul className="space-y-5">
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Terms of Service</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Cookie Policy</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-blue-600 hover:translate-x-1 inline-block transition-all duration-300">Disclaimer</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Terms of Service</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Privacy Policy</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Cookie Policy</Link></li>
+              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Disclaimer</Link></li>
             </ul>
           </div>
 
@@ -77,11 +77,8 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-6">
             <span className="font-medium text-slate-700 flex items-center bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">
-              <span className="relative flex h-2.5 w-2.5 mr-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-              All systems operational
+              
+              Created with ❤️ 
             </span>
           </div>
         </div>

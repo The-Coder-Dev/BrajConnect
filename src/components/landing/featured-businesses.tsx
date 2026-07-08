@@ -64,7 +64,7 @@ export function FeaturedBusinesses() {
             title="Premium Businesses" 
             subtitle="Discover top-rated and verified businesses trusted by thousands of customers."
           />
-          <Button variant="ghost" className="hidden md:flex text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold mb-12">
+          <Button variant="ghost" className="hidden md:flex text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold mb-12">
             View All <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
@@ -79,7 +79,7 @@ export function FeaturedBusinesses() {
           ))}
         </div>
 
-        <Button className="w-full md:hidden mt-8 border-slate-200 text-slate-700 font-semibold h-12 rounded-xl">
+        <Button className="w-full md:hidden mt-8 border-red-600 text-red-600 font-semibold h-12 rounded-xl">
           View All Businesses
         </Button>
       </div>

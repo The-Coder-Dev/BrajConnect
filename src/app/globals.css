@@ -59,7 +59,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.6 0.2 25); 
-  --primary-foreground: oklch(0.6 0.2 25);
+  --primary-foreground: oklch(100% 0.00011 271.152);
   --secondary: oklch(0.45 0.2 255); /* Premium Blue as secondary */
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.97 0 0);

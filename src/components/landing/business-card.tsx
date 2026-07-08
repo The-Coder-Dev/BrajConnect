@@ -52,10 +52,10 @@ export function BusinessCard({ name, category, location, rating, reviews, verifi
         </div>
 
         <div className="mb-2">
-          <span className="text-xs font-bold text-blue-600 tracking-wider uppercase bg-blue-50 px-2 py-1 rounded-md">{category}</span>
+          <span className="text-xs font-bold text-red-600 tracking-wider uppercase bg-red-50 px-2 py-1 rounded-md">{category}</span>
         </div>
         
-        <h3 className="text-xl font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">{name}</h3>
+        <h3 className="text-xl font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-red-600 transition-colors">{name}</h3>
         
         {description && (
           <p className="text-sm text-slate-600 mb-4 line-clamp-2">
@@ -69,11 +69,8 @@ export function BusinessCard({ name, category, location, rating, reviews, verifi
         </div>
 
         <div className="mt-auto pt-5 flex items-center gap-3 border-t border-slate-100/80">
-          <Button render={<Link href={`/business/${slug || name.toLowerCase().replace(/\s+/g, '-')}`} />} variant="default" className="flex-1 h-11 rounded-xl border-slate-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-semibold shadow-sm transition-all duration-300">
+          <Button render={<Link href={`/business/${slug || name.toLowerCase().replace(/\s+/g, '-')}`} />} variant="default" className="flex-1 h-11 rounded-xl text-white border-slate-200 hover:bg-red-700 hover:text-white hover:border-red-700 font-semibold shadow-sm transition-all duration-300">
               View Details
-          </Button>
-          <Button size="icon" className="h-11 w-11 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white shrink-0 transition-colors shadow-sm">
-            <Phone className="h-4 w-4" />
           </Button>
         </div>
       </div>

@@ -47,7 +47,7 @@ export function WhyBrajConnect() {
   return (
     <section id="about" className="py-32 bg-slate-50 relative overflow-hidden">
       {/* Subtle Background Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-slate-50 to-slate-50 pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-blue-100/40 via-slate-50 to-slate-50 pointer-events-none" />
       
       <div className="container mx-auto px-4 md:px-6 max-w-[1440px] relative z-10">
         <div className="max-w-3xl mx-auto mb-20 text-center">
@@ -62,10 +62,6 @@ export function WhyBrajConnect() {
           {features.map((feature, index) => (
             <motion.div 
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: index * 0.1, type: "spring", stiffness: 100 }}
               className={`group relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 p-8 flex flex-col ${feature.className || ""}`}
             >
               {/* Subtle inner gradient */}
@@ -84,7 +80,7 @@ export function WhyBrajConnect() {
                 {feature.hasImage && (
                   <div className="mt-8 relative flex-1 min-h-[150px] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/50 group-hover:border-blue-200 transition-colors">
                     {/* Abstract placeholder visual */}
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size[16px_16px]" />
                     <div className="absolute inset-0 bg-linear-to-tr from-emerald-100/50 to-blue-100/50 mix-blend-multiply" />
                     <div className="absolute bottom-[-20%] right-[-10%] w-64 h-64 bg-emerald-400/20 blur-3xl rounded-full group-hover:bg-emerald-400/30 transition-colors duration-700" />
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
