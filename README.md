@@ -137,25 +137,27 @@ BUSINESSES ||--o{ REVIEWS : receives
 ```text
 src
 │
-├── app
-│   ├── (auth)
-│   ├── dashboard
-│   ├── listings
-│   └── api
-│
-├── actions
-├── components
-├── db
-│   ├── schema
-│   ├── migrations
-│   └── index.ts
-│
-├── hooks
-├── lib
-├── providers
-├── services
-├── types
-└── utils
+├── app                  # Next.js App Router
+├── components           # Shared UI components
+├── constants            # Global configurations & constants
+├── db                   # Database schema & migrations
+│   ├── schema           # Drizzle schema definitions
+│   └── migrations       # SQL migrations
+├── features             # Feature-based architecture
+│   ├── business         # Business core logic
+│   ├── business-onboarding # Business setup flow
+│   └── dashboard        # Dashboards (Admin/Owner/Visitor)
+├── hooks                # Custom React hooks
+├── lib                  # Utilities & Third-party wrappers
+│   ├── cloudinary       # Image optimization & uploads
+│   ├── maps             # Google Maps integrations
+│   ├── search           # Search algorithms & filters
+│   └── supabase-storage # Document storage
+├── server               # Server layer (Actions & Queries)
+│   ├── actions          # Mutations (business, category, etc.)
+│   └── queries          # Fetching (search, dashboard, etc.)
+├── types                # Global TypeScript definitions
+└── validations          # Zod validation schemas
 ```
 
 ---
