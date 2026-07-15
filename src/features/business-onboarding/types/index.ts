@@ -5,10 +5,15 @@ export type StepId =
   | "welcome" 
   | "name" 
   | "category" 
+  | "dynamic_fields"
   | "contact" 
   | "location" 
+  | "hours"
+  | "social"
   | "brand" 
+  | "gallery"
   | "about" 
+  | "documents"
   | "review" 
   | "success";
 
@@ -27,7 +32,8 @@ export interface AssistantContextType {
   goToNextStep: () => Promise<void>;
   goToPreviousStep: () => void;
   goToStep: (index: number) => void;
-  form: UseFormReturn<BusinessSetupInput>;
+  saveAsDraft: () => void;
+  form: UseFormReturn<any>;
   isSubmitting: boolean;
   submitAssistant: () => Promise<void>;
 }
