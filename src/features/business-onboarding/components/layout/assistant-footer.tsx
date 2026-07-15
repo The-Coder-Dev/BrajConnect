@@ -13,7 +13,8 @@ export function AssistantFooter() {
     goToPreviousStep, 
     isFirstStep,
     isSubmitting,
-    submitAssistant
+    submitAssistant,
+    saveAsDraft
   } = useAssistant();
 
   const isReviewStep = currentStepIndex === steps.length - 2;
@@ -40,7 +41,15 @@ export function AssistantFooter() {
 
         <div className="flex items-center gap-3">
           {!isFirstStep && !isReviewStep && (
-            <Button variant="ghost" size="sm" className="rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/50 hidden sm:flex">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => {
+                saveAsDraft();
+                window.location.href = "/dashboard";
+              }}
+              className="rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/50 hidden sm:flex"
+            >
               <Save className="mr-2 h-4 w-4" />
               Save & Exit
             </Button>

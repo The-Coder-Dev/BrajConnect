@@ -68,6 +68,17 @@ export function Step5Location() {
             />
             {errors.address && <p className="text-red-500 text-sm font-medium">{errors.address.message}</p>}
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="postalCode" className="text-muted-foreground">Postal Code / ZIP</Label>
+            <Input 
+              id="postalCode"
+              placeholder="e.g. 94105" 
+              className="h-12 rounded-xl"
+              {...register("postalCode")}
+            />
+            {errors.postalCode && <p className="text-red-500 text-sm font-medium">{errors.postalCode.message}</p>}
+          </div>
         </div>
       </AssistantCard>
     </motion.div>

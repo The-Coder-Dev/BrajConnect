@@ -36,4 +36,6 @@ export interface AssistantContextType {
   form: UseFormReturn<any>;
   isSubmitting: boolean;
   submitAssistant: () => Promise<void>;
+  registerStepValidator: (stepId: StepId, validator: () => boolean | Promise<boolean>) => void;
+  unregisterStepValidator: (stepId: StepId) => void;
 }

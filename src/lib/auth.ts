@@ -5,8 +5,8 @@ import * as schema from '@/db/schema';
 import { DEFAULT_USER_ROLE } from '@/lib/auth/roles';
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://brajconnect.vercel.app",
-  trustedOrigins: ["https://brajconnect.vercel.app", "https://brajconnect.vercel.app/"],
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  trustedOrigins: ["https://brajconnect.vercel.app", "https://brajconnect.vercel.app/", "http://localhost:3000"],
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {

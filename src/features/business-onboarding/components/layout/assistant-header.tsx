@@ -10,7 +10,7 @@ export function AssistantHeader() {
   // Don't show progress on first step (Welcome) or last step (Success)
   const showProgress = currentStepIndex > 0 && currentStepIndex < steps.length - 1;
   const progressPercentage = showProgress 
-    ? Math.round((currentStepIndex / (steps.length - 2)) * 100) 
+    ? Math.round(((currentStepIndex) / (steps.length - 2)) * 100) 
     : 0;
 
   return (

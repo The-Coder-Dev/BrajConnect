@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeSlideVariants } from "../animations";
 import { AssistantCard, AssistantQuestion } from "../components/ui/assistant-card";
@@ -11,26 +11,57 @@ import { FileUp, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAssistant } from "../context/assistant-context";
+import { saveBusinessDocuments } from "@/server/actions/business/onboarding/save-documents";
+import { documentTypeEnum } from "@/db/schema";
 
 export function StepDocuments() {
-  const { control, setValue, formState: { errors } } = useFormContext<BusinessSetupInput>();
-  const { fields, append, remove } = useFieldArray({
+  const { control } = useFormContext<BusinessSetupInput>();
+  const { fields, remove } = useFieldArray({
     control,
     name: "documents",
   });
+  
+  const { registerStepValidator, unregisterStepValidator, businessId } = useAssistant();
+  const [newDocs, setNewDocs] = useState<{ file: File; type: string }[]>([]);
+  const [currentType, setCurrentType] = useState<string>("gst");
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: "gst" | "pan" | "registration_certificate" | "trade_license" | "other") => {
+  useEffect(() => {
+    registerStepValidator("documents", async () => {
+      if (newDocs.length === 0) return true; // Optional step, skip if nothing new
+      if (!businessId) return false;
+
+      const formData = new FormData();
+      newDocs.forEach((doc) => {
+        formData.append("type", doc.type);
+        formData.append("file", doc.file);
+      });
+
+      const res = await saveBusinessDocuments(businessId, formData);
+      if (!res.success) {
+        throw new Error((res as any).error || "Failed to upload documents");
+      }
+      return true;
+    });
+
+    return () => unregisterStepValidator("documents");
+  }, [registerStepValidator, unregisterStepValidator, newDocs, businessId]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Note: Actual upload logic to Supabase Storage would go here
-      // For now we populate the form state to simulate a successful upload
-      append({
-        type,
-        fileName: file.name,
-        mimeType: file.type,
-        storagePath: `temp/${file.name}`, // Simulated path
-      });
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File size exceeds 10MB limit");
+        return;
+      }
+      setNewDocs(prev => [...prev, { file, type: currentType }]);
+      // Reset input
+      e.target.value = '';
     }
+  };
+
+  const removeNewDoc = (index: number) => {
+    setNewDocs(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -50,7 +81,7 @@ export function StepDocuments() {
           <div className="p-4 border rounded-xl border-dashed bg-muted/30">
             <Label className="mb-3 block">Add New Document</Label>
             <div className="flex gap-4">
-              <Select defaultValue="gst">
+              <Select value={currentType} onValueChange={(val) => { if (val) setCurrentType(val); }}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Document Type" />
                 </SelectTrigger>
@@ -66,7 +97,7 @@ export function StepDocuments() {
                 <Input 
                   type="file" 
                   className="absolute inset-0 opacity-0 cursor-pointer"
-                  onChange={(e) => handleFileUpload(e, "gst")}
+                  onChange={handleFileUpload}
                   accept=".pdf,.jpg,.jpeg,.png"
                 />
                 <Button variant="outline" className="w-32 gap-2">
@@ -74,12 +105,13 @@ export function StepDocuments() {
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Supported formats: PDF, JPG, PNG (Max 5MB)</p>
+            <p className="text-xs text-muted-foreground mt-2">Supported formats: PDF, JPG, PNG (Max 10MB)</p>
           </div>
 
-          {fields.length > 0 && (
+          {(fields.length > 0 || newDocs.length > 0) && (
             <div className="space-y-3">
-              <Label>Uploaded Documents</Label>
+              <Label>Documents</Label>
+              {/* Existing DB docs */}
               {fields.map((field, index) => (
                 <div key={field.id} className="flex items-center justify-between p-3 rounded-lg border">
                   <div className="flex items-center gap-3">
@@ -92,6 +124,24 @@ export function StepDocuments() {
                     </div>
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => remove(index)} className="text-muted-foreground hover:text-red-500">
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+
+              {/* New files to upload */}
+              {newDocs.map((doc, index) => (
+                <div key={`new-${index}`} className="flex items-center justify-between p-3 rounded-lg border border-dashed border-blue-400">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-md">
+                      <FileUp className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-blue-900">{doc.file.name}</p>
+                      <p className="text-xs text-blue-600 uppercase">Ready to upload • {doc.type.replace('_', ' ')}</p>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={() => removeNewDoc(index)} className="text-muted-foreground hover:text-red-500">
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
