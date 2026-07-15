@@ -8,10 +8,15 @@ import { AssistantLayout } from "./layout/assistant-layout";
 import { Step1Welcome } from "../steps/step-1-welcome";
 import { Step2Name } from "../steps/step-2-name";
 import { Step3Category } from "../steps/step-3-category";
+import { StepDynamicFields } from "../steps/step-dynamic-fields";
 import { Step4Contact } from "../steps/step-4-contact";
 import { Step5Location } from "../steps/step-5-location";
+import { StepHours } from "../steps/step-hours";
+import { StepSocial } from "../steps/step-social";
 import { Step6Brand } from "../steps/step-6-brand";
+import { StepGallery } from "../steps/step-gallery";
 import { Step7About } from "../steps/step-7-about";
+import { StepDocuments } from "../steps/step-documents";
 import { Step8Review } from "../steps/step-8-review";
 import { Step9Success } from "../steps/step-9-success";
 
@@ -20,15 +25,20 @@ function StepRenderer() {
 
   const renderStep = () => {
     switch (currentStep.id) {
-      case "welcome": return <Step1Welcome key="step-1" />;
-      case "name": return <Step2Name key="step-2" />;
-      case "category": return <Step3Category key="step-3" />;
-      case "contact": return <Step4Contact key="step-4" />;
-      case "location": return <Step5Location key="step-5" />;
-      case "brand": return <Step6Brand key="step-6" />;
-      case "about": return <Step7About key="step-7" />;
-      case "review": return <Step8Review key="step-8" />;
-      case "success": return <Step9Success key="step-9" />;
+      case "welcome": return <Step1Welcome key="welcome" />;
+      case "name": return <Step2Name key="name" />;
+      case "category": return <Step3Category key="category" />;
+      case "dynamic_fields": return <StepDynamicFields key="dynamic_fields" />;
+      case "contact": return <Step4Contact key="contact" />;
+      case "location": return <Step5Location key="location" />;
+      case "hours": return <StepHours key="hours" />;
+      case "social": return <StepSocial key="social" />;
+      case "brand": return <Step6Brand key="brand" />;
+      case "gallery": return <StepGallery key="gallery" />;
+      case "about": return <Step7About key="about" />;
+      case "documents": return <StepDocuments key="documents" />;
+      case "review": return <Step8Review key="review" />;
+      case "success": return <Step9Success key="success" />;
       default: return null;
     }
   };

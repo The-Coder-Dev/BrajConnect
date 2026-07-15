@@ -26,7 +26,7 @@ const Section = ({ title, onEdit, children }: { title: string, onEdit: () => voi
 
 export function Step8Review() {
   const { getValues } = useFormContext<BusinessSetupInput>();
-  const { goToStep } = useAssistant();
+  const { goToStep, saveAsDraft, isSubmitting } = useAssistant();
   const data = getValues();
 
   return (
@@ -38,8 +38,15 @@ export function Step8Review() {
       className="max-w-2xl mx-auto mt-8"
     >
       <AssistantCard>
-        <AssistantQuestion>Review your business details.</AssistantQuestion>
-        <p className="text-slate-500 mb-6">Make sure everything looks good before submitting for review.</p>
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <AssistantQuestion>Review your business details.</AssistantQuestion>
+            <p className="text-slate-500 mt-2">Make sure everything looks good before submitting for review.</p>
+          </div>
+          <Button variant="outline" onClick={saveAsDraft} disabled={isSubmitting}>
+            Save as Draft
+          </Button>
+        </div>
         
         <div className="bg-slate-50/50 rounded-2xl border border-slate-100 px-6 shadow-sm">
           <Section title="Business Name & Category" onEdit={() => goToStep(1)}>
@@ -47,19 +54,54 @@ export function Step8Review() {
             <p><span className="font-medium text-foreground">Category:</span> {data.categoryId}</p>
           </Section>
           
-          <Section title="Contact Information" onEdit={() => goToStep(3)}>
+          <Section title="Contact Information" onEdit={() => goToStep(4)}>
             <p><span className="font-medium text-foreground">Phone:</span> {data.phone}</p>
+            {data.whatsapp && <p><span className="font-medium text-foreground">WhatsApp:</span> {data.whatsapp}</p>}
             <p><span className="font-medium text-foreground">Email:</span> {data.email}</p>
             {data.website && <p><span className="font-medium text-foreground">Website:</span> {data.website}</p>}
           </Section>
 
-          <Section title="Location" onEdit={() => goToStep(4)}>
+          <Section title="Location" onEdit={() => goToStep(5)}>
             <p>{data.address}</p>
-            <p>{data.city}, {data.state} ({data.country})</p>
+            <p>{data.city}, {data.state} {data.postalCode}</p>
+            <p>{data.country}</p>
           </Section>
 
-          <Section title="About" onEdit={() => goToStep(6)}>
-            <p className="line-clamp-3">{data.description || "No description provided."}</p>
+          <Section title="Business Hours" onEdit={() => goToStep(6)}>
+            {data.hours.filter(h => !h.isClosed).length > 0 ? (
+              <p>Hours configured for {data.hours.filter(h => !h.isClosed).length} days.</p>
+            ) : (
+              <p>No business hours set.</p>
+            )}
+          </Section>
+          
+          <Section title="Social Links" onEdit={() => goToStep(7)}>
+            {data.socialLinks.filter(s => s.url).length > 0 ? (
+              <ul className="list-disc pl-4 space-y-1">
+                {data.socialLinks.filter(s => s.url).map((s, i) => (
+                  <li key={i} className="capitalize">{s.platform}: <a href={s.url} target="_blank" rel="noreferrer" className="text-primary hover:underline lowercase">{s.url}</a></li>
+                ))}
+              </ul>
+            ) : (
+              <p>No social links provided.</p>
+            )}
+          </Section>
+
+          <Section title="About" onEdit={() => goToStep(10)}>
+            {data.shortDescription && <p className="font-medium mb-1 line-clamp-2">{data.shortDescription}</p>}
+            <p className="line-clamp-3">{data.description || "No full description provided."}</p>
+          </Section>
+          
+          <Section title="Verification Documents" onEdit={() => goToStep(11)}>
+            {data.documents.length > 0 ? (
+              <ul className="list-disc pl-4 space-y-1">
+                {data.documents.map((doc, i) => (
+                  <li key={i}>{doc.fileName} <span className="text-xs uppercase text-muted-foreground ml-2">({doc.type.replace('_', ' ')})</span></li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-red-500">No documents uploaded. Verification requires at least one document.</p>
+            )}
           </Section>
         </div>
       </AssistantCard>

@@ -18,9 +18,9 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<BusinessSetupInput>({
-    resolver: zodResolver(businessSetupSchema),
-    defaultValues: defaultBusinessSetupValues,
+  const form = useForm<any>({
+    resolver: zodResolver(businessSetupSchema) as any,
+    defaultValues: defaultBusinessSetupValues as any,
     mode: "onChange",
   });
 
@@ -57,6 +57,30 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const saveAsDraft = useCallback(() => {
+    const data = form.getValues();
+    localStorage.setItem("business_setup_draft", JSON.stringify({
+      data,
+      stepIndex: currentStepIndex
+    }));
+    toast.success("Progress saved as draft.");
+  }, [form, currentStepIndex]);
+
+  // Try to load draft on mount
+  React.useEffect(() => {
+    try {
+      const draft = localStorage.getItem("business_setup_draft");
+      if (draft) {
+        const { data, stepIndex } = JSON.parse(draft);
+        form.reset(data);
+        if (stepIndex) setCurrentStepIndex(stepIndex);
+        toast("Draft restored successfully.");
+      }
+    } catch (e) {
+      console.error("Failed to parse draft", e);
+    }
+  }, [form]);
+
   const submitAssistant = useCallback(async () => {
     try {
       setIsSubmitting(true);
@@ -67,10 +91,13 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
       }
       
       const data = form.getValues();
-      console.log("Submitting business setup data:", data);
+      console.log("Submitting business setup data (Status will become pending_review):", data);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Clear draft on successful submit
+      localStorage.removeItem("business_setup_draft");
       
       // Move to success step
       setCurrentStepIndex(SETUP_STEPS.length - 1);
@@ -94,6 +121,7 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
         goToNextStep,
         goToPreviousStep,
         goToStep,
+        saveAsDraft,
         form,
         isSubmitting,
         submitAssistant,
