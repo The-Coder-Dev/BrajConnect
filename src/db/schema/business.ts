@@ -19,7 +19,7 @@ export const verificationStatusEnum = pgEnum("verification_status", [
 
 export const business = pgTable("business", {
   id: text("id").primaryKey(),
-  ownerId: text("ownerId").notNull().references(() => user.id),
+  ownerId: text("ownerId").notNull().references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   shortDescription: text("shortDescription"),

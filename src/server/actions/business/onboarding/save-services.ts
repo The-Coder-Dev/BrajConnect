@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function saveBusinessServices(businessId: string, services: { title: string; description?: string }[]) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -41,6 +43,6 @@ export async function saveBusinessServices(businessId: string, services: { title
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save services:", error);
-    return { success: false, error: error.message || "Failed to save services" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save services.") };
   }
 }

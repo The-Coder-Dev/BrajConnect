@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function saveBusinessContact(businessId: string, data: {
   primaryPhone?: string;
   whatsapp?: string;
@@ -61,6 +63,6 @@ export async function saveBusinessContact(businessId: string, data: {
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save contact:", error);
-    return { success: false, error: error.message || "Failed to save contact" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save contact details.") };
   }
 }

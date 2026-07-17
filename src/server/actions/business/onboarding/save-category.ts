@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function saveBusinessCategory(businessId: string, categoryId: string) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -41,6 +43,6 @@ export async function saveBusinessCategory(businessId: string, categoryId: strin
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save category:", error);
-    return { success: false, error: error.message || "Failed to save category" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save category.") };
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getCategoryDynamicFields } from "@/server/actions/category/get-categories";
 import { useFormContext } from "react-hook-form";
 
@@ -25,9 +25,11 @@ export type DynamicFieldType = {
 export function useDynamicFields(categoryId: string | undefined) {
   const [fields, setFields] = useState<DynamicFieldType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { formState, setError, clearErrors } = useFormContext();
+  const { setError, clearErrors } = useFormContext();
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchFields() {
       if (!categoryId) {
         setFields([]);
@@ -37,41 +39,60 @@ export function useDynamicFields(categoryId: string | undefined) {
       setIsLoading(true);
       try {
         const data = await getCategoryDynamicFields(categoryId);
-        // Cast is necessary since the DB schema type might differ slightly from the explicit type we defined
-        setFields(data as any as DynamicFieldType[]);
+        if (!cancelled) {
+          setFields(data as any as DynamicFieldType[]);
+        }
       } catch (error) {
-        console.error("Failed to load dynamic fields", error);
+        console.error("[DynamicFields] Failed to load:", error);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
 
     fetchFields();
+
+    return () => {
+      cancelled = true;
+    };
   }, [categoryId]);
 
-  const validateDynamicFields = (values: Record<string, any>) => {
-    clearErrors("dynamicFields");
-    let isValid = true;
-    
-    fields.forEach(field => {
-      if (field.required) {
-        const val = values[field.key];
-        if (val === undefined || val === null || val === "" || (field.inputType === "checkbox" && val === false)) {
-          setError(`dynamicFields.${field.key}`, {
-            type: "manual",
-            message: `${field.label} is required`
-          });
-          isValid = false;
+  /**
+   * Wrapped in useCallback so the reference is stable and does not cause
+   * infinite re-registration loops in the step's useEffect dep array.
+   */
+  const validateDynamicFields = useCallback(
+    (values: Record<string, any>) => {
+      clearErrors("dynamicFields");
+      let isValid = true;
+
+      fields.forEach((field) => {
+        if (field.required) {
+          const val = values[field.id];
+          if (
+            val === undefined ||
+            val === null ||
+            val === "" ||
+            (field.inputType === "checkbox" && val === false)
+          ) {
+            setError(`dynamicFields.${field.id}`, {
+              type: "manual",
+              message: `${field.label} is required`,
+            });
+            isValid = false;
+          }
         }
-      }
-    });
-    
-    return isValid;
-  };
+      });
+
+      return isValid;
+    },
+    [fields, setError, clearErrors]
+  );
 
   return {
     fields,
     isLoading,
-    validateDynamicFields
+    validateDynamicFields,
   };
 }

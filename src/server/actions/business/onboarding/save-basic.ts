@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function saveBusinessBasic(businessId: string, data: {
   name?: string;
   shortDescription?: string;
@@ -41,6 +43,6 @@ export async function saveBusinessBasic(businessId: string, data: {
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save basic info:", error);
-    return { success: false, error: error.message || "Failed to save basic info" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save basic business details.") };
   }
 }

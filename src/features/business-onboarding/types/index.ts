@@ -1,20 +1,20 @@
 import { BusinessSetupInput } from "@/lib/validations/business/setup";
 import { UseFormReturn } from "react-hook-form";
 
-export type StepId = 
-  | "welcome" 
-  | "name" 
-  | "category" 
+export type StepId =
+  | "welcome"
+  | "name"
+  | "category"
   | "dynamic_fields"
-  | "contact" 
-  | "location" 
+  | "contact"
+  | "location"
   | "hours"
   | "social"
-  | "brand" 
+  | "brand"
   | "gallery"
-  | "about" 
+  | "about"
   | "documents"
-  | "review" 
+  | "review"
   | "success";
 
 export interface SetupStep {

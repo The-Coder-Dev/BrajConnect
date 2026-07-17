@@ -1,4 +1,4 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
@@ -11,5 +11,6 @@ if (!connectionString) {
 // Disable prefetch/prepare as it is not supported for "Transaction" pool mode in Supabase
 const client = postgres(connectionString, { prepare: false });
 
-// @ts-expect-error: schema is omitted in DrizzlePgConfig in 1.0.0-rc.4 but supported in runtime
-export const db = drizzle({ client, schema });
+
+
+export const db = drizzle(client, { schema });

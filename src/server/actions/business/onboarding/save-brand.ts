@@ -5,7 +5,9 @@ import { business, gallery } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { uploadImageBuffer } from "@/lib/cloudinary/upload";
+import { uploadImageBuffer, deleteImage } from "@/lib/cloudinary/upload";
+
+import { getFriendlyErrorMessage } from "@/lib/utils";
 
 export async function saveBusinessBrand(businessId: string, formData: FormData) {
   try {
@@ -17,7 +19,7 @@ export async function saveBusinessBrand(businessId: string, formData: FormData) 
     // Verify ownership
     const existing = await db.query.business.findFirst({
       where: and(eq(business.id, businessId), eq(business.ownerId, session.user.id)),
-      columns: { id: true }
+      columns: { id: true, logoPublicId: true, coverPublicId: true }
     });
 
     if (!existing) {
@@ -34,7 +36,7 @@ export async function saveBusinessBrand(businessId: string, formData: FormData) 
       const arrayBuffer = await logoFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const res = await uploadImageBuffer(buffer, { folder: `brajconnect/business/${businessId}/logo` });
-      if (!res.success || !res.data) throw new Error(res.error || "Failed to upload logo");
+      if (!res.success) throw new Error(res.error || "Failed to upload logo");
       logoUrl = res.data.secure_url;
       logoPublicId = res.data.public_id;
     }
@@ -44,7 +46,7 @@ export async function saveBusinessBrand(businessId: string, formData: FormData) 
       const arrayBuffer = await coverFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const res = await uploadImageBuffer(buffer, { folder: `brajconnect/business/${businessId}/cover` });
-      if (!res.success || !res.data) throw new Error(res.error || "Failed to upload cover");
+      if (!res.success) throw new Error(res.error || "Failed to upload cover");
       coverUrl = res.data.secure_url;
       coverPublicId = res.data.public_id;
     }
@@ -61,11 +63,19 @@ export async function saveBusinessBrand(businessId: string, formData: FormData) 
 
     if (Object.keys(updates).length > 1) {
       await db.update(business).set(updates).where(eq(business.id, businessId));
+      
+      // Cleanup old images if they were replaced
+      if (logoUrl && existing.logoPublicId) {
+        await deleteImage(existing.logoPublicId);
+      }
+      if (coverUrl && existing.coverPublicId) {
+        await deleteImage(existing.coverPublicId);
+      }
     }
 
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save brand:", error);
-    return { success: false, error: error.message || "Failed to save brand" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save brand images.") };
   }
 }

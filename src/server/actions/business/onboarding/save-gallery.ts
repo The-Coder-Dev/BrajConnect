@@ -5,9 +5,13 @@ import { business, gallery } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { uploadImageBuffer } from "@/lib/cloudinary/upload";
+import { uploadImageBuffer, deleteImages } from "@/lib/cloudinary/upload";
+
+import { getFriendlyErrorMessage } from "@/lib/utils";
 
 export async function saveBusinessGallery(businessId: string, formData: FormData) {
+  let uploadedPublicIds: string[] = [];
+
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
@@ -49,7 +53,9 @@ export async function saveBusinessGallery(businessId: string, formData: FormData
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const res = await uploadImageBuffer(buffer, { folder: `brajconnect/business/${businessId}/gallery` });
-      if (res.success && res.data) {
+      if (res.success) {
+        uploadedPublicIds.push(res.data.public_id);
+        
         uploads.push({
           id: `gal_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
           businessId,
@@ -73,6 +79,12 @@ export async function saveBusinessGallery(businessId: string, formData: FormData
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save gallery:", error);
-    return { success: false, error: error.message || "Failed to save gallery" };
+    
+    // Rollback successful uploads if batch failed
+    if (uploadedPublicIds.length > 0) {
+      await deleteImages(uploadedPublicIds);
+    }
+
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save gallery images.") };
   }
 }
