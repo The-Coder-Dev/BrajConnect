@@ -23,8 +23,9 @@ export const metadata: Metadata = {
   description: mockBusiness.description,
 };
 
-export default function BusinessDetailsPage({ params }: { params: { slug: string } }) {
-  if (params.slug !== mockBusiness.slug && params.slug !== 'aura-premium-salon') {
+export default async function BusinessDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  if (slug !== mockBusiness.slug && slug !== 'aura-premium-salon') {
     // We'll render anyway, but usually this is notFound()
   }
 

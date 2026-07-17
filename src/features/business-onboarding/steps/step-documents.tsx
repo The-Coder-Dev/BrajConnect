@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -22,6 +23,7 @@ interface PendingDoc {
   file: File;
   type: string;
   status: DocStatus;
+  progress?: number;
   error?: string;
 }
 
@@ -39,6 +41,51 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// Local helper to upload documents via AJAX route handler
+const uploadDocFile = (
+  file: File,
+  businessId: string,
+  type: string,
+  onProgress: (pct: number) => void
+): Promise<{ storagePath: string; fileName: string; mimeType: string }> => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload/document");
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        onProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          resolve(JSON.parse(xhr.responseText));
+        } catch {
+          reject(new Error("Invalid response from server"));
+        }
+      } else {
+        try {
+          const err = JSON.parse(xhr.responseText);
+          reject(new Error(err.error || "Upload failed"));
+        } catch {
+          reject(new Error("Upload failed"));
+        }
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Network error during upload"));
+
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("type", type);
+    fd.append("businessId", businessId);
+    xhr.send(fd);
+  });
+};
+
 export function StepDocuments() {
   const { registerStepValidator, unregisterStepValidator, businessId } = useAssistant();
   const [pendingDocs, setPendingDocs] = useState<PendingDoc[]>([]);
@@ -46,13 +93,13 @@ export function StepDocuments() {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  /**
-   * Refs keep validator closure in sync without re-registering.
-   */
   const pendingDocsRef = useRef<PendingDoc[]>([]);
   const businessIdRef = useRef<string | null>(null);
-  pendingDocsRef.current = pendingDocs;
-  businessIdRef.current = businessId;
+
+  useEffect(() => {
+    pendingDocsRef.current = pendingDocs;
+    businessIdRef.current = businessId;
+  }, [pendingDocs, businessId]);
 
   // Register ONCE on mount
   useEffect(() => {
@@ -60,7 +107,8 @@ export function StepDocuments() {
       const docs = pendingDocsRef.current;
       const bId = businessIdRef.current;
 
-      if (docs.length === 0) return true; // Optional step
+      const unuploadedDocs = docs.filter((d) => d.status !== "success");
+      if (unuploadedDocs.length === 0) return true; // already uploaded or empty
 
       if (!bId) {
         toast.error("Business ID missing. Complete previous steps first.");
@@ -68,29 +116,57 @@ export function StepDocuments() {
       }
 
       setIsUploading(true);
-      setPendingDocs((prev) => prev.map((d) => ({ ...d, status: "uploading" })));
+      const uploadedDocs: {
+        type: string;
+        fileName: string;
+        storagePath: string;
+        mimeType: string;
+      }[] = [];
 
       try {
-        const formData = new FormData();
-        docs.forEach((doc) => {
-          formData.append("type", doc.type);
-          formData.append("file", doc.file);
-        });
+        for (const doc of docs) {
+          if (doc.status === "success") {
+            continue;
+          }
 
-        const res = await saveBusinessDocuments(bId, formData);
+          setPendingDocs((prev) =>
+            prev.map((d) => (d.id === doc.id ? { ...d, status: "uploading", progress: 0 } : d))
+          );
 
-        if (!res.success) {
-          const errMsg = (res as any).error || "Failed to upload documents";
-          setPendingDocs((prev) => prev.map((d) => ({ ...d, status: "error", error: errMsg })));
-          throw new Error(errMsg);
+          try {
+            const res = await uploadDocFile(doc.file, bId, doc.type, (pct) => {
+              setPendingDocs((prev) =>
+                prev.map((d) => (d.id === doc.id ? { ...d, progress: pct } : d))
+              );
+            });
+
+            setPendingDocs((prev) =>
+              prev.map((d) => (d.id === doc.id ? { ...d, status: "success" } : d))
+            );
+
+            uploadedDocs.push({
+              type: doc.type,
+              fileName: res.fileName,
+              storagePath: res.storagePath,
+              mimeType: res.mimeType,
+            });
+          } catch (uploadErr: any) {
+            setPendingDocs((prev) =>
+              prev.map((d) =>
+                d.id === doc.id ? { ...d, status: "error", error: uploadErr.message || "Failed" } : d
+              )
+            );
+            throw uploadErr;
+          }
         }
 
-        setPendingDocs((prev) => prev.map((d) => ({ ...d, status: "success" })));
+        const res = await saveBusinessDocuments(bId, uploadedDocs);
+        if (!res.success) {
+          throw new Error((res as any).error || "Failed to save verification documents");
+        }
         return true;
       } catch (e: any) {
-        setPendingDocs((prev) =>
-          prev.map((d) => ({ ...d, status: d.status === "uploading" ? "error" : d.status }))
-        );
+        toast.error(e.message || "Failed to upload documents");
         throw e;
       } finally {
         setIsUploading(false);
@@ -98,8 +174,8 @@ export function StepDocuments() {
     });
 
     return () => unregisterStepValidator("documents");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // intentionally empty
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,6 +183,14 @@ export function StepDocuments() {
 
     if (file.size > 10 * 1024 * 1024) {
       toast.error("File exceeds 10MB limit.");
+      return;
+    }
+
+    // MIME type check
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Invalid file format. Only PDF, JPG, and PNG are allowed.");
+      e.target.value = "";
       return;
     }
 
@@ -165,6 +249,7 @@ export function StepDocuments() {
               <Select
                 value={currentType}
                 onValueChange={(val) => { if (val) setCurrentType(val); }}
+                disabled={isUploading}
               >
                 <SelectTrigger className="flex-1 h-11 rounded-xl">
                   <SelectValue placeholder="Document Type" />
@@ -193,6 +278,7 @@ export function StepDocuments() {
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={handleFileUpload}
+                disabled={isUploading}
                 className="hidden"
               />
             </div>
@@ -209,45 +295,60 @@ export function StepDocuments() {
                 <div
                   key={doc.id}
                   className={cn(
-                    "flex items-center justify-between p-3 rounded-xl border transition-colors",
+                    "flex flex-col p-3 rounded-xl border transition-colors",
                     doc.status === "pending" && "border-blue-200 bg-blue-50/50",
                     doc.status === "uploading" && "border-yellow-200 bg-yellow-50/50",
                     doc.status === "success" && "border-green-200 bg-green-50/50",
                     doc.status === "error" && "border-red-200 bg-red-50/50"
                   )}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className={cn(
-                      "p-2 rounded-lg shrink-0",
-                      doc.status === "pending" && "bg-blue-100",
-                      doc.status === "uploading" && "bg-yellow-100",
-                      doc.status === "success" && "bg-green-100",
-                      doc.status === "error" && "bg-red-100"
-                    )}>
-                      {statusIcon(doc.status)}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={cn(
+                        "p-2 rounded-lg shrink-0",
+                        doc.status === "pending" && "bg-blue-100",
+                        doc.status === "uploading" && "bg-yellow-100",
+                        doc.status === "success" && "bg-green-100",
+                        doc.status === "error" && "bg-red-100"
+                      )}>
+                        {statusIcon(doc.status)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{doc.file.name}</p>
+                        <p className="text-xs text-muted-foreground flex gap-2 flex-wrap">
+                          <span className="uppercase">{docTypeLabel(doc.type)}</span>
+                          <span>·</span>
+                          <span>{formatBytes(doc.file.size)}</span>
+                          {doc.status === "uploading" && <span className="text-yellow-600 font-semibold">Uploading ({doc.progress || 0}%)</span>}
+                          {doc.status === "success" && <span className="text-green-600 font-semibold">✓ Uploaded</span>}
+                          {doc.status === "error" && <span className="text-red-600 font-semibold">Failed</span>}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{doc.file.name}</p>
-                      <p className="text-xs text-muted-foreground flex gap-2">
-                        <span className="uppercase">{docTypeLabel(doc.type)}</span>
-                        <span>·</span>
-                        <span>{formatBytes(doc.file.size)}</span>
-                        {doc.status === "uploading" && <span className="text-yellow-600">Uploading...</span>}
-                        {doc.status === "success" && <span className="text-green-600">✓ Uploaded</span>}
-                        {doc.status === "error" && <span className="text-red-600">Failed</span>}
-                      </p>
-                    </div>
+                    {doc.status !== "uploading" && doc.status !== "success" && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-red-500 shrink-0"
+                        onClick={() => removeDoc(doc.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
-                  {doc.status !== "uploading" && doc.status !== "success" && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-red-500 shrink-0"
-                      onClick={() => removeDoc(doc.id)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+                  {doc.status === "uploading" && (
+                    <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1 mt-2.5 overflow-hidden">
+                      <div
+                        className="bg-yellow-500 h-full transition-all duration-300"
+                        style={{ width: `${doc.progress || 0}%` }}
+                      />
+                    </div>
+                  )}
+                  {doc.status === "error" && doc.error && (
+                    <p className="text-[10px] text-red-600 font-medium mt-1 pl-11">
+                      Reason: {doc.error}
+                    </p>
                   )}
                 </div>
               ))}

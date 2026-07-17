@@ -38,7 +38,7 @@ export function StepSocial() {
     >
       <AssistantCard>
         <AssistantQuestion>Where else can customers find you?</AssistantQuestion>
-        <p className="text-muted-foreground mt-2">Add links to your social media profiles. You can leave these blank if you don't have them.</p>
+        <p className="text-muted-foreground mt-2">Add links to your social media profiles. You can leave these blank if you don&apos;t have them.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
           {fields.map((field, index) => {

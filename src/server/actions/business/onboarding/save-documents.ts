@@ -1,21 +1,31 @@
 "use server";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { db } from "@/db";
-import { business, businessDocuments, documentTypeEnum } from "@/db/schema";
+import { business, businessDocuments } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { uploadDocument, deleteDocuments } from "@/lib/supabase/storage";
-
+import { deleteDocuments } from "@/lib/supabase/storage";
 import { getFriendlyErrorMessage } from "@/lib/utils";
 
-export async function saveBusinessDocuments(businessId: string, formData: FormData) {
-  let uploadedPaths: string[] = [];
-
+export async function saveBusinessDocuments(
+  businessId: string,
+  docs: {
+    type: string;
+    fileName: string;
+    storagePath: string;
+    mimeType: string;
+  }[]
+) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };
+    }
+
+    if (!businessId || typeof businessId !== "string" || businessId.trim() === "") {
+      return { success: false, error: "Business ID is required." };
     }
 
     // Verify ownership
@@ -28,35 +38,16 @@ export async function saveBusinessDocuments(businessId: string, formData: FormDa
       return { success: false, error: "Business not found or unauthorized" };
     }
 
-    const types = formData.getAll("type") as typeof documentTypeEnum.enumValues[number][];
-    const files = formData.getAll("file") as File[];
-
-    if (types.length !== files.length) {
-      return { success: false, error: "Mismatched document data" };
-    }
-
-    const newDocs = [];
-    for (let i = 0; i < files.length; i++) {
-      const type = types[i];
-      const file = files[i];
-
-      const res = await uploadDocument(file, businessId, type);
-      if (res.error) {
-        throw new Error(res.error);
-      }
-
-      uploadedPaths.push(res.path);
-
-      newDocs.push({
-        id: `doc_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-        businessId,
-        documentType: type,
-        fileName: file.name,
-        storagePath: res.path,
-        mimeType: file.type,
-        verificationStatus: "not_submitted" as const,
-      });
-    }
+    const types = docs.map((d) => d.type);
+    const newDocs = docs.map((doc) => ({
+      id: `doc_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      businessId,
+      documentType: doc.type as any,
+      fileName: doc.fileName,
+      storagePath: doc.storagePath,
+      mimeType: doc.mimeType,
+      verificationStatus: "not_submitted" as const,
+    }));
 
     if (newDocs.length > 0) {
       // Find old documents of the same type and delete them
@@ -67,15 +58,15 @@ export async function saveBusinessDocuments(businessId: string, formData: FormDa
       });
       
       const oldPathsToDelete = existingDocs
-        .filter(d => types.includes(d.documentType))
-        .map(d => d.storagePath);
+        .filter((d) => types.includes(d.documentType))
+        .map((d) => d.storagePath);
       
       // Delete old from DB
       for (const type of types) {
         await db.delete(businessDocuments)
           .where(and(
             eq(businessDocuments.businessId, businessId),
-            eq(businessDocuments.documentType, type)
+            eq(businessDocuments.documentType, type as any)
           ));
       }
       
@@ -91,9 +82,10 @@ export async function saveBusinessDocuments(businessId: string, formData: FormDa
   } catch (error: any) {
     console.error("Failed to save documents:", error);
     
-    // Rollback orphaned uploads
-    if (uploadedPaths.length > 0) {
-      await deleteDocuments(uploadedPaths);
+    // Rollback uploaded paths to avoid orphan files
+    const paths = docs.map((d) => d.storagePath).filter(Boolean);
+    if (paths.length > 0) {
+      await deleteDocuments(paths);
     }
 
     return { success: false, error: getFriendlyErrorMessage(error, "Unable to save verification documents.") };

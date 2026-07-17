@@ -1,19 +1,31 @@
 "use server";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { db } from "@/db";
-import { business, gallery } from "@/db/schema";
+import { business } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { uploadImageBuffer, deleteImage } from "@/lib/cloudinary/upload";
-
+import { deleteImage } from "@/lib/cloudinary/upload";
 import { getFriendlyErrorMessage } from "@/lib/utils";
 
-export async function saveBusinessBrand(businessId: string, formData: FormData) {
+export async function saveBusinessBrand(
+  businessId: string,
+  data: {
+    logoUrl?: string;
+    logoPublicId?: string;
+    coverUrl?: string;
+    coverPublicId?: string;
+  }
+) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };
+    }
+
+    if (!businessId || typeof businessId !== "string" || businessId.trim() === "") {
+      return { success: false, error: "Business ID is required." };
     }
 
     // Verify ownership
@@ -26,49 +38,24 @@ export async function saveBusinessBrand(businessId: string, formData: FormData) 
       return { success: false, error: "Business not found or unauthorized" };
     }
 
-    const logoFile = formData.get("logo") as File | null;
-    const coverFile = formData.get("cover") as File | null;
-
-    let logoUrl, logoPublicId, coverUrl, coverPublicId;
-
-    if (logoFile && logoFile.size > 0) {
-      if (logoFile.size > 2 * 1024 * 1024) return { success: false, error: "Logo exceeds 2MB limit" };
-      const arrayBuffer = await logoFile.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const res = await uploadImageBuffer(buffer, { folder: `brajconnect/business/${businessId}/logo` });
-      if (!res.success) throw new Error(res.error || "Failed to upload logo");
-      logoUrl = res.data.secure_url;
-      logoPublicId = res.data.public_id;
-    }
-
-    if (coverFile && coverFile.size > 0) {
-      if (coverFile.size > 5 * 1024 * 1024) return { success: false, error: "Cover exceeds 5MB limit" };
-      const arrayBuffer = await coverFile.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const res = await uploadImageBuffer(buffer, { folder: `brajconnect/business/${businessId}/cover` });
-      if (!res.success) throw new Error(res.error || "Failed to upload cover");
-      coverUrl = res.data.secure_url;
-      coverPublicId = res.data.public_id;
-    }
-
     const updates: any = { updatedAt: new Date() };
-    if (logoUrl) {
-      updates.logoUrl = logoUrl;
-      updates.logoPublicId = logoPublicId;
+    if (data.logoUrl) {
+      updates.logoUrl = data.logoUrl;
+      updates.logoPublicId = data.logoPublicId || null;
     }
-    if (coverUrl) {
-      updates.coverUrl = coverUrl;
-      updates.coverPublicId = coverPublicId;
+    if (data.coverUrl) {
+      updates.coverUrl = data.coverUrl;
+      updates.coverPublicId = data.coverPublicId || null;
     }
 
     if (Object.keys(updates).length > 1) {
       await db.update(business).set(updates).where(eq(business.id, businessId));
       
       // Cleanup old images if they were replaced
-      if (logoUrl && existing.logoPublicId) {
+      if (data.logoUrl && existing.logoPublicId) {
         await deleteImage(existing.logoPublicId);
       }
-      if (coverUrl && existing.coverPublicId) {
+      if (data.coverUrl && existing.coverPublicId) {
         await deleteImage(existing.coverPublicId);
       }
     }

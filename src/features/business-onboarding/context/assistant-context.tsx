@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, {
@@ -18,6 +19,8 @@ import {
 import { AssistantContextType, StepId } from "../types";
 import { SETUP_STEPS } from "../constants";
 import { toast } from "sonner";
+
+import { useSearchParams } from "next/navigation";
 
 // Server Actions
 import { getDraftBusiness } from "@/server/actions/business/onboarding/get-draft";
@@ -56,7 +59,32 @@ const AssistantContext = createContext<ExtendedAssistantContextType | undefined>
   undefined
 );
 
+function calculateIncompleteStepIndex(draft: any): number {
+  if (!draft) return 0;
+  // 1. Name step
+  if (!draft.name) return 1;
+  // 2. Category step
+  if (!draft.businessCategories || draft.businessCategories.length === 0) return 2;
+  // 3. Dynamic fields step (optional lookup, default to proceed if empty/complete)
+  // 4. Contact step
+  if (!draft.contact || !draft.contact.primaryPhone) return 4;
+  // 5. Location step
+  if (!draft.location || !draft.location.address) return 5;
+  // 6. Business Hours step
+  if (!draft.hours || draft.hours.length === 0) return 6;
+  // 8. Brand step (logo & cover image)
+  if (!draft.logoUrl || !draft.coverUrl) return 8;
+  // 10. About step
+  if (!draft.shortDescription || !draft.fullDescription) return 10;
+  // default to review step
+  return 12; 
+}
+
+
 export function AssistantProvider({ children }: { children: React.ReactNode }) {
+  const searchParams = useSearchParams();
+  const queryBusinessId = searchParams.get("id");
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [businessId, setBusinessId] = useState<string | null>(null);
@@ -89,7 +117,9 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
   // Stable ref to form so we can call form.reset inside effects
   // without listing `form` as a dependency (which changes every render).
   const formRef = useRef(form);
-  formRef.current = form;
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
 
   const currentStep = SETUP_STEPS[currentStepIndex];
   const isFirstStep = currentStepIndex === 0;
@@ -106,7 +136,7 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
 
     async function loadDraft() {
       try {
-        const res = await getDraftBusiness();
+        const res = await getDraftBusiness(queryBusinessId || undefined);
 
         if (cancelled) return;
 
@@ -130,7 +160,12 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
             formData.whatsapp = draft.contact.whatsapp || "";
             formData.email = draft.contact.email || "";
             formData.website = draft.contact.website || "";
-            formData.preferredContactMethod = draft.contact.preferredContactMethod;
+            
+            const rawMethod = draft.contact.preferredContactMethod;
+            const normalized = rawMethod ? rawMethod.toLowerCase().trim() : "phone";
+            formData.preferredContactMethod = ["phone", "whatsapp", "email"].includes(normalized)
+              ? (normalized as any)
+              : "phone";
           }
 
           if (draft.location) {
@@ -176,15 +211,18 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
           // Read saved step from localStorage
           let savedStepIndex = 0;
           try {
-            const uiState = localStorage.getItem("business_setup_ui");
+            const uiKey = `business_setup_ui_${draft.id}`;
+            const uiState = localStorage.getItem(uiKey) || localStorage.getItem("business_setup_ui");
             if (uiState) {
               const parsed = JSON.parse(uiState);
               if (typeof parsed.stepIndex === "number") {
                 savedStepIndex = Math.min(parsed.stepIndex, SETUP_STEPS.length - 2);
               }
+            } else {
+              savedStepIndex = calculateIncompleteStepIndex(draft);
             }
           } catch {
-            // ignore localStorage errors
+            savedStepIndex = calculateIncompleteStepIndex(draft);
           }
 
           setBusinessId(draft.id);
@@ -251,17 +289,17 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
   // Persist step index to localStorage (only after hydration completes)
   // -------------------------------------------------------------------------
   useEffect(() => {
-    if (!isHydrating) {
+    if (!isHydrating && businessId) {
       try {
         localStorage.setItem(
-          "business_setup_ui",
+          `business_setup_ui_${businessId}`,
           JSON.stringify({ stepIndex: currentStepIndex })
         );
       } catch {
         // ignore
       }
     }
-  }, [currentStepIndex, isHydrating]);
+  }, [currentStepIndex, isHydrating, businessId]);
 
   // -------------------------------------------------------------------------
   // Step validators — stored in a ref, stable callbacks

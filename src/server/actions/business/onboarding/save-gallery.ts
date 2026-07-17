@@ -1,21 +1,33 @@
 "use server";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { db } from "@/db";
 import { business, gallery } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { uploadImageBuffer, deleteImages } from "@/lib/cloudinary/upload";
-
+import { deleteImages } from "@/lib/cloudinary/upload";
 import { getFriendlyErrorMessage } from "@/lib/utils";
 
-export async function saveBusinessGallery(businessId: string, formData: FormData) {
-  let uploadedPublicIds: string[] = [];
-
+export async function saveBusinessGallery(
+  businessId: string,
+  images: {
+    imageUrl: string;
+    cloudinaryPublicId: string;
+    format?: string;
+    bytes?: number;
+    width?: number;
+    height?: number;
+  }[]
+) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };
+    }
+
+    if (!businessId || typeof businessId !== "string" || businessId.trim() === "") {
+      return { success: false, error: "Business ID is required." };
     }
 
     // Verify ownership
@@ -28,49 +40,26 @@ export async function saveBusinessGallery(businessId: string, formData: FormData
       return { success: false, error: "Business not found or unauthorized" };
     }
 
-    const files = formData.getAll("images") as File[];
-    
-    // Server validation: Max 20 images total in db? For now we just validate upload size.
-    if (files.length > 20) {
-      return { success: false, error: "Maximum 20 images allowed" };
-    }
-
+    // Server validation: Max 20 images total in db
     const existingGallery = await db.query.gallery.findMany({
       where: eq(gallery.businessId, businessId)
     });
     const currentCount = existingGallery.length;
-    if (currentCount + files.length > 20) {
-       return { success: false, error: `Maximum 20 images allowed. You already have ${currentCount}.` };
+    if (currentCount + images.length > 20) {
+      return { success: false, error: `Maximum 20 images allowed. You already have ${currentCount}.` };
     }
 
-    for (const file of files) {
-      if (file.size > 5 * 1024 * 1024) return { success: false, error: "Each image must be under 5MB" };
-    }
-
-    const uploads = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const res = await uploadImageBuffer(buffer, { folder: `brajconnect/business/${businessId}/gallery` });
-      if (res.success) {
-        uploadedPublicIds.push(res.data.public_id);
-        
-        uploads.push({
-          id: `gal_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-          businessId,
-          imageUrl: res.data.secure_url,
-          cloudinaryPublicId: res.data.public_id,
-          format: res.data.format,
-          bytes: res.data.bytes,
-          width: res.data.width,
-          height: res.data.height,
-          sortOrder: currentCount + i,
-        });
-      } else {
-        throw new Error(res.error || "Failed to upload gallery image");
-      }
-    }
+    const uploads = images.map((img, i) => ({
+      id: `gal_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      businessId,
+      imageUrl: img.imageUrl,
+      cloudinaryPublicId: img.cloudinaryPublicId,
+      format: img.format || null,
+      bytes: img.bytes || null,
+      width: img.width || null,
+      height: img.height || null,
+      sortOrder: currentCount + i,
+    }));
 
     if (uploads.length > 0) {
       await db.insert(gallery).values(uploads);
@@ -80,9 +69,10 @@ export async function saveBusinessGallery(businessId: string, formData: FormData
   } catch (error: any) {
     console.error("Failed to save gallery:", error);
     
-    // Rollback successful uploads if batch failed
-    if (uploadedPublicIds.length > 0) {
-      await deleteImages(uploadedPublicIds);
+    // Rollback successful uploads if database insert failed
+    const publicIds = images.map((img) => img.cloudinaryPublicId).filter(Boolean);
+    if (publicIds.length > 0) {
+      await deleteImages(publicIds);
     }
 
     return { success: false, error: getFriendlyErrorMessage(error, "Unable to save gallery images.") };

@@ -44,7 +44,18 @@ export const businessSetupSchema = z.object({
   whatsapp: z.string().regex(BUSINESS.VALIDATION.PHONE_REGEX, "Invalid phone number format").optional().or(z.literal("")),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   website: z.string().url("Invalid URL").optional().or(z.literal("")),
-  preferredContactMethod: z.enum(["phone", "whatsapp", "email"]).optional(),
+  preferredContactMethod: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        const lower = val.toLowerCase().trim();
+        if (lower === "phone" || lower === "whatsapp" || lower === "email") {
+          return lower;
+        }
+      }
+      return undefined;
+    },
+    z.enum(["phone", "whatsapp", "email"]).optional()
+  ),
 
   // Location
   country: z.string().min(2, "Country is required"),
@@ -119,4 +130,5 @@ export const defaultBusinessSetupValues: Partial<BusinessSetupInput> = {
   ],
   documents: [],
   dynamicFields: {},
+  preferredContactMethod: "phone",
 };

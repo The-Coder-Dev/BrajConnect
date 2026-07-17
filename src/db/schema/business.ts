@@ -36,6 +36,8 @@ export const business = pgTable("business", {
   updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().notNull(),
   publishedAt: timestamp("publishedAt", { mode: "date" }),
   deletedAt: timestamp("deletedAt", { mode: "date" }),
+  rejectionReason: text("rejectionReason"),
+  suspensionReason: text("suspensionReason"),
 }, (table) => {
   return {
     nameIdx: index("name_idx").on(table.name),

@@ -71,7 +71,10 @@ export function AppSidebar({ user }: { user: any }) {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/50 bg-background shadow-none">
+    <Sidebar
+      collapsible="icon"
+      className="border-r border-border/50 bg-background shadow-none"
+    >
       <SidebarHeader className="py-6 px-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-9 w-9 rounded-lg bg-red-50">
@@ -82,8 +85,12 @@ export function AppSidebar({ user }: { user: any }) {
           </Avatar>
           {state !== "collapsed" && (
             <div className="flex flex-col flex-1 overflow-hidden">
-              <span className="truncate text-sm font-semibold">{user.name}</span>
-              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+              <span className="truncate text-sm font-semibold">
+                {user.name}
+              </span>
+              <span className="truncate text-xs text-muted-foreground">
+                {user.email}
+              </span>
             </div>
           )}
         </div>
@@ -94,16 +101,18 @@ export function AppSidebar({ user }: { user: any }) {
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
               {items.map((item) => {
-                const isActive = pathname === item.url;
+                const isActive = item.url === "/dashboard"
+                  ? pathname === "/dashboard"
+                  : pathname.startsWith(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
+                    <SidebarMenuButton
                       render={<Link href={item.url} />}
                       isActive={isActive}
                       tooltip={item.title}
                       className={`rounded-lg transition-all ${
-                        isActive 
-                          ? "bg-transparent text-primary font-medium relative after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:w-1 after:h-5 after:bg-primary after:rounded-r-full" 
+                        isActive
+                          ? "bg-transparent text-primary font-medium relative after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:w-1 after:h-5 after:bg-primary after:rounded-r-full"
                           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                       }`}
                     >
@@ -121,7 +130,7 @@ export function AppSidebar({ user }: { user: any }) {
       <SidebarFooter className="p-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton 
+            <SidebarMenuButton
               onClick={handleSignOut}
               tooltip="Sign out"
               className="rounded-lg cursor-pointer text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all"

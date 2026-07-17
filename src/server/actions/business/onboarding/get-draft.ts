@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 
 import { getFriendlyErrorMessage } from "@/lib/utils";
 
-export async function getDraftBusiness() {
+export async function getDraftBusiness(businessId?: string) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
@@ -19,10 +19,16 @@ export async function getDraftBusiness() {
 
     // Fetch the draft business
     const draft = await db.query.business.findFirst({
-      where: and(
-        eq(business.ownerId, userId),
-        eq(business.status, "draft")
-      ),
+      where: businessId
+        ? and(
+            eq(business.id, businessId),
+            eq(business.ownerId, userId),
+            eq(business.status, "draft")
+          )
+        : and(
+            eq(business.ownerId, userId),
+            eq(business.status, "draft")
+          ),
       with: {
         contact: true,
         location: true,
