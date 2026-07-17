@@ -8,7 +8,8 @@ export const inputTypeEnum = pgEnum("input_type", [
   "select",
   "checkbox",
   "radio",
-  "date"
+  "date",
+  "switch",
 ]);
 
 export const dynamicFields = pgTable("dynamic_fields", {

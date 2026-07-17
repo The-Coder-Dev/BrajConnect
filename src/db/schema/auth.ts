@@ -1,7 +1,7 @@
 import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { USER_ROLES } from "@/lib/auth/roles";
 
-export const userRoleEnum = pgEnum("user_role", USER_ROLES);
+export const userRoleEnum = pgEnum("user_role", ["visitor", "business_owner", "admin"]);
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -22,14 +22,14 @@ export const session = pgTable("session", {
 	updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
 	ipAddress: text("ipAddress"),
 	userAgent: text("userAgent"),
-	userId: text("userId").notNull().references(() => user.id)
+	userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" })
 });
 
 export const account = pgTable("account", {
 	id: text("id").primaryKey(),
 	accountId: text("accountId").notNull(),
 	providerId: text("providerId").notNull(),
-	userId: text("userId").notNull().references(() => user.id),
+	userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
 	accessToken: text("accessToken"),
 	refreshToken: text("refreshToken"),
 	idToken: text("idToken"),

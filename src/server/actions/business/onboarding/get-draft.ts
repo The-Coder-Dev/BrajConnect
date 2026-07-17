@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function getDraftBusiness() {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -40,6 +42,6 @@ export async function getDraftBusiness() {
     return { success: true, data: draft };
   } catch (error: any) {
     console.error("Failed to fetch draft business:", error);
-    return { success: false, error: error.message || "Failed to fetch draft business" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Failed to fetch business draft.") };
   }
 }

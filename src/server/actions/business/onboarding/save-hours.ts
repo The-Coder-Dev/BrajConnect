@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 type HourEntry = {
   dayOfWeek: number;
   openTime?: string;
@@ -52,6 +54,6 @@ export async function saveBusinessHours(businessId: string, hours: HourEntry[]) 
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save hours:", error);
-    return { success: false, error: error.message || "Failed to save hours" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save business hours.") };
   }
 }

@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 type SocialLink = {
   platform: typeof socialPlatformEnum.enumValues[number];
   url: string;
@@ -48,6 +50,6 @@ export async function saveBusinessSocials(businessId: string, links: SocialLink[
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save socials:", error);
-    return { success: false, error: error.message || "Failed to save socials" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save social links.") };
   }
 }

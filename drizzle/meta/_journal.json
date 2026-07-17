@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1784140043900,
+      "tag": "0000_condemned_mad_thinker",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784140043901,
+      "tag": "0001_sync_db",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784140043902,
+      "tag": "0002_sync_db_deleted_at",
+      "breakpoints": true
+    }
+  ]
+}

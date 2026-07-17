@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function saveBusinessLocation(businessId: string, data: {
   country: string;
   state: string;
@@ -34,6 +36,21 @@ export async function saveBusinessLocation(businessId: string, data: {
       return { success: false, error: "Business not found or unauthorized" };
     }
 
+    // Explicitly map every field; coerce undefined optional values to null
+    // so Drizzle never passes `undefined` into typed DB columns (e.g. doublePrecision).
+    const locationData = {
+      country: data.country,
+      state: data.state,
+      district: data.district ?? null,
+      city: data.city,
+      locality: data.locality ?? null,
+      address: data.address,
+      postalCode: data.postalCode,
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
+      googlePlaceId: data.googlePlaceId ?? null,
+    };
+
     const existingLocation = await db.query.location.findFirst({
       where: eq(location.businessId, businessId),
       columns: { id: true }
@@ -42,7 +59,7 @@ export async function saveBusinessLocation(businessId: string, data: {
     if (existingLocation) {
       await db.update(location)
         .set({
-          ...data,
+          ...locationData,
           updatedAt: new Date(),
         })
         .where(eq(location.businessId, businessId));
@@ -50,13 +67,13 @@ export async function saveBusinessLocation(businessId: string, data: {
       await db.insert(location).values({
         id: `loc_${Date.now()}`,
         businessId,
-        ...data,
+        ...locationData,
       });
     }
 
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save location:", error);
-    return { success: false, error: error.message || "Failed to save location" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save location.") };
   }
 }

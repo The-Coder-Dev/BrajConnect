@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -20,7 +24,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.4.0",
     "dotenv": "^17.4.2",
-    "drizzle-orm": "1.0.0-rc.4",
+    "drizzle-orm": "0.45.2",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.42.2",
     "input-otp": "^1.4.2",
@@ -46,7 +50,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "drizzle-kit": "1.0.0-rc.4",
+    "drizzle-kit": "0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",

@@ -7,6 +7,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { randomUUID } from "crypto";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function createDraftBusiness(name: string) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -33,6 +35,6 @@ export async function createDraftBusiness(name: string) {
     return { success: true, businessId };
   } catch (error: any) {
     console.error("Failed to create draft:", error);
-    return { success: false, error: error.message || "Failed to create draft" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Failed to create business draft. Please try again.") };
   }
 }

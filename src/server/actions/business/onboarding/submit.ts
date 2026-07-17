@@ -6,6 +6,8 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { getFriendlyErrorMessage } from "@/lib/utils";
+
 export async function submitBusinessForReview(businessId: string) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -67,6 +69,6 @@ export async function submitBusinessForReview(businessId: string) {
     });
   } catch (error: any) {
     console.error("Failed to submit business:", error);
-    return { success: false, error: error.message || "Failed to submit business" };
+    return { success: false, error: getFriendlyErrorMessage(error, "Unable to submit business. Please try again.") };
   }
 }
