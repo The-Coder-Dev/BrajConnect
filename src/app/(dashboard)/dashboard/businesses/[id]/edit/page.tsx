@@ -1,5 +1,4 @@
 import React from "react";
-import { requireAuth } from "@/lib/auth/guards";
 import { getOwnerBusiness } from "@/server/actions/business/owner";
 import { getCategories } from "@/server/actions/category/get-categories";
 import { db } from "@/db";
@@ -14,7 +13,6 @@ export const metadata = {
 
 export default async function EditBusinessPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  await requireAuth();
   
   // 1. Fetch business details and verify ownership
   const bizRes = await getOwnerBusiness(id);

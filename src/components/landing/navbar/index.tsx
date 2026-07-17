@@ -57,12 +57,13 @@ export function Navbar({ variant = "transparent" }: NavbarProps) {
             </button>
             <div className={`h-6 w-px mx-2 transition-colors ${isDarkText ? 'bg-border' : 'bg-white/20'}`}></div>
             
-            {!isPending && (
-              session?.user ? (
-                <ProfileDropdown session={session} />
-              ) : (
-                <AuthButtons isScrolled={isScrolled} variant={variant} />
-              )
+            {isPending ? (
+              // Skeleton placeholder — same size as the avatar, prevents layout shift
+              <div className="h-10 w-10 rounded-full bg-slate-200/70 animate-pulse" />
+            ) : session?.user ? (
+              <ProfileDropdown session={session} />
+            ) : (
+              <AuthButtons isScrolled={isScrolled} variant={variant} />
             )}
           </div>
 

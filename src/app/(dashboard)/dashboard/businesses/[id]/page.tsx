@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { requireAuth } from "@/lib/auth/guards";
 import { getOwnerBusiness } from "@/server/actions/business/owner";
 import { notFound } from "next/navigation";
 import {
@@ -31,7 +30,6 @@ export const metadata = {
 
 export default async function BusinessDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  await requireAuth();
   const res = await getOwnerBusiness(id);
 
   if (!res.success || !res.data) {

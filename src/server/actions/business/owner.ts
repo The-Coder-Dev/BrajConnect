@@ -6,13 +6,13 @@ import {
   businessAmenities,
 } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/guards";
 import { getFriendlyErrorMessage } from "@/lib/utils";
 
-// Helper to verify owner session
+// Helper to verify owner session — uses the request-scoped cached session
+// so calling it multiple times never issues extra DB round-trips.
 async function getVerifiedUserId() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
@@ -28,11 +28,27 @@ export async function getOwnerBusinesses() {
 
     const businesses = await db.query.business.findMany({
       where: eq(business.ownerId, userId),
+      columns: {
+        id: true,
+        name: true,
+        slug: true,
+        status: true,
+        coverUrl: true,
+        logoUrl: true,
+        shortDescription: true,
+        updatedAt: true,
+        createdAt: true,
+        publishedAt: true,
+      },
       with: {
-        location: true,
+        location: {
+          columns: { city: true, state: true },
+        },
         businessCategories: {
           with: {
-            category: true,
+            category: {
+              columns: { name: true, slug: true },
+            },
           },
         },
       },

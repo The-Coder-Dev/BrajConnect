@@ -1,5 +1,4 @@
 import React from "react";
-import { requireAuth } from "@/lib/auth/guards";
 import { getOwnerBusinesses } from "@/server/actions/business/owner";
 import { BusinessesClient } from "@/features/dashboard/owner";
 import { AlertTriangle } from "lucide-react";
@@ -9,7 +8,6 @@ export const metadata = {
 };
 
 export default async function MyBusinessesPage() {
-  await requireAuth();
   const res = await getOwnerBusinesses();
 
   if (!res.success || !res.data) {

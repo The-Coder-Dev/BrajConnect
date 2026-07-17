@@ -1,4 +1,3 @@
-import { requireAuth } from "@/lib/auth/guards";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LifeBuoy, BookOpen, MessageSquare } from "lucide-react";
@@ -9,7 +8,6 @@ export const metadata = {
 };
 
 export default async function SupportPage() {
-  await requireAuth();
 
   return (
     <div className="space-y-6">
