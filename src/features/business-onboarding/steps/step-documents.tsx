@@ -218,7 +218,7 @@ export function StepDocuments() {
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={cn(
-                      "p-2 rounded-lg flex-shrink-0",
+                      "p-2 rounded-lg shrink-0",
                       doc.status === "pending" && "bg-blue-100",
                       doc.status === "uploading" && "bg-yellow-100",
                       doc.status === "success" && "bg-green-100",
@@ -243,7 +243,7 @@ export function StepDocuments() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-red-500 flex-shrink-0"
+                      className="h-8 w-8 text-muted-foreground hover:text-red-500 shrink-0"
                       onClick={() => removeDoc(doc.id)}
                     >
                       <X className="h-4 w-4" />
