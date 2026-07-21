@@ -9,6 +9,8 @@ import { BusinessSetupInput } from "@/lib/validations/business/setup";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useAssistant } from "../context/assistant-context";
+import { getActiveAmenities } from "@/server/actions/business/onboarding/get-amenities";
+import { useEffect, useState } from "react";
 
 const Section = ({ title, onEdit, children }: { title: string, onEdit: () => void, children: React.ReactNode }) => (
   <div className="py-5 border-b border-slate-200/60 last:border-0">
@@ -28,6 +30,21 @@ export function Step8Review() {
   const { getValues } = useFormContext<BusinessSetupInput>();
   const { goToStep, saveAsDraft, isSubmitting } = useAssistant();
   const data = getValues();
+  const [amenitiesMap, setAmenitiesMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function fetchMap() {
+      if (data.amenities.length > 0) {
+        const res = await getActiveAmenities();
+        if (res.success && res.data) {
+          const map: Record<string, string> = {};
+          res.data.forEach(a => map[a.id] = a.name);
+          setAmenitiesMap(map);
+        }
+      }
+    }
+    fetchMap();
+  }, [data.amenities]);
 
   return (
     <motion.div
@@ -103,8 +120,33 @@ export function Step8Review() {
               <p className="text-red-500">No documents uploaded. Verification requires at least one document.</p>
             )}
           </Section>
+
+          <Section title="Services Offered" onEdit={() => goToStep(12)}>
+            {data.services.length > 0 ? (
+              <ul className="list-disc pl-4 space-y-1">
+                {data.services.map((svc, i) => (
+                  <li key={i} className="font-medium text-foreground">{svc.name}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No services listed.</p>
+            )}
+          </Section>
+
+          <Section title="Amenities" onEdit={() => goToStep(13)}>
+            {data.amenities.length > 0 ? (
+              <ul className="space-y-1">
+                {data.amenities.map((amId, i) => (
+                  <li key={i} className="text-foreground">✓ {amId}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No amenities listed.</p>
+            )}
+          </Section>
         </div>
       </AssistantCard>
     </motion.div>
   );
 }
+

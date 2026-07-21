@@ -38,6 +38,10 @@ export async function getDraftBusiness(businessId?: string) {
         documents: true,
         businessCategories: true,
         businessFields: true,
+        services: true,
+        businessAmenities: {
+          with: { amenity: true },
+        },
       }
     });
 

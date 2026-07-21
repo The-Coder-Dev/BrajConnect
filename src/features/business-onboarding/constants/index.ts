@@ -13,6 +13,8 @@ export const SETUP_STEPS: SetupStep[] = [
   { id: "gallery", title: "Gallery", fields: ["gallery"] },
   { id: "about", title: "About Business", fields: ["description", "shortDescription", "establishedYear"] },
   { id: "documents", title: "Verification", fields: ["documents"] },
+  { id: "services", title: "Services Offered", fields: ["services"] },
+  { id: "amenities", title: "Amenities", fields: ["amenities"] },
   { id: "review", title: "Review", fields: [] },
   { id: "success", title: "Success", fields: [] },
 ];

@@ -32,6 +32,8 @@ import { saveBusinessContact } from "@/server/actions/business/onboarding/save-c
 import { saveBusinessLocation } from "@/server/actions/business/onboarding/save-location";
 import { saveBusinessHours } from "@/server/actions/business/onboarding/save-hours";
 import { saveBusinessSocials } from "@/server/actions/business/onboarding/save-socials";
+import { saveBusinessServices } from "@/server/actions/business/onboarding/save-services";
+import { saveBusinessAmenities } from "@/server/actions/business/owner";
 import { submitBusinessForReview } from "@/server/actions/business/onboarding/submit";
 
 export interface DraftInfo {
@@ -208,6 +210,17 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
             formData.dynamicFields = dynamicFields;
           }
 
+          if (draft.services && draft.services.length > 0) {
+            formData.services = draft.services.map((s: any) => ({
+              name: s.title,
+              description: s.description || "",
+            }));
+          }
+
+          if (draft.businessAmenities && draft.businessAmenities.length > 0) {
+            formData.amenities = draft.businessAmenities.map((ba: any) => ba.amenityId);
+          }
+
           // Read saved step from localStorage
           let savedStepIndex = 0;
           try {
@@ -378,6 +391,12 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
           description: data.description,
           establishedYear: data.establishedYear,
         });
+        if (!res.success) throw new Error((res as any).error);
+      } else if (stepId === "services" && bId) {
+        const res = await saveBusinessServices(bId, data.services);
+        if (!res.success) throw new Error((res as any).error);
+      } else if (stepId === "amenities" && bId) {
+        const res = await saveBusinessAmenities(bId, data.amenities);
         if (!res.success) throw new Error((res as any).error);
       }
       // Brand, Gallery, Documents are handled by their custom step validators.
