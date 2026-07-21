@@ -10,9 +10,9 @@ import {
   ArrowRight,
   History,
   AlertTriangle,
-  Archive,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { getOwnerBusinesses } from "@/server/actions/business/owner";
 import { Button } from "@/components/ui/button";
@@ -237,11 +237,12 @@ export default async function DashboardPage() {
             <Card className="rounded-2xl border-border/50 bg-card shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
               <div className="relative h-40 bg-slate-100 flex items-center justify-center overflow-hidden">
                 {latestBusiness.coverUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={latestBusiness.coverUrl}
                     alt={`${latestBusiness.name} Cover`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 66vw"
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center text-muted-foreground">
@@ -253,12 +254,15 @@ export default async function DashboardPage() {
               <CardHeader className="pb-4">
                 <div className="flex items-start gap-4">
                   {latestBusiness.logoUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={latestBusiness.logoUrl}
-                      alt={latestBusiness.name}
-                      className="h-14 w-14 rounded-xl border object-cover shadow-sm bg-white shrink-0 -mt-10 z-10"
-                    />
+                    <div className="relative h-14 w-14 rounded-xl border overflow-hidden shadow-sm bg-white shrink-0 -mt-10 z-10">
+                      <Image
+                        src={latestBusiness.logoUrl}
+                        alt={latestBusiness.name}
+                        fill
+                        className="object-cover"
+                        sizes="56px"
+                      />
+                    </div>
                   )}
                   <div className="space-y-1">
                     <CardTitle className="text-xl font-bold">{latestBusiness.name}</CardTitle>

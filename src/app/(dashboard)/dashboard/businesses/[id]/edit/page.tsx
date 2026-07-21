@@ -13,31 +13,31 @@ export const metadata = {
 
 export default async function EditBusinessPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  
-  // 1. Fetch business details and verify ownership
+
+  // 1. Verify ownership first — the category ID is needed for dynamic fields
   const bizRes = await getOwnerBusiness(id);
   if (!bizRes.success || !bizRes.data) {
     return notFound();
   }
   const biz = bizRes.data;
 
-  // 2. Fetch categories
-  const categories = await getCategories();
-
-  // 3. Fetch all system amenities
-  const allAmenities = await db.query.amenities.findMany({
-    where: eq(amenities.active, true),
-    orderBy: [asc(amenities.sortOrder)],
-  });
-
-  // 4. Fetch dynamic fields for the business's category
   const primaryCategoryId = biz.businessCategories?.[0]?.categoryId;
-  const catFields = primaryCategoryId
-    ? await db.query.dynamicFields.findMany({
-        where: eq(dynamicFields.categoryId, primaryCategoryId),
-        orderBy: [asc(dynamicFields.sortOrder)],
-      })
-    : [];
+
+  // 2. Fetch all remaining data in parallel — these three queries are fully
+  //    independent of each other and only require the categoryId from step 1.
+  const [categories, allAmenities, catFields] = await Promise.all([
+    getCategories(),
+    db.query.amenities.findMany({
+      where: eq(amenities.active, true),
+      orderBy: [asc(amenities.sortOrder)],
+    }),
+    primaryCategoryId
+      ? db.query.dynamicFields.findMany({
+          where: eq(dynamicFields.categoryId, primaryCategoryId),
+          orderBy: [asc(dynamicFields.sortOrder)],
+        })
+      : Promise.resolve([]),
+  ]);
 
   return (
     <EditBusinessClient

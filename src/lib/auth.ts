@@ -13,6 +13,15 @@ export const auth = betterAuth({
       ...schema
     }
   }),
+  session: {
+    // Cache the session in a signed cookie so the DB is NOT hit on every
+    // request. The session is re-validated from the DB at most once per
+    // maxAge window (5 minutes). This dramatically reduces PG round-trips.
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes in seconds
+    },
+  },
   emailAndPassword: {
     enabled: true
   },
@@ -33,3 +42,4 @@ export const auth = betterAuth({
     }
   }
 });
+

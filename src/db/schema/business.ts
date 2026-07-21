@@ -43,5 +43,10 @@ export const business = pgTable("business", {
     nameIdx: index("name_idx").on(table.name),
     statusIdx: index("status_idx").on(table.status),
     featuredIdx: index("featured_idx").on(table.featured),
+    // Composite index for the most common query: "all businesses by owner"
+    // Used by getOwnerBusinesses() and getOwnerBusiness() on every dashboard page load.
+    ownerIdIdx: index("owner_id_idx").on(table.ownerId),
+    ownerIdBusinessIdIdx: index("owner_id_business_id_idx").on(table.ownerId, table.id),
   }
 });
+
