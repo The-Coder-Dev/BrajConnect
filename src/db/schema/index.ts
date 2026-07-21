@@ -15,3 +15,4 @@ export * from "./amenities";
 export * from "./business-amenities";
 export * from "./dynamic-fields";
 export * from "./business-fields";
+export * from "./admin";

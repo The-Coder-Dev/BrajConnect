@@ -21,6 +21,7 @@ import {
   BriefcaseBusiness,
   LifeBuoy,
   LogOut,
+  ShieldAlert,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
@@ -54,6 +55,15 @@ export function AppSidebar({ user }: { user: any }) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const router = useRouter();
+
+  const navItems = [...items];
+  if (user?.role === "admin") {
+    navItems.unshift({
+      title: "Admin Console",
+      url: "/admin",
+      icon: ShieldAlert,
+    });
+  }
 
   const getInitials = (name: string) => {
     return name?.substring(0, 2).toUpperCase() || "BC";
@@ -100,7 +110,7 @@ export function AppSidebar({ user }: { user: any }) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
-              {items.map((item) => {
+              {navItems.map((item) => {
                 const isActive = item.url === "/dashboard"
                   ? pathname === "/dashboard"
                   : pathname.startsWith(item.url);

@@ -14,7 +14,10 @@ export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-export const BUCKET_NAME = process.env.SUPABASE_STORAGE_BUCKET || "documents";
+// Supabase storage bucket to store pdfs for verification only
+export const BUCKET_NAME = "verification-document";
+
+
 
 export async function uploadDocument(
   file: File,
@@ -37,9 +40,12 @@ export async function uploadDocument(
     const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
     const path = `${businessId}/${type}_${timestamp}_${cleanFileName}`;
 
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
     const { data, error } = await supabaseServer.storage
       .from(BUCKET_NAME)
-      .upload(path, file, {
+      .upload(path, buffer, {
         cacheControl: "3600",
         upsert: false,
         contentType: file.type
@@ -90,5 +96,23 @@ export async function deleteDocuments(paths: string[]): Promise<boolean> {
   } catch (err) {
     console.error("Failed to delete documents:", err);
     return false;
+  }
+}
+
+export async function getSignedDocumentUrl(path: string): Promise<string | null> {
+  try {
+    if (!path) return null;
+    const { data, error } = await supabaseServer.storage
+      .from(BUCKET_NAME)
+      .createSignedUrl(path, 3600); // 1 hour signed URL
+
+    if (error) {
+      console.error("Failed to generate signed URL:", error);
+      return null;
+    }
+    return data.signedUrl;
+  } catch (err) {
+    console.error("Error creating signed URL:", err);
+    return null;
   }
 }

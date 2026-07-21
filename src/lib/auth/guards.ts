@@ -48,3 +48,22 @@ export async function requireAuth() {
 
   return sessionData;
 }
+
+/**
+ * Ensures the user is authenticated and has the 'admin' role.
+ * Redirects to /sign-in if unauthenticated, or /unauthorized if not an admin.
+ * Returns the session and user if authorized.
+ */
+export async function requireAdmin() {
+  const sessionData = await getSession();
+
+  if (!sessionData || !sessionData.session) {
+    redirect("/sign-in");
+  }
+
+  if ((sessionData.user as { role?: string })?.role !== "admin") {
+    redirect("/unauthorized");
+  }
+
+  return sessionData;
+}
