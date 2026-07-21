@@ -98,3 +98,21 @@ export async function deleteDocuments(paths: string[]): Promise<boolean> {
     return false;
   }
 }
+
+export async function getSignedDocumentUrl(path: string): Promise<string | null> {
+  try {
+    if (!path) return null;
+    const { data, error } = await supabaseServer.storage
+      .from(BUCKET_NAME)
+      .createSignedUrl(path, 3600); // 1 hour signed URL
+
+    if (error) {
+      console.error("Failed to generate signed URL:", error);
+      return null;
+    }
+    return data.signedUrl;
+  } catch (err) {
+    console.error("Error creating signed URL:", err);
+    return null;
+  }
+}

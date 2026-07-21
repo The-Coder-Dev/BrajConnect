@@ -5,7 +5,7 @@ export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Define protected and auth routes
-    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/setup");
+    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/setup") || pathname.startsWith("/admin");
     const isAuthRoute = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
 
     // Only look up the session if the route actually needs it
@@ -25,7 +25,8 @@ export async function proxy(request: NextRequest) {
 
             // Redirect authenticated users away from sign-in/sign-up
             if (isAuthRoute && session) {
-                return NextResponse.redirect(new URL("/dashboard", request.url));
+                const targetUrl = (session.user as { role?: string })?.role === "admin" ? "/admin" : "/dashboard";
+                return NextResponse.redirect(new URL(targetUrl, request.url));
             }
         } catch (error) {
             console.error("Middleware session error:", error);
@@ -40,5 +41,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/dashboard/:path*", "/setup/:path*", "/sign-in", "/sign-up"],
+    matcher: ["/dashboard/:path*", "/admin/:path*", "/setup/:path*", "/sign-in", "/sign-up"],
 };

@@ -4,6 +4,7 @@ import { user } from "./auth";
 export const businessStatusEnum = pgEnum("business_status", [
   "draft",
   "pending_review",
+  "needs_changes",
   "published",
   "rejected",
   "suspended",
@@ -42,6 +43,7 @@ export const business = pgTable("business", {
   return {
     nameIdx: index("name_idx").on(table.name),
     statusIdx: index("status_idx").on(table.status),
+    createdAtIdx: index("created_at_idx").on(table.createdAt),
     featuredIdx: index("featured_idx").on(table.featured),
     // Composite index for the most common query: "all businesses by owner"
     // Used by getOwnerBusinesses() and getOwnerBusiness() on every dashboard page load.

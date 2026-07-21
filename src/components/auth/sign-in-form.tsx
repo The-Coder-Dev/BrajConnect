@@ -45,7 +45,12 @@ export function SignInForm() {
       }
 
       toast.success("Signed in successfully!");
-      router.push("/dashboard");
+      const session = await authClient.getSession();
+      if ((session?.data?.user as { role?: string })?.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
       router.refresh();
     } catch (err: unknown) {
       console.error("Sign in error:", err);
