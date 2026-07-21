@@ -14,6 +14,8 @@ export type StepId =
   | "gallery"
   | "about"
   | "documents"
+  | "services"
+  | "amenities"
   | "review"
   | "success";
 

@@ -254,7 +254,7 @@ export function EditBusinessClient({
   const handleSaveServices = () => {
     startTransition(async () => {
       const formattedServices = services.map((s) => ({
-        title: s.title || s.name || "",
+        name: s.title || s.name || "",
         description: s.description || "",
       }));
       const res = await saveBusinessServices(biz.id, formattedServices);

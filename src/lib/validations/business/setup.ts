@@ -90,6 +90,15 @@ export const businessSetupSchema = z.object({
 
   // Dynamic Fields
   dynamicFields: z.record(z.string(), z.any()).default({}),
+
+  // Services
+  services: z.array(z.object({
+    name: z.string().min(1, "Service name is required"),
+    description: z.string().max(200, "Description cannot exceed 200 characters").optional().or(z.literal("")),
+  })).default([]),
+
+  // Amenities
+  amenities: z.array(z.string()).default([]),
 });
 
 export type BusinessSetupInput = z.infer<typeof businessSetupSchema>;
@@ -130,5 +139,7 @@ export const defaultBusinessSetupValues: Partial<BusinessSetupInput> = {
   ],
   documents: [],
   dynamicFields: {},
+  services: [],
+  amenities: [],
   preferredContactMethod: "phone",
 };
