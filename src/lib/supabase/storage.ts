@@ -14,7 +14,8 @@ export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-export const BUCKET_NAME = process.env.SUPABASE_STORAGE_BUCKET || "documents";
+// Supabase storage bucket to store pdfs for verification only
+export const BUCKET_NAME = "verification_documents";
 
 export async function uploadDocument(
   file: File,
