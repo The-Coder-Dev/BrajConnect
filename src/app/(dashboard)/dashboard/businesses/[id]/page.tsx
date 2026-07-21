@@ -2,6 +2,7 @@
 import React from "react";
 import { getOwnerBusiness } from "@/server/actions/business/owner";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import {
   Building2,
   Phone,
@@ -144,11 +145,13 @@ export default async function BusinessDetailsPage({ params }: { params: Promise<
       <Card className="rounded-2xl border-border/50 bg-card overflow-hidden shadow-xs">
         <div className="h-48 md:h-64 bg-slate-100 relative">
           {biz.coverUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={biz.coverUrl}
               alt={`${biz.name} Cover`}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 80vw"
+              priority
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-slate-300 bg-linear-to-b from-muted to-muted/20">
@@ -163,12 +166,15 @@ export default async function BusinessDetailsPage({ params }: { params: Promise<
         <CardHeader className="pb-6">
           <div className="flex flex-col md:flex-row md:items-end gap-5">
             {biz.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={biz.logoUrl}
-                alt={biz.name}
-                className="h-20 w-20 rounded-2xl border-4 border-background object-cover shadow-sm bg-white shrink-0 -mt-14 z-10"
-              />
+              <div className="relative h-20 w-20 rounded-2xl border-4 border-background overflow-hidden shadow-sm bg-white shrink-0 -mt-14 z-10">
+                <Image
+                  src={biz.logoUrl}
+                  alt={biz.name}
+                  fill
+                  className="object-cover"
+                  sizes="80px"
+                />
+              </div>
             ) : (
               <div className="h-20 w-20 rounded-2xl bg-slate-100 border-4 border-background shadow-sm shrink-0 -mt-14 z-10 flex items-center justify-center text-slate-400">
                 <Building2 className="h-8 w-8" />
@@ -316,11 +322,12 @@ export default async function BusinessDetailsPage({ params }: { params: Promise<
               <div className="grid gap-4 grid-cols-2 sm:grid-cols-3">
                 {biz.gallery.map((img: any) => (
                   <div key={img.id} className="relative aspect-square bg-slate-100 rounded-xl overflow-hidden border">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={img.imageUrl}
                       alt={img.altText || "Gallery Image"}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     />
                   </div>
                 ))}

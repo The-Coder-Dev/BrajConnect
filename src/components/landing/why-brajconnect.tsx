@@ -1,8 +1,5 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { SectionHeader } from "./section-header";
-import { ShieldCheck, Search, Star, Store, Map, Smartphone } from "lucide-react";
+import { ShieldCheck, Search, Star, Store, Map } from "lucide-react";
 
 const features = [
   {
@@ -60,7 +57,7 @@ export function WhyBrajConnect() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
           {features.map((feature, index) => (
-            <motion.div 
+            <div 
               key={index}
               className={`group relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 p-8 flex flex-col ${feature.className || ""}`}
             >
@@ -78,7 +75,7 @@ export function WhyBrajConnect() {
                 </p>
                 
                 {feature.hasImage && (
-                  <div className="mt-8 relative flex-1 min-h-[150px] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/50 group-hover:border-blue-200 transition-colors">
+                  <div className="mt-8 relative flex-1 min-h-37.5 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/50 group-hover:border-blue-200 transition-colors">
                     {/* Abstract placeholder visual */}
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size[16px_16px]" />
                     <div className="absolute inset-0 bg-linear-to-tr from-emerald-100/50 to-blue-100/50 mix-blend-multiply" />
@@ -89,10 +86,11 @@ export function WhyBrajConnect() {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
     </section>
   );
 }
+

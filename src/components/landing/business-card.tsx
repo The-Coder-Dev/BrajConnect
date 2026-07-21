@@ -1,6 +1,5 @@
-"use client";
-
-import { Star, MapPin, Phone, ShieldCheck, Heart } from "lucide-react";
+import { Star, MapPin, ShieldCheck, Heart } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -28,8 +27,13 @@ export function BusinessCard({ name, category, location, rating, reviews, verifi
 
       {/* Cover Image */}
       <div className="relative h-48 w-full overflow-hidden bg-slate-100">
-        {/* Using standard img for external URLs to avoid next/image domain configs */}
-        <img src={image} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+        <Image
+          src={image}
+          alt={name}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+        />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
         
         {verified && (
@@ -47,8 +51,16 @@ export function BusinessCard({ name, category, location, rating, reviews, verifi
 
       <div className="relative flex-1 p-6 pt-10">
         {/* Overlapping Logo */}
-        <div className="absolute -top-10 left-6 h-16 w-16 rounded-2xl bg-white p-1 shadow-lg shadow-black/5 border border-slate-100 group-hover:-translate-y-1 transition-transform duration-500">
-          <img src={logo} alt={`${name} logo`} className="w-full h-full object-cover rounded-xl" />
+        <div className="absolute -top-10 left-6 h-16 w-16 rounded-2xl bg-white p-1 shadow-lg shadow-black/5 border border-slate-100 group-hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+          <div className="relative w-full h-full rounded-xl overflow-hidden">
+            <Image
+              src={logo}
+              alt={`${name} logo`}
+              fill
+              className="object-cover"
+              sizes="60px"
+            />
+          </div>
         </div>
 
         <div className="mb-2">
@@ -77,3 +89,4 @@ export function BusinessCard({ name, category, location, rating, reviews, verifi
     </div>
   );
 }
+

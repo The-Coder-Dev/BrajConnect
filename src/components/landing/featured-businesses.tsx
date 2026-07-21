@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { SectionHeader } from "./section-header";
 import { BusinessCard } from "./business-card";
 import { Button } from "@/components/ui/button";
@@ -53,8 +50,6 @@ const businesses = [
   }
 ];
 
-
-
 export function FeaturedBusinesses() {
   return (
     <section id="businesses" className="py-24 bg-slate-50">
@@ -69,9 +64,7 @@ export function FeaturedBusinesses() {
           </Button>
         </div>
 
-        <div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {businesses.map((business, index) => (
             <div key={index} className="h-full">
               <BusinessCard {...business} />
@@ -86,3 +79,4 @@ export function FeaturedBusinesses() {
     </section>
   );
 }
+
