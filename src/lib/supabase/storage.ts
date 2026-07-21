@@ -17,6 +17,8 @@ export const supabase = createClient(
 // Supabase storage bucket to store pdfs for verification only
 export const BUCKET_NAME = "verification-document";
 
+
+
 export async function uploadDocument(
   file: File,
   businessId: string,
@@ -38,9 +40,12 @@ export async function uploadDocument(
     const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
     const path = `${businessId}/${type}_${timestamp}_${cleanFileName}`;
 
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
     const { data, error } = await supabaseServer.storage
       .from(BUCKET_NAME)
-      .upload(path, file, {
+      .upload(path, buffer, {
         cacheControl: "3600",
         upsert: false,
         contentType: file.type
