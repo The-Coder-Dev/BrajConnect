@@ -15,7 +15,7 @@ export const supabase = createClient(
 );
 
 // Supabase storage bucket to store pdfs for verification only
-export const BUCKET_NAME = "verification_documents";
+export const BUCKET_NAME = "verification-document";
 
 export async function uploadDocument(
   file: File,
