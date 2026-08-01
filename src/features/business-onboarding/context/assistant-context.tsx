@@ -578,7 +578,7 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
       <FormProvider {...form}>
         {isHydrating ? (
           <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#F8FAFC]">
-            <div className="h-10 w-10 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
+            <div className="h-10 w-10 rounded-full border-4 border-blue-200 border-t-red-600 animate-spin" />
             <p className="text-slate-500 text-sm font-medium">Loading your draft...</p>
           </div>
         ) : (

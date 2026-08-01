@@ -12,7 +12,7 @@ export function HeroSection() {
       {/* Background Elements */}
       <div className="absolute inset-0 z-0 bg-slate-50 overflow-hidden">
         {/* Soft blue radial gradient */}
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-500/10 blur-[140px]" />
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-red-500/10 blur-[140px]" />
         {/* Subtle red glow */}
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-red-500/5 blur-[120px]" />
         {/* Blurred floating gradient blobs */}
@@ -28,7 +28,7 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="container mx-auto px-4 md:px-6 relative z-10 max-w-[1440px]">
+      <div className="container mx-auto px-4 md:px-6 relative z-10 max-w-360">
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -37,7 +37,7 @@ export function HeroSection() {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-border shadow-sm mb-6"
           >
             <span className="flex h-2 w-2 rounded-full animate-pulse bg-primary"></span>
-            <span className="text-sm font-medium text-muted-foreground">The premier business directory in Braj</span>
+            <span className="text-sm shimmer shimmer-color-primary font-medium text-muted-foreground">Find Best Businesses in Braj</span>
           </motion.div>
 
           <motion.h1
@@ -76,7 +76,7 @@ export function HeroSection() {
             className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm md:text-base font-medium text-slate-600 mb-12"
           >
             <div className="flex items-center gap-2">
-              <span className="text-slate-900 font-bold">15,000+</span>
+              <span className="text-slate-900 font-bold">5,000+</span>
               <span>Businesses</span>
             </div>
             <div className="h-1 w-1 rounded-full bg-slate-300 hidden md:block"></div>
@@ -87,12 +87,12 @@ export function HeroSection() {
             </div>
             <div className="h-1 w-1 rounded-full bg-slate-300 hidden md:block"></div>
             <div className="flex items-center gap-2">
-              <span className="text-slate-900 font-bold">40+</span>
+              <span className="text-slate-900 font-bold">20+</span>
               <span>Categories</span>
             </div>
             <div className="h-1 w-1 rounded-full bg-slate-300 hidden md:block"></div>
             <div className="flex items-center gap-2">
-              <span className="text-slate-900 font-bold">100K+</span>
+              <span className="text-slate-900 font-bold">40K+</span>
               <span>Monthly Visitors</span>
             </div>
           </motion.div>

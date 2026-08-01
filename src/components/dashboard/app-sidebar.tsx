@@ -29,7 +29,7 @@ import { useRouter } from "next/navigation";
 
 const items = [
   {
-    title: "Overview",
+    title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
   },

@@ -26,8 +26,8 @@ function DraftRecoveryDialog() {
       {/* Dialog */}
       <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-md p-6 z-10">
         <div className="flex items-center gap-3 mb-4">
-          <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-            <Clock className="h-5 w-5 text-blue-600" />
+          <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+            <Clock className="h-5 w-5 text-red-600" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-900">Resume your draft?</h3>
@@ -43,7 +43,7 @@ function DraftRecoveryDialog() {
         <div className="flex flex-col gap-3">
           <Button
             onClick={resumeDraft}
-            className="w-full rounded-xl h-11 bg-linear-to-b from-[#3B82F6] to-[#2563EB] hover:from-[#2563EB] hover:to-[#1D4ED8] text-white shadow-md shadow-blue-500/20"
+            className="w-full rounded-xl h-11 bg-linear-to-b from-red-200 to-red-600 hover:from-red-600 hover:to-red-800 text-white shadow-md shadow-red-500/20"
           >
             Resume Draft
           </Button>

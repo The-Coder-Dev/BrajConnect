@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata = {
-  title: "Dashboard - BrajConnect",
+  title: "Dashboard - BachatLal",
 };
 
 interface ActivityItem {
@@ -53,13 +53,13 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight">Welcome, {user.name}</h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Register your business to list it on BrajConnect and manage it from this portal.
+            Register your business to list it on BachatLal and manage it from this portal.
           </p>
         </div>
         <EmptyState
           icon={Building2}
           title="You haven't registered any business yet"
-          description="Start building your online presence by registering your business on BrajConnect today."
+          description="Start building your online presence by registering your business on BachatLal today."
           actionLabel="Register Your Business"
           actionHref="/setup/business"
         />

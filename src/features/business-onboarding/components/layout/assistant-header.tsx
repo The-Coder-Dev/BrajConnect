@@ -42,7 +42,7 @@ export function AssistantHeader() {
           <Button
             variant="ghost"
             size="sm"
-            className="rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 flex-shrink-0 gap-1.5"
+            className="rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 shrink-0 gap-1.5"
             onClick={requestLeave}
           >
             <ArrowLeft className="h-4 w-4" />
@@ -63,7 +63,7 @@ export function AssistantHeader() {
 
           {/* Right: Progress bar + % + time */}
           {showProgress ? (
-            <div className="flex flex-col items-end gap-1.5 w-40 flex-shrink-0">
+            <div className="flex flex-col items-end gap-1.5 w-40 shrink-0">
               <AssistantProgress value={progressPercentage} />
               <div className="flex items-center justify-between w-full text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                 <span>{progressPercentage}%</span>

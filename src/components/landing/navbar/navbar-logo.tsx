@@ -10,7 +10,7 @@ export function NavbarLogo({ isScrolled, variant = "transparent" }: { isScrolled
         <Building2 className="h-5 w-5" />
       </div>
       <span className={`text-xl font-bold tracking-tight transition-colors ${isDarkText ? "text-foreground" : "text-black"}`}>
-        BrajConnect
+        BachatLal
       </span>
     </Link>
   );

@@ -11,7 +11,7 @@ export function AssistantCard({ children, className, ...props }: AssistantCardPr
   return (
     <div 
       className={cn(
-        "bg-white/80 backdrop-blur-xl border border-white/60 rounded-[24px] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-blue-100 hover:shadow-[0_8px_40px_rgb(37,99,235,0.06)] transition-all duration-500 ease-out",
+        "bg-white/80 backdrop-blur-xl border border-white/60 rounded-[24px] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-red-100 hover:shadow-[0_8px_40px_rgb(37,99,235,0.06)] transition-all duration-500 ease-out",
         className
       )}
       {...props}

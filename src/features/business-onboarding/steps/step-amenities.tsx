@@ -50,7 +50,7 @@ export function StepAmenities() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="h-8 w-8 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
+            <div className="h-8 w-8 rounded-full border-4 border-blue-200 border-t-red`-600 animate-spin" />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

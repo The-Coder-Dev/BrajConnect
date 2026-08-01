@@ -88,9 +88,9 @@ export function AssistantFooter() {
           <Button
             onClick={handleNext}
             disabled={isSubmitting}
-            className={`rounded-xl px-6 h-10 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-px active:scale-[0.98] active:translate-y-0 min-w-[120px] ${
+            className={`rounded-xl px-6 h-10 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-px active:scale-[0.98] active:translate-y-0 min-w-30 ${
               isFirstStep || isReviewStep
-                ? "bg-linear-to-b from-[#3B82F6] to-[#2563EB] hover:from-[#2563EB] hover:to-[#1D4ED8] text-white shadow-blue-500/20"
+                ? "bg-linear-to-b from-red-400 to-red-400 hover:from-red-400 hover:to-red-600 text-white shadow-red-500/20"
                 : "bg-slate-900 hover:bg-slate-800 text-white"
             }`}
           >
