@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { db } from "@/db";
-import { business, gallery } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { gallery } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { deleteImages } from "@/lib/cloudinary/upload";
 import { getFriendlyErrorMessage } from "@/lib/utils";
+import { verifyBusinessOwnership } from "@/lib/security/ownership";
 
 export async function saveBusinessGallery(
   businessId: string,
@@ -26,23 +27,15 @@ export async function saveBusinessGallery(
       return { success: false, error: "Unauthorized" };
     }
 
-    if (!businessId || typeof businessId !== "string" || businessId.trim() === "") {
-      return { success: false, error: "Business ID is required." };
-    }
-
-    // Verify ownership
-    const existing = await db.query.business.findFirst({
-      where: and(eq(business.id, businessId), eq(business.ownerId, session.user.id)),
-      columns: { id: true }
-    });
-
-    if (!existing) {
-      return { success: false, error: "Business not found or unauthorized" };
+    // Task 3: Centralized Business Ownership & State Verification
+    const ownershipCheck = await verifyBusinessOwnership(businessId, session.user.id);
+    if (!ownershipCheck.authorized) {
+      return { success: false, error: ownershipCheck.error || "Permission denied." };
     }
 
     // Server validation: Max 20 images total in db
     const existingGallery = await db.query.gallery.findMany({
-      where: eq(gallery.businessId, businessId)
+      where: eq(gallery.businessId, businessId),
     });
     const currentCount = existingGallery.length;
     if (currentCount + images.length > 20) {
@@ -68,7 +61,7 @@ export async function saveBusinessGallery(
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save gallery:", error);
-    
+
     // Rollback successful uploads if database insert failed
     const publicIds = images.map((img) => img.cloudinaryPublicId).filter(Boolean);
     if (publicIds.length > 0) {

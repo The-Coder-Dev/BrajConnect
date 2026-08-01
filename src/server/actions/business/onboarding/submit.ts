@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { business, businessContact, location, businessHours, businessCategory, businessDocuments } from "@/db/schema";
+import { business } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -72,7 +72,7 @@ export async function submitBusinessForReview(businessId: string) {
 
       return { success: true };
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to submit business:", error);
     return { success: false, error: getFriendlyErrorMessage(error, "Unable to submit business. Please try again.") };
   }

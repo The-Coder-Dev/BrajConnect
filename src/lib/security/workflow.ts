@@ -1,19 +1,11 @@
+import { businessStatusEnum } from "@/db/schema";
+
 /**
  * Business Workflow & State Transition Security Utility
  *
- * Enforces Task 8: Validates legal state transitions for business status.
- * Reuses businessStatusEnum values:
- * draft | pending_review | needs_changes | published | rejected | suspended | archived
+ * Task 4: Reuses businessStatusEnum values from Drizzle DB schema for full type safety.
  */
-
-export type BusinessStatus =
-  | "draft"
-  | "pending_review"
-  | "needs_changes"
-  | "published"
-  | "rejected"
-  | "suspended"
-  | "archived";
+export type BusinessStatus = (typeof businessStatusEnum.enumValues)[number];
 
 const ALLOWED_TRANSITIONS: Record<BusinessStatus, Set<BusinessStatus>> = {
   draft: new Set(["pending_review", "archived"]),
@@ -32,7 +24,7 @@ export function isValidStatusTransition(
   currentStatus: string,
   targetStatus: string
 ): boolean {
-  if (currentStatus === targetStatus) return true; // No change
+  if (currentStatus === targetStatus) return true;
 
   const current = currentStatus as BusinessStatus;
   const target = targetStatus as BusinessStatus;

@@ -3,11 +3,12 @@
 
 import { db } from "@/db";
 import { business } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { deleteImage } from "@/lib/cloudinary/upload";
 import { getFriendlyErrorMessage } from "@/lib/utils";
+import { verifyBusinessOwnership } from "@/lib/security/ownership";
 
 export async function saveBusinessBrand(
   businessId: string,
@@ -24,19 +25,17 @@ export async function saveBusinessBrand(
       return { success: false, error: "Unauthorized" };
     }
 
-    if (!businessId || typeof businessId !== "string" || businessId.trim() === "") {
-      return { success: false, error: "Business ID is required." };
+    // Task 3: Centralized Business Ownership & State Verification
+    const ownershipCheck = await verifyBusinessOwnership(businessId, session.user.id);
+    if (!ownershipCheck.authorized) {
+      return { success: false, error: ownershipCheck.error || "Permission denied." };
     }
 
-    // Verify ownership
+    // Fetch existing stored image public IDs for safe deletion
     const existing = await db.query.business.findFirst({
-      where: and(eq(business.id, businessId), eq(business.ownerId, session.user.id)),
-      columns: { id: true, logoPublicId: true, coverPublicId: true }
+      where: eq(business.id, businessId),
+      columns: { logoPublicId: true, coverPublicId: true },
     });
-
-    if (!existing) {
-      return { success: false, error: "Business not found or unauthorized" };
-    }
 
     const updates: any = { updatedAt: new Date() };
     if (data.logoUrl) {
@@ -50,12 +49,12 @@ export async function saveBusinessBrand(
 
     if (Object.keys(updates).length > 1) {
       await db.update(business).set(updates).where(eq(business.id, businessId));
-      
-      // Cleanup old images if they were replaced
-      if (data.logoUrl && existing.logoPublicId) {
+
+      // Cleanup old images if replaced
+      if (data.logoUrl && existing?.logoPublicId) {
         await deleteImage(existing.logoPublicId);
       }
-      if (data.coverUrl && existing.coverPublicId) {
+      if (data.coverUrl && existing?.coverPublicId) {
         await deleteImage(existing.coverPublicId);
       }
     }

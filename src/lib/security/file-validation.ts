@@ -1,12 +1,9 @@
 /**
  * File Security & Magic Byte Validation Utility
  *
- * Enforces Task 4 (Strict rejection of SVG files to prevent Stored XSS)
- * and Task 5 (Verifying file signatures via magic bytes for raster images & PDFs).
+ * Task 4: Strict rejection of SVG files (preventing Stored XSS).
+ * Task 5: Magic byte header inspection, buffer integrity, empty file checks, and signature verification.
  */
-
-export type AllowedRasterImageType = "image/jpeg" | "image/png" | "image/webp";
-export type AllowedDocumentType = "application/pdf" | AllowedRasterImageType;
 
 export const ALLOWED_IMAGE_MIME_TYPES: Set<string> = new Set([
   "image/jpeg",
@@ -22,6 +19,9 @@ export const ALLOWED_DOCUMENT_MIME_TYPES: Set<string> = new Set([
   "image/png",
   "image/webp",
 ]);
+
+export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+export const MAX_DOCUMENT_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
 /**
  * Checks if a buffer matches JPEG magic bytes (0xFF, 0xD8, 0xFF)
@@ -50,8 +50,7 @@ function isPng(buffer: Buffer): boolean {
 
 /**
  * Checks if a buffer matches WebP magic bytes:
- * Bytes 0..3: "RIFF" (0x52, 0x49, 0x46, 0x46)
- * Bytes 8..11: "WEBP" (0x57, 0x45, 0x42, 0x50)
+ * Bytes 0..3: "RIFF", Bytes 8..11: "WEBP"
  */
 function isWebp(buffer: Buffer): boolean {
   if (buffer.length < 12) return false;
@@ -83,11 +82,16 @@ function isPdf(buffer: Buffer): boolean {
 }
 
 /**
- * Detects if the buffer contains SVG or XML markers (e.g. <svg, <?xml)
+ * Detects if the buffer contains SVG or XML markers
  */
 function isSvgOrXml(buffer: Buffer): boolean {
   const sample = buffer.slice(0, 1000).toString("utf8").toLowerCase();
   return sample.includes("<svg") || sample.includes("<?xml");
+}
+
+export interface FileValidationOptions {
+  maxSizeBytes?: number;
+  category?: "image" | "document";
 }
 
 export interface FileValidationResult {
@@ -97,27 +101,42 @@ export interface FileValidationResult {
 }
 
 /**
- * Validates the file buffer magic bytes against expected MIME types.
- * Strictly rejects SVG, HTML, and unrecognized formats.
+ * Task 5: Validates buffer integrity, non-emptiness, maximum file size, SVG rejection, and magic byte signatures.
  */
 export function validateFileMagicBytes(
   buffer: Buffer,
-  declaredMimeType: string
+  declaredMimeType: string,
+  options: FileValidationOptions = {}
 ): FileValidationResult {
-  // Reject empty or corrupt buffers
-  if (!buffer || buffer.length === 0) {
-    return { valid: false, detectedType: null, error: "Empty file content." };
+  // 1. Empty or null buffer check
+  if (!buffer || !(buffer instanceof Buffer) || buffer.length === 0) {
+    return { valid: false, detectedType: null, error: "Uploaded file is empty or corrupted." };
   }
 
-  // Reject SVG/XML immediately regardless of claimed MIME type or extension
+  // 2. Minimum header length check (at least 3 bytes for basic signature)
+  if (buffer.length < 3) {
+    return { valid: false, detectedType: null, error: "File buffer is corrupted or truncated." };
+  }
+
+  // 3. Maximum size check
+  const defaultMaxSize = options.category === "document" ? MAX_DOCUMENT_SIZE_BYTES : MAX_IMAGE_SIZE_BYTES;
+  const maxAllowed = options.maxSizeBytes || defaultMaxSize;
+
+  if (buffer.length > maxAllowed) {
+    const sizeInMB = Math.round(maxAllowed / (1024 * 1024));
+    return { valid: false, detectedType: null, error: `File size exceeds maximum allowed limit of ${sizeInMB}MB.` };
+  }
+
+  // 4. SVG/XML rejection check
   if (isSvgOrXml(buffer)) {
     return {
       valid: false,
       detectedType: "image/svg+xml",
-      error: "SVG file format is not allowed for security reasons.",
+      error: "SVG file format is strictly prohibited for security reasons.",
     };
   }
 
+  // 5. Binary magic byte inspection
   let detectedType: string | null = null;
 
   if (isJpeg(buffer)) {
@@ -134,15 +153,13 @@ export function validateFileMagicBytes(
     return {
       valid: false,
       detectedType: null,
-      error: "Unsupported file content or unrecognized file signature.",
+      error: "Unsupported file signature or untrusted binary content.",
     };
   }
 
   const normalizedDeclared = declaredMimeType.toLowerCase().trim();
-  const isDeclaredJpeg =
-    normalizedDeclared === "image/jpeg" || normalizedDeclared === "image/jpg";
+  const isDeclaredJpeg = normalizedDeclared === "image/jpeg" || normalizedDeclared === "image/jpg";
 
-  // Match check
   if (detectedType === "image/jpeg" && isDeclaredJpeg) {
     return { valid: true, detectedType: "image/jpeg" };
   }
@@ -154,6 +171,6 @@ export function validateFileMagicBytes(
   return {
     valid: false,
     detectedType,
-    error: `File signature mismatch. Detected ${detectedType} but declared ${declaredMimeType}.`,
+    error: `File content mismatch. Signature detected ${detectedType} but declared ${declaredMimeType}.`,
   };
 }
