@@ -21,7 +21,7 @@ export const auth = betterAuth({
   }),
   session: {
     // Cache the session in a signed cookie so the DB is NOT hit on every
-    // request. The session is re-validated from the DB at most once per
+    // request. The session is re-validated from the DB at most once pergenerates and sends this exact URI to
     // maxAge window (5 minutes). This dramatically reduces PG round-trips.
     cookieCache: {
       enabled: true,
@@ -35,9 +35,6 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      redirectURI: process.env.BETTER_AUTH_URL
-        ? `${process.env.BETTER_AUTH_URL}/api/auth/callback/google`
-        : "https://bachatlal.in/api/auth/callback/google",
     }
   },
   user: {
