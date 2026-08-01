@@ -252,9 +252,9 @@ export function StepGallery() {
             "flex flex-col items-center justify-center h-40 rounded-2xl border-2 border-dashed cursor-pointer transition-all duration-300 group bg-slate-50/50",
             isUploading
               ? "pointer-events-none opacity-60"
-              : "border-slate-200 hover:border-blue-400 hover:bg-blue-50/30"
+              : "border-slate-200 hover:border-red-400 hover:bg-red-50/30"
           )}>
-            <div className="h-12 w-12 rounded-full bg-white shadow-sm text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-300">
+            <div className="h-12 w-12 rounded-full bg-white shadow-sm text-red-600 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-red-100 transition-all duration-300">
               <UploadCloud className="h-6 w-6" />
             </div>
             <span className="text-sm font-semibold text-slate-900 mb-1">Add Photos</span>
@@ -312,7 +312,7 @@ export function StepGallery() {
             {pendingFiles.map((pf) => (
               <div
                 key={pf.id}
-                className="relative group rounded-xl overflow-hidden border-2 aspect-video bg-muted border-dashed border-blue-400"
+                className="relative group rounded-xl overflow-hidden border-2 aspect-video bg-muted border-dashed border-red-400"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

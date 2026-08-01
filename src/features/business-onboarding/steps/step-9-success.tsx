@@ -44,10 +44,10 @@ export function Step9Success() {
       </p>
 
       {/* Estimated review time */}
-      <div className="bg-blue-50 border border-blue-100 rounded-2xl px-6 py-4 mb-10 max-w-sm w-full">
-        <p className="text-sm font-semibold text-blue-800 mb-1">Estimated Review Time</p>
-        <p className="text-2xl font-bold text-blue-600">24–48 hours</p>
-        <p className="text-xs text-blue-500 mt-1">
+      <div className="bg-red-50 border border-red-100 rounded-2xl px-6 py-4 mb-10 max-w-sm w-full">
+        <p className="text-sm font-semibold text-red-800 mb-1">Estimated Review Time</p>
+        <p className="text-2xl font-bold text-red-600">24–48 hours</p>
+        <p className="text-xs text-red-500 mt-1">
           You&apos;ll receive an email once your business is approved.
         </p>
       </div>
@@ -56,7 +56,7 @@ export function Step9Success() {
         <Button
           render={<Link href="/dashboard" />}
           nativeButton={false}
-          className="w-full sm:w-auto rounded-xl px-8 h-12 bg-linear-to-b from-[#3B82F6] to-[#2563EB] hover:from-[#2563EB] hover:to-[#1D4ED8] text-white shadow-md shadow-blue-500/20 transition-all hover:-translate-y-px active:scale-[0.98] active:translate-y-0"
+          className="w-full sm:w-auto rounded-xl px-8 h-12 bg-linear-to-b from-red-300 to-red-600 hover:from-red-600 hover:to-red-900 text-white shadow-md shadow-red-500/20 transition-all hover:-translate-y-px active:scale-[0.98] active:translate-y-0"
         >
           <LayoutDashboard className="mr-2 h-4 w-4" />
           Go to Dashboard

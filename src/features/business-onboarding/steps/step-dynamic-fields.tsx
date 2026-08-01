@@ -57,7 +57,7 @@ export function StepDynamicFields() {
           <>
             <Textarea 
               placeholder={field.placeholder || ""}
-              className="rounded-xl min-h-[100px]"
+              className="rounded-xl min-h-25"
               {...register(`dynamicFields.${field.id}`)}
             />
             {error && <p className="text-red-500 text-sm font-medium">{error.message}</p>}
@@ -146,7 +146,7 @@ export function StepDynamicFields() {
         
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
           </div>
         ) : fields.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground bg-slate-50 rounded-xl mt-8">

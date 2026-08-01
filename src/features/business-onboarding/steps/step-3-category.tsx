@@ -63,7 +63,7 @@ export function Step3Category() {
         
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-8">
@@ -78,11 +78,11 @@ export function Step3Category() {
                   className={cn(
                     "flex flex-col items-center justify-center p-5 text-center rounded-2xl cursor-pointer transition-all duration-300 border-2",
                     isSelected 
-                      ? "border-blue-500 bg-blue-50/50 text-blue-700 shadow-[0_4px_14px_rgb(37,99,235,0.08)] scale-[0.98]" 
-                      : "border-slate-100 bg-white hover:border-blue-200 hover:bg-slate-50/50 text-slate-500 hover:text-slate-900 shadow-sm hover:shadow-[0_4px_14px_rgb(0,0,0,0.04)]"
+                      ? "border-red-500 bg-red-50/50 text-red-700 shadow-[0_4px_14px_rgb(37,99,235,0.08)] scale-[0.98]" 
+                      : "border-slate-100 bg-white hover:border-red-200 hover:bg-slate-50/50 text-slate-500 hover:text-slate-900 shadow-sm hover:shadow-[0_4px_14px_rgb(0,0,0,0.04)]"
                   )}
                 >
-                  <Icon className={cn("h-7 w-7 mb-3 transition-colors duration-300", isSelected ? "text-blue-600" : "text-slate-400 group-hover:text-blue-500")} strokeWidth={isSelected ? 2 : 1.5} />
+                  <Icon className={cn("h-7 w-7 mb-3 transition-colors duration-300", isSelected ? "text-red-600" : "text-slate-400 group-hover:text-red-500")} strokeWidth={isSelected ? 2 : 1.5} />
                   <span className="text-sm font-semibold">{cat.name}</span>
                 </div>
               );

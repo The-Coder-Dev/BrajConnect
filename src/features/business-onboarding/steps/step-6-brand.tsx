@@ -176,7 +176,7 @@ export function Step6Brand() {
             {logoProgress !== null && (
               <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
                 <div
-                  className="bg-blue-600 h-full transition-all duration-300"
+                  className="bg-red-600 h-full transition-all duration-300"
                   style={{ width: `${logoProgress}%` }}
                 />
               </div>
@@ -198,7 +198,7 @@ export function Step6Brand() {
             {coverProgress !== null && (
               <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
                 <div
-                  className="bg-blue-600 h-full transition-all duration-300"
+                  className="bg-red-600 h-full transition-all duration-300"
                   style={{ width: `${coverProgress}%` }}
                 />
               </div>

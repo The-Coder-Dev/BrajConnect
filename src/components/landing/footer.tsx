@@ -17,7 +17,7 @@ export function Footer() {
                 <Building2 className="h-6 w-6" />
               </div>
               <span className="text-3xl font-extrabold tracking-tight text-slate-900">
-                BrajConnect
+                BachatLal
               </span>
             </Link>
             <p className="text-slate-500 text-lg leading-relaxed mb-10 max-w-md">

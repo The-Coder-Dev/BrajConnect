@@ -13,8 +13,8 @@ const outfit = Outfit({
 
 
 export const metadata: Metadata = {
-  title: "BrajConnect - Grow Your Business",
-  description: "BrajConnect is a platform for businesses to grow their customer base.",
+  title: "BachatLal - The best platform for businesses to grow their customer base.",
+  description: "BachatLal is a platform for businesses to grow their customer base.",
 };
 
 export default function RootLayout({

@@ -28,7 +28,7 @@ export function Step7About() {
         <div className="space-y-4 mt-8">
           <Textarea 
             placeholder="We are a family-owned bakery specializing in artisanal sourdough breads and custom cakes..."
-            className="min-h-[200px] rounded-xl resize-none text-base p-4"
+            className="min-h-50 rounded-xl resize-none text-base p-4"
             {...register("description")}
           />
           

@@ -29,7 +29,7 @@ export function Step2Name() {
           <div>
             <Input 
               placeholder="e.g. Acme Corporation" 
-              className="h-14 text-lg rounded-xl"
+              className="h-14 text-lg rounded-xl focus-ring-red-600"
               {...register("name")}
               autoFocus
             />
@@ -41,7 +41,7 @@ export function Step2Name() {
           <div className="pt-4 border-t border-border/50">
             <p className="text-sm text-muted-foreground font-medium mb-1">Your public profile URL will be:</p>
             <div className="bg-muted/50 p-3 rounded-lg border border-border/50 text-sm overflow-hidden text-ellipsis">
-              <span className="text-muted-foreground">brajconnect.com/b/</span>
+              <span className="text-muted-foreground">bachatlal.com/b/</span>
               <span className="font-semibold text-foreground">{generatedSlug || "your-business-name"}</span>
             </div>
           </div>
