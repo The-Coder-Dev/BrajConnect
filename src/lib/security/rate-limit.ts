@@ -1,7 +1,8 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { getRedisClient } from "@/lib/redis";
+import { RATE_LIMIT_CONFIG, type RateLimitCategory } from "./rate-limit-config";
 
-// In-memory fallback map for environments without Upstash Redis credentials configured
+// In-memory fallback map for dev mode
 const memoryStore = new Map<string, { count: number; expiresAt: number }>();
 
 function checkMemoryRateLimit(
@@ -26,7 +27,6 @@ function checkMemoryRateLimit(
   return { success: true, remaining: limit - entry.count, reset: Math.ceil(entry.expiresAt / 1000) };
 }
 
-// Pre-configured rate limiters per action domain
 const limiterInstances = new Map<string, Ratelimit>();
 
 function getUpstashLimiter(requests: number, windowSeconds: number): Ratelimit | null {
@@ -51,9 +51,9 @@ function getUpstashLimiter(requests: number, windowSeconds: number): Ratelimit |
 
 export interface RateLimitOptions {
   identifier: string;
-  action?: string;
-  limit?: number; // default: 10
-  windowSeconds?: number; // default: 60
+  category: RateLimitCategory;
+  customLimit?: number;
+  customWindowSeconds?: number;
 }
 
 export interface RateLimitResult {
@@ -65,11 +65,15 @@ export interface RateLimitResult {
 }
 
 /**
- * Production-grade rate limiter powered by Upstash Redis with zero-downtime memory fallback.
+ * Production-grade rate limiter powered by Upstash Redis (with fail-fast in production & dev memory fallback).
  */
 export async function enforceRateLimit(options: RateLimitOptions): Promise<RateLimitResult> {
-  const { identifier, action = "general", limit = 10, windowSeconds = 60 } = options;
-  const key = `${action}:${identifier}`;
+  const { identifier, category, customLimit, customWindowSeconds } = options;
+  const config = RATE_LIMIT_CONFIG[category];
+
+  const limit = customLimit ?? config.limit;
+  const windowSeconds = customWindowSeconds ?? config.windowSeconds;
+  const key = `${category}:${identifier}`;
 
   try {
     const upstashLimiter = getUpstashLimiter(limit, windowSeconds);
@@ -85,10 +89,12 @@ export async function enforceRateLimit(options: RateLimitOptions): Promise<RateL
       };
     }
   } catch (error) {
-    console.error("[RateLimit] Upstash Redis rate limit check failed, using fallback:", error);
+    console.error(`[RateLimit] Upstash Redis rate limit check failed for category '${category}':`, error);
+    // In production, getRedisClient() will have thrown if credentials missing.
+    // Here we handle temporary network/runtime Redis failures gracefully without leaking details.
   }
 
-  // Fallback to in-memory sliding window
+  // Dev mode or runtime fallback
   const memResult = checkMemoryRateLimit(key, limit, windowSeconds);
   return {
     success: memResult.success,
@@ -100,7 +106,7 @@ export async function enforceRateLimit(options: RateLimitOptions): Promise<RateL
 }
 
 /**
- * Extracts a unique rate-limit key (IP address or fallback identifier) from incoming Request headers.
+ * Extracts a unique rate-limit key (IP address or user ID) from incoming Request headers.
  */
 export function getClientIdentifier(request: Request, userOrSessionId?: string): string {
   if (userOrSessionId && userOrSessionId.trim() !== "") {

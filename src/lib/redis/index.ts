@@ -2,7 +2,10 @@ import { Redis } from "@upstash/redis";
 
 /**
  * Server-only Upstash Redis Client Singleton.
- * Gracefully handles missing environment variables without crashing the application.
+ *
+ * Task 1 Hardening:
+ * - Development: Returns null if credentials missing, allowing memory fallback.
+ * - Production: Throws a server error if credentials missing (fail fast).
  */
 let redisClient: Redis | null = null;
 
@@ -11,13 +14,19 @@ export function getRedisClient(): Redis | null {
 
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const isProd = process.env.NODE_ENV === "production";
 
   if (!url || !token) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn(
-        "[Redis] UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN missing. Rate limiting falling back to standard pass-through or local fallback."
-      );
+    if (isProd) {
+      const errorMsg =
+        "[Redis Error] UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be configured in production environment.";
+      console.error(errorMsg);
+      throw new Error(errorMsg);
     }
+
+    console.warn(
+      "[Redis] Missing Upstash credentials in development mode. Falling back to local in-memory rate limiter."
+    );
     return null;
   }
 
@@ -29,6 +38,9 @@ export function getRedisClient(): Redis | null {
     return redisClient;
   } catch (error) {
     console.error("[Redis] Failed to initialize Redis client:", error);
+    if (isProd) {
+      throw new Error("[Redis Error] Failed to initialize Redis client in production.");
+    }
     return null;
   }
 }

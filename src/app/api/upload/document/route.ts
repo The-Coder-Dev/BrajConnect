@@ -3,14 +3,12 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { uploadDocument } from "@/lib/supabase/storage";
-import { db } from "@/db";
-import { business } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
 import {
   ALLOWED_DOCUMENT_MIME_TYPES,
   validateFileMagicBytes,
 } from "@/lib/security/file-validation";
 import { enforceRateLimit, getClientIdentifier } from "@/lib/security/rate-limit";
+import { verifyBusinessOwnership } from "@/lib/security/ownership";
 
 export async function POST(request: Request) {
   try {
@@ -20,13 +18,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 2. Enforce Rate Limiting (Task 6)
+    // 2. Task 2: Enforce Rate Limiting using centralized category
     const clientIdentifier = getClientIdentifier(request, session.user.id);
     const rateLimit = await enforceRateLimit({
       identifier: clientIdentifier,
-      action: "upload_document",
-      limit: 15,
-      windowSeconds: 60,
+      category: "document_upload",
     });
 
     if (!rateLimit.success) {
@@ -50,23 +46,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Document type and Business ID are required." }, { status: 400 });
     }
 
-    // 5. Task 2: Verify Business existence, status & owner ownership
-    const biz = await db.query.business.findFirst({
-      where: and(eq(business.id, businessId), eq(business.ownerId, session.user.id)),
-      columns: { id: true, status: true },
-    });
-
-    if (!biz) {
+    // 5. Task 3: Centralized Business Ownership & State Verification
+    const ownershipCheck = await verifyBusinessOwnership(businessId, session.user.id);
+    if (!ownershipCheck.authorized) {
       return NextResponse.json(
-        { error: "Business not found or unauthorized cross-tenant upload." },
-        { status: 403 }
-      );
-    }
-
-    if (biz.status === "archived" || biz.status === "suspended") {
-      return NextResponse.json(
-        { error: "Business status does not allow document uploads." },
-        { status: 400 }
+        { error: ownershipCheck.error || "Permission denied." },
+        { status: ownershipCheck.statusCode || 403 }
       );
     }
 
@@ -78,20 +63,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024;
-    if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: "Document file size must be under 10MB" },
-        { status: 400 }
-      );
-    }
-
-    // 7. Task 5: Inspect file Magic Bytes
+    // 7. Task 5: Read Buffer and inspect Magic Bytes & buffer integrity
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const magicByteCheck = validateFileMagicBytes(buffer, file.type);
+    const magicByteCheck = validateFileMagicBytes(buffer, file.type, { category: "document" });
     if (!magicByteCheck.valid) {
       return NextResponse.json(
         { error: magicByteCheck.error || "File content does not match declared document type." },
@@ -99,7 +75,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 8. Task 7: Upload to Supabase Storage with strict business directory scoping
+    // 8. Upload to Supabase Storage with strict business directory scoping
     const res = await uploadDocument(file, businessId, type);
 
     if (res.error) {

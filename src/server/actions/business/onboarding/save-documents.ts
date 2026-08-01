@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { db } from "@/db";
-import { business, businessDocuments } from "@/db/schema";
+import { businessDocuments } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { deleteDocuments } from "@/lib/supabase/storage";
 import { getFriendlyErrorMessage } from "@/lib/utils";
+import { verifyBusinessOwnership } from "@/lib/security/ownership";
 
 export async function saveBusinessDocuments(
   businessId: string,
@@ -24,18 +25,10 @@ export async function saveBusinessDocuments(
       return { success: false, error: "Unauthorized" };
     }
 
-    if (!businessId || typeof businessId !== "string" || businessId.trim() === "") {
-      return { success: false, error: "Business ID is required." };
-    }
-
-    // Verify ownership
-    const existing = await db.query.business.findFirst({
-      where: and(eq(business.id, businessId), eq(business.ownerId, session.user.id)),
-      columns: { id: true }
-    });
-
-    if (!existing) {
-      return { success: false, error: "Business not found or unauthorized" };
+    // Task 3: Centralized Business Ownership & State Verification
+    const ownershipCheck = await verifyBusinessOwnership(businessId, session.user.id);
+    if (!ownershipCheck.authorized) {
+      return { success: false, error: ownershipCheck.error || "Permission denied." };
     }
 
     // Task 7: Validate storage ownership for each attached document
@@ -63,25 +56,26 @@ export async function saveBusinessDocuments(
     if (newDocs.length > 0) {
       // Find old documents of the same type and delete them
       const existingDocs = await db.query.businessDocuments.findMany({
-        where: and(
-          eq(businessDocuments.businessId, businessId)
-        )
+        where: eq(businessDocuments.businessId, businessId),
       });
-      
+
       const oldPathsToDelete = existingDocs
         .filter((d) => types.includes(d.documentType))
         .map((d) => d.storagePath);
-      
+
       // Delete old from DB
       for (const type of types) {
-        await db.delete(businessDocuments)
-          .where(and(
-            eq(businessDocuments.businessId, businessId),
-            eq(businessDocuments.documentType, type as any)
-          ));
+        await db
+          .delete(businessDocuments)
+          .where(
+            and(
+              eq(businessDocuments.businessId, businessId),
+              eq(businessDocuments.documentType, type as any)
+            )
+          );
       }
-      
-      // Delete old from Supabase
+
+      // Delete old from Supabase Storage
       if (oldPathsToDelete.length > 0) {
         await deleteDocuments(oldPathsToDelete);
       }
@@ -92,13 +86,16 @@ export async function saveBusinessDocuments(
     return { success: true };
   } catch (error: any) {
     console.error("Failed to save documents:", error);
-    
+
     // Rollback uploaded paths to avoid orphan files
     const paths = docs.map((d) => d.storagePath).filter(Boolean);
     if (paths.length > 0) {
       await deleteDocuments(paths);
     }
 
-    return { success: false, error: getFriendlyErrorMessage(error, "Unable to save verification documents.") };
+    return {
+      success: false,
+      error: getFriendlyErrorMessage(error, "Unable to save verification documents."),
+    };
   }
 }
