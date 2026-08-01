@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 import { getFriendlyErrorMessage } from "@/lib/utils";
+import { isValidStatusTransition } from "@/lib/security/workflow";
 
 export async function submitBusinessForReview(businessId: string) {
   try {
@@ -35,6 +36,11 @@ export async function submitBusinessForReview(businessId: string) {
         throw new Error("Business not found or unauthorized");
       }
 
+      // Task 8: Validate business workflow state transition
+      if (!isValidStatusTransition(existing.status, "pending_review")) {
+        throw new Error(`Cannot submit business in status '${existing.status}' for review.`);
+      }
+
       // 9. Before changing status, validate required sections are complete
       if (!existing.name) throw new Error("Business name is required");
       
@@ -54,11 +60,10 @@ export async function submitBusinessForReview(businessId: string) {
         throw new Error("Business hours are required");
       }
       
-      // Optionally validate documents if required, etc.
-      // If we require at least one document:
-      // if (!existing.documents || existing.documents.length === 0) {
-      //   throw new Error("Verification documents are required");
-      // }
+      // Task 9: Re-enable required verification document validation
+      if (!existing.documents || existing.documents.length === 0) {
+        throw new Error("At least one verification document is required before submitting for review.");
+      }
 
       // 10. Use BusinessStatus enum
       await tx.update(business)

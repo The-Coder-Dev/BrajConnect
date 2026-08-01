@@ -8,6 +8,7 @@ import {
 import { eq, and, desc } from "drizzle-orm";
 import { getSession } from "@/lib/auth/guards";
 import { getFriendlyErrorMessage } from "@/lib/utils";
+import { isValidStatusTransition } from "@/lib/security/workflow";
 
 // Helper to verify owner session — uses the request-scoped cached session
 // so calling it multiple times never issues extra DB round-trips.
@@ -177,13 +178,13 @@ export async function withdrawSubmission(businessId: string) {
         eq(business.ownerId, userId),
         eq(business.status, "pending_review")
       ),
-      columns: { id: true },
+      columns: { id: true, status: true },
     });
 
-    if (!existing) {
+    if (!existing || !isValidStatusTransition(existing.status, "draft")) {
       return {
         success: false,
-        error: "Permission denied.",
+        error: "Permission denied or invalid state transition.",
       };
     }
 
@@ -222,13 +223,13 @@ export async function resubmitBusiness(businessId: string) {
         eq(business.ownerId, userId),
         eq(business.status, "rejected")
       ),
-      columns: { id: true },
+      columns: { id: true, status: true },
     });
 
-    if (!existing) {
+    if (!existing || !isValidStatusTransition(existing.status, "pending_review")) {
       return {
         success: false,
-        error: "Permission denied.",
+        error: "Permission denied or invalid state transition.",
       };
     }
 
@@ -264,13 +265,13 @@ export async function restoreArchivedBusiness(businessId: string) {
         eq(business.ownerId, userId),
         eq(business.status, "archived")
       ),
-      columns: { id: true },
+      columns: { id: true, status: true },
     });
 
-    if (!existing) {
+    if (!existing || !isValidStatusTransition(existing.status, "draft")) {
       return {
         success: false,
-        error: "Permission denied.",
+        error: "Permission denied or invalid state transition.",
       };
     }
 

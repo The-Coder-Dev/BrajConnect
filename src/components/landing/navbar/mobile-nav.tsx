@@ -15,9 +15,14 @@ export function MobileNav({
   const router = useRouter();
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    router.refresh();
     onClose();
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = "/sign-in";
+        },
+      },
+    });
   };
 
   return (

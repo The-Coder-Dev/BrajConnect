@@ -1,3 +1,6 @@
+import { db } from "@/db";
+import { business, gallery } from "@/db/schema";
+import { eq, and, or } from "drizzle-orm";
 import { cloudinary } from "./cloudinary";
 
 /**
@@ -22,3 +25,63 @@ export async function deleteImage(publicId: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Task 3: Verifies that publicId matches a stored DB record for a business owned by ownerId
+ * before executing deletion from Cloudinary. Prevents arbitrary deletion abuse.
+ */
+export async function deleteVerifiedBusinessAsset(
+  businessId: string,
+  ownerId: string,
+  publicId: string
+): Promise<boolean> {
+  if (!businessId || !ownerId || !publicId || publicId.trim() === "") {
+    return false;
+  }
+
+  try {
+    // 1. Check if publicId matches business logo/cover owned by user
+    const bizMatch = await db.query.business.findFirst({
+      where: and(
+        eq(business.id, businessId),
+        eq(business.ownerId, ownerId),
+        or(eq(business.logoPublicId, publicId), eq(business.coverPublicId, publicId))
+      ),
+      columns: { id: true },
+    });
+
+    if (bizMatch) {
+      return await deleteImage(publicId);
+    }
+
+    // 2. Check if publicId matches a gallery item for business owned by user
+    const galleryMatch = await db.query.gallery.findFirst({
+      where: and(
+        eq(gallery.businessId, businessId),
+        eq(gallery.cloudinaryPublicId, publicId)
+      ),
+      columns: { id: true },
+    });
+
+    if (galleryMatch) {
+      // Confirm business ownership
+      const ownerBiz = await db.query.business.findFirst({
+        where: and(eq(business.id, businessId), eq(business.ownerId, ownerId)),
+        columns: { id: true },
+      });
+
+      if (ownerBiz) {
+        return await deleteImage(publicId);
+      }
+    }
+
+    console.warn(
+      `[Cloudinary Security] Blocked unverified deletion attempt for publicId "${publicId}" on business "${businessId}" by owner "${ownerId}".`
+    );
+    return false;
+  } catch (error) {
+    console.error("[Cloudinary Security] Error verifying asset deletion:", error);
+    return false;
+  }
+}
+
