@@ -18,8 +18,13 @@ export function ProfileDropdown({ session }: { session: any }) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    router.refresh();
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = "/sign-in";
+        },
+      },
+    });
   };
 
   return (

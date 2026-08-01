@@ -73,8 +73,7 @@ export function AppSidebar({ user }: { user: any }) {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/sign-in");
-          router.refresh();
+          window.location.href = "/sign-in";
         },
       },
     });

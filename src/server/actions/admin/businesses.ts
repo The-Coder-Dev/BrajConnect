@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { getFriendlyErrorMessage } from "@/lib/utils";
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
+import { isValidStatusTransition } from "@/lib/security/workflow";
 
 export interface AdminBusinessFilterParams {
   status?: string;
@@ -209,6 +210,17 @@ export async function approveBusiness(businessId: string) {
     if (!businessId) return { success: false, error: "Business ID required." };
 
     await db.transaction(async (tx) => {
+      const existing = await tx.query.business.findFirst({
+        where: eq(business.id, businessId),
+        columns: { status: true },
+      });
+
+      if (!existing) throw new Error("Business not found.");
+
+      if (!isValidStatusTransition(existing.status, "published")) {
+        throw new Error(`Cannot approve business in state '${existing.status}'.`);
+      }
+
       // 1. Update business status
       await tx
         .update(business)
@@ -265,6 +277,17 @@ export async function rejectBusiness(businessId: string, reason: string) {
     }
 
     await db.transaction(async (tx) => {
+      const existing = await tx.query.business.findFirst({
+        where: eq(business.id, businessId),
+        columns: { status: true },
+      });
+
+      if (!existing) throw new Error("Business not found.");
+
+      if (!isValidStatusTransition(existing.status, "rejected")) {
+        throw new Error(`Cannot reject business in state '${existing.status}'.`);
+      }
+
       // 1. Update business status
       await tx
         .update(business)
@@ -320,6 +343,17 @@ export async function requestChanges(businessId: string, reason: string) {
     }
 
     await db.transaction(async (tx) => {
+      const existing = await tx.query.business.findFirst({
+        where: eq(business.id, businessId),
+        columns: { status: true },
+      });
+
+      if (!existing) throw new Error("Business not found.");
+
+      if (!isValidStatusTransition(existing.status, "needs_changes")) {
+        throw new Error(`Cannot request changes for business in state '${existing.status}'.`);
+      }
+
       // 1. Update business status
       await tx
         .update(business)

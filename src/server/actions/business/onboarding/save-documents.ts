@@ -38,6 +38,17 @@ export async function saveBusinessDocuments(
       return { success: false, error: "Business not found or unauthorized" };
     }
 
+    // Task 7: Validate storage ownership for each attached document
+    const expectedPrefix = `businesses/${businessId}/`;
+    for (const doc of docs) {
+      if (!doc.storagePath || !doc.storagePath.startsWith(expectedPrefix)) {
+        return {
+          success: false,
+          error: "Unauthorized document attachment. Storage path does not belong to this business.",
+        };
+      }
+    }
+
     const types = docs.map((d) => d.type);
     const newDocs = docs.map((doc) => ({
       id: `doc_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,

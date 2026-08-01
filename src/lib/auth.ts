@@ -46,8 +46,23 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         defaultValue: DEFAULT_USER_ROLE,
+        input: false
       }
     }
-  }
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          return {
+            data: {
+              ...user,
+              role: DEFAULT_USER_ROLE,
+            },
+          };
+        },
+      },
+    },
+  },
 });
 
