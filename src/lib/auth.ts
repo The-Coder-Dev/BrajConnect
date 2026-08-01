@@ -6,7 +6,7 @@ import { DEFAULT_USER_ROLE } from '@/lib/auth/roles';
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://bachatlal.in",
-  trustedOrigins: ["https://bachatlal.in"],
+  trustedOrigins: ["https://bachatlal.in", "https://www.bachatlal.in"],
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -29,7 +29,6 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      redirectURI: "https://www.bachatlal.in/api/auth/callback/google",
     }
   },
   user: {
