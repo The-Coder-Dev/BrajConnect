@@ -20,21 +20,32 @@ export async function saveBusinessDocuments(
   }[]
 ) {
   try {
+    console.log(`[saveBusinessDocuments] Starting document save for businessId: ${businessId}, Count: ${docs.length}`);
+
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
+      console.warn("[saveBusinessDocuments] Session missing or unauthenticated");
       return { success: false, error: "Unauthorized" };
     }
 
     // Task 3: Centralized Business Ownership & State Verification
     const ownershipCheck = await verifyBusinessOwnership(businessId, session.user.id);
     if (!ownershipCheck.authorized) {
+      console.warn(`[saveBusinessDocuments] Ownership check failed for user: ${session.user.id}, business: ${businessId}`);
       return { success: false, error: ownershipCheck.error || "Permission denied." };
     }
 
     // Task 7: Validate storage ownership for each attached document
-    const expectedPrefix = `businesses/${businessId}/`;
+    const prefixVariant1 = `${businessId}/`;
+    const prefixVariant2 = `businesses/${businessId}/`;
+
     for (const doc of docs) {
-      if (!doc.storagePath || !doc.storagePath.startsWith(expectedPrefix)) {
+      const isValidPrefix = doc.storagePath && (
+        doc.storagePath.startsWith(prefixVariant1) || doc.storagePath.startsWith(prefixVariant2)
+      );
+
+      if (!isValidPrefix) {
+        console.warn(`[saveBusinessDocuments] Security check failed: Path "${doc.storagePath}" does not match business prefix "${prefixVariant1}"`);
         return {
           success: false,
           error: "Unauthorized document attachment. Storage path does not belong to this business.",
@@ -77,15 +88,17 @@ export async function saveBusinessDocuments(
 
       // Delete old from Supabase Storage
       if (oldPathsToDelete.length > 0) {
+        console.log(`[saveBusinessDocuments] Cleaning up ${oldPathsToDelete.length} obsolete storage files`);
         await deleteDocuments(oldPathsToDelete);
       }
 
       await db.insert(businessDocuments).values(newDocs);
+      console.log(`[saveBusinessDocuments] Successfully saved ${newDocs.length} document records into DB for businessId: ${businessId}`);
     }
 
     return { success: true };
   } catch (error: any) {
-    console.error("Failed to save documents:", error);
+    console.error(`[saveBusinessDocuments] Fatal error for businessId ${businessId}:`, error);
 
     // Rollback uploaded paths to avoid orphan files
     const paths = docs.map((d) => d.storagePath).filter(Boolean);

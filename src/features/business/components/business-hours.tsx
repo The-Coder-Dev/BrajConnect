@@ -4,7 +4,8 @@ import { mockBusiness } from '../data/mock-business';
 import { Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-export function BusinessHours({ business = mockBusiness }: { business?: typeof mockBusiness }) {
+export function BusinessHours({ business }: { business?: any }) {
+  if (!business) return null;
   const hours = business.hours || [];
   if (hours.length === 0) return null;
 
@@ -21,7 +22,7 @@ export function BusinessHours({ business = mockBusiness }: { business?: typeof m
 
       <div className="overflow-hidden border border-slate-100 dark:border-slate-800/60 rounded-xl bg-white dark:bg-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
         <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
-          {hours.map((schedule, idx) => {
+          {hours.map((schedule: any, idx: number) => {
             const isToday = schedule.day === currentDayName;
             return (
               <div 

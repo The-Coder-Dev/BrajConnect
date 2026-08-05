@@ -1,82 +1,81 @@
 import { SectionHeader } from "./section-header";
 import { BusinessCard } from "./business-card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Store } from "lucide-react";
+import Link from "next/link";
+import { getPublicBusinesses } from "@/server/queries/public/businesses";
 
-const businesses = [
-  {
-    name: "Govinda's Restaurant",
-    category: "Restaurants",
-    location: "Raman Reti, Vrindavan",
-    rating: 4.8,
-    reviews: 1245,
-    verified: true,
-    description: "Authentic pure vegetarian satvik food with a divine ambiance.",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
-    logo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=150&q=80"
-  },
-  {
-    name: "Brijwasi Royal",
-    category: "Hotels",
-    location: "Near Railway Station, Mathura",
-    rating: 4.6,
-    reviews: 892,
-    verified: true,
-    description: "Premium luxury stays with world-class amenities in the heart of the city.",
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
-    logo: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=150&q=80"
-  },
-  {
-    name: "Nayati Medicity",
-    category: "Hospitals",
-    location: "NH-2, Mathura",
-    rating: 4.5,
-    reviews: 534,
-    verified: true,
-    description: "Multi-super specialty hospital providing advanced healthcare services.",
-    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
-    logo: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=150&q=80"
-  },
-  {
-    name: "Krishna Valley",
-    category: "Real Estate",
-    location: "Chatikara Road, Vrindavan",
-    rating: 4.3,
-    reviews: 128,
-    verified: false,
-    description: "Modern luxury apartments surrounded by spiritual serenity.",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
-    logo: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=150&q=80"
-  }
-];
+export async function FeaturedBusinesses() {
+  const { items: businesses } = await getPublicBusinesses({
+    limit: 8,
+    sort: "featured",
+  });
 
-export function FeaturedBusinesses() {
   return (
     <section id="businesses" className="py-24 bg-slate-50">
       <div className="container mx-auto px-4 md:px-6 max-w-[1440px]">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-          <SectionHeader 
-            title="Premium Businesses" 
-            subtitle="Discover top-rated and verified businesses trusted by thousands of customers."
+          <SectionHeader
+            title="Verified Businesses"
+            subtitle="Discover top-rated and verified businesses trusted by thousands of customers in Braj."
           />
-          <Button variant="ghost" className="hidden md:flex text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold mb-12">
-            View All <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          {businesses.length > 0 && (
+            <Button
+              variant="ghost"
+              className="hidden md:flex text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold mb-12 cursor-pointer"
+              render={<Link href="/business" />}
+            >
+              View All <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {businesses.map((business, index) => (
-            <div key={index} className="h-full">
-              <BusinessCard {...business} />
+        {businesses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {businesses.map((b) => (
+              <div key={b.id} className="h-full">
+                <BusinessCard
+                  name={b.name}
+                  category={b.category?.name || "General"}
+                  location={b.location.city ? `${b.location.city}, ${b.location.state}` : b.location.formattedAddress}
+                  rating={b.rating.average}
+                  reviews={b.rating.count}
+                  verified={b.isVerified}
+                  description={b.shortDescription || undefined}
+                  image={b.coverUrl}
+                  logo={b.logoUrl}
+                  slug={b.slug}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center p-12 bg-white rounded-3xl border border-slate-200/80 text-center max-w-2xl mx-auto shadow-xs">
+            <div className="w-16 h-16 rounded-full bg-red-50 text-red-600 flex items-center justify-center mb-4">
+              <Store className="w-8 h-8" />
             </div>
-          ))}
-        </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">No Published Businesses Yet</h3>
+            <p className="text-slate-600 text-sm mb-6 max-w-md">
+              Businesses approved by our admin team will appear here automatically. Are you a local business owner?
+            </p>
+            <Button
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl px-6 h-11 shadow-md cursor-pointer"
+              render={<Link href="/business/onboarding" />}
+            >
+              Register Your Business Now
+            </Button>
+          </div>
+        )}
 
-        <Button className="w-full md:hidden mt-8 border-red-600 text-red-600 font-semibold h-12 rounded-xl">
-          View All Businesses
-        </Button>
+        {businesses.length > 0 && (
+          <Button
+            className="w-full md:hidden mt-8 border-red-600 text-red-600 font-semibold h-12 rounded-xl"
+            render={<Link href="/business" />}
+          >
+            View All Businesses
+          </Button>
+        )}
       </div>
     </section>
   );
 }
-

@@ -15,6 +15,9 @@ import { dynamicFields } from "./dynamic-fields";
 import { businessFields } from "./business-fields";
 import { amenities } from "./amenities";
 import { businessAmenities } from "./business-amenities";
+import { businessLeads } from "./leads";
+import { notifications } from "./notifications";
+import { businessAnalytics } from "./analytics";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -57,6 +60,11 @@ export const businessRelations = relations(business, ({ one, many }) => ({
   documents: many(businessDocuments),
   businessFields: many(businessFields),
   businessAmenities: many(businessAmenities),
+  leads: many(businessLeads),
+  analytics: one(businessAnalytics, {
+    fields: [business.id],
+    references: [businessAnalytics.businessId],
+  }),
 }));
 
 export const categoryRelations = relations(category, ({ many }) => ({
@@ -163,5 +171,34 @@ export const businessAmenitiesRelations = relations(businessAmenities, ({ one })
   amenity: one(amenities, {
     fields: [businessAmenities.amenityId],
     references: [amenities.id],
+  }),
+}));
+
+export const businessLeadsRelations = relations(businessLeads, ({ one }) => ({
+  business: one(business, {
+    fields: [businessLeads.businessId],
+    references: [business.id],
+  }),
+  owner: one(user, {
+    fields: [businessLeads.ownerId],
+    references: [user.id],
+  }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(user, {
+    fields: [notifications.userId],
+    references: [user.id],
+  }),
+  business: one(business, {
+    fields: [notifications.businessId],
+    references: [business.id],
+  }),
+}));
+
+export const businessAnalyticsRelations = relations(businessAnalytics, ({ one }) => ({
+  business: one(business, {
+    fields: [businessAnalytics.businessId],
+    references: [business.id],
   }),
 }));

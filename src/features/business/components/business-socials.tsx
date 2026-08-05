@@ -2,8 +2,10 @@ import { mockBusiness } from '../data/mock-business';
 import { Globe, MessageCircle } from 'lucide-react';
 import { FaInstagram, FaFacebook, FaLinkedin, FaYoutube } from 'react-icons/fa';
 
-export function BusinessSocials({ business = mockBusiness }: { business?: typeof mockBusiness }) {
-  const { socials, contact } = business;
+export function BusinessSocials({ business }: { business?: any }) {
+  if (!business) return null;
+  const socials = business.socials || {};
+  const contact = business.contact || {};
 
   const socialLinks = [
     { name: "Website", icon: Globe, url: contact.website ? `https://${contact.website}` : null, color: "text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white" },

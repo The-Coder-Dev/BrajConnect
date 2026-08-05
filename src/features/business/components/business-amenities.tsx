@@ -14,7 +14,8 @@ const amenityIconMap: Record<string, React.ElementType> = {
   "Private Rooms": DoorOpen
 };
 
-export function BusinessAmenities({ business = mockBusiness }: { business?: typeof mockBusiness }) {
+export function BusinessAmenities({ business }: { business?: any }) {
+  if (!business) return null;
   const amenities = business.amenities || [];
   if (amenities.length === 0) return null;
 
@@ -25,7 +26,7 @@ export function BusinessAmenities({ business = mockBusiness }: { business?: type
       </div>
 
       <div className="flex flex-wrap gap-3">
-        {amenities.map((amenity, idx) => {
+        {amenities.map((amenity: any, idx: number) => {
           const IconComponent = amenityIconMap[amenity] || CheckCircle2;
           return (
             <div 

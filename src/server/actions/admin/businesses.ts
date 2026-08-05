@@ -9,6 +9,7 @@ import { getFriendlyErrorMessage } from "@/lib/utils";
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { isValidStatusTransition } from "@/lib/security/workflow";
+import { invalidateAllPublicBusinessCaches } from "@/lib/cache/business-cache";
 
 export interface AdminBusinessFilterParams {
   status?: string;
@@ -209,13 +210,16 @@ export async function approveBusiness(businessId: string) {
 
     if (!businessId) return { success: false, error: "Business ID required." };
 
+    let targetSlug: string | undefined;
+
     await db.transaction(async (tx) => {
       const existing = await tx.query.business.findFirst({
         where: eq(business.id, businessId),
-        columns: { status: true },
+        columns: { status: true, slug: true },
       });
 
       if (!existing) throw new Error("Business not found.");
+      targetSlug = existing.slug;
 
       if (!isValidStatusTransition(existing.status, "published")) {
         throw new Error(`Cannot approve business in state '${existing.status}'.`);
@@ -252,6 +256,9 @@ export async function approveBusiness(businessId: string) {
       });
     });
 
+    // Invalidate public feed and detail caches
+    await invalidateAllPublicBusinessCaches({ businessId, slug: targetSlug });
+
     revalidatePath("/admin/businesses");
     revalidatePath(`/admin/businesses/${businessId}`);
 
@@ -276,13 +283,16 @@ export async function rejectBusiness(businessId: string, reason: string) {
       return { success: false, error: "Reason for rejection is required." };
     }
 
+    let targetSlug: string | undefined;
+
     await db.transaction(async (tx) => {
       const existing = await tx.query.business.findFirst({
         where: eq(business.id, businessId),
-        columns: { status: true },
+        columns: { status: true, slug: true },
       });
 
       if (!existing) throw new Error("Business not found.");
+      targetSlug = existing.slug;
 
       if (!isValidStatusTransition(existing.status, "rejected")) {
         throw new Error(`Cannot reject business in state '${existing.status}'.`);
@@ -318,6 +328,8 @@ export async function rejectBusiness(businessId: string, reason: string) {
       });
     });
 
+    await invalidateAllPublicBusinessCaches({ businessId, slug: targetSlug });
+
     revalidatePath("/admin/businesses");
     revalidatePath(`/admin/businesses/${businessId}`);
 
@@ -342,13 +354,16 @@ export async function requestChanges(businessId: string, reason: string) {
       return { success: false, error: "Reason for requested changes is required." };
     }
 
+    let targetSlug: string | undefined;
+
     await db.transaction(async (tx) => {
       const existing = await tx.query.business.findFirst({
         where: eq(business.id, businessId),
-        columns: { status: true },
+        columns: { status: true, slug: true },
       });
 
       if (!existing) throw new Error("Business not found.");
+      targetSlug = existing.slug;
 
       if (!isValidStatusTransition(existing.status, "needs_changes")) {
         throw new Error(`Cannot request changes for business in state '${existing.status}'.`);
@@ -382,6 +397,8 @@ export async function requestChanges(businessId: string, reason: string) {
         reason: reason.trim(),
       });
     });
+
+    await invalidateAllPublicBusinessCaches({ businessId, slug: targetSlug });
 
     revalidatePath("/admin/businesses");
     revalidatePath(`/admin/businesses/${businessId}`);
