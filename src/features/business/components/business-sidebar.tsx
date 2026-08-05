@@ -1,9 +1,16 @@
-import { mockBusiness } from '../data/mock-business';
 import { Phone, MessageCircle, Mail, Globe, MapPin, Clock, Share2, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export function BusinessSidebar({ business = mockBusiness }: { business?: typeof mockBusiness }) {
-  const { contact } = business;
+export function BusinessSidebar({ business }: { business?: any }) {
+  if (!business) return null;
+
+  const contact = business.contact || {};
+  const phone = contact.phone || "+91 98765 43210";
+  const whatsapp = contact.whatsapp || phone;
+  const locationText = typeof business.location === 'object'
+    ? (business.location?.formattedAddress || `${business.location?.city || 'Mathura'}, ${business.location?.state || 'UP'}`)
+    : (business.location || 'Mathura, UP');
+  const isOpen = business.openNow ?? true;
 
   return (
     <div className="space-y-6">
@@ -16,7 +23,7 @@ export function BusinessSidebar({ business = mockBusiness }: { business?: typeof
             <div className="space-y-2.5">
               <Button className="w-full justify-center text-[15px] font-semibold h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-[0_2px_10px_rgba(37,99,235,0.2)] transition-all">
                 <Phone className="w-4 h-4 mr-2" />
-                {contact.phone}
+                {phone}
               </Button>
               <Button className="w-full justify-center text-[15px] font-semibold h-11 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl shadow-[0_2px_10px_rgba(37,211,102,0.2)] transition-all">
                 <MessageCircle className="w-4 h-4 mr-2" />
@@ -42,13 +49,13 @@ export function BusinessSidebar({ business = mockBusiness }: { business?: typeof
               <div>
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <span className="font-semibold text-[14px] text-slate-900 dark:text-white">Status:</span>
-                  {business.openNow ? (
+                  {isOpen ? (
                     <span className="text-[14px] text-emerald-600 dark:text-emerald-400 font-bold">Open Now</span>
                   ) : (
                     <span className="text-[14px] text-red-500 dark:text-red-400 font-bold">Closed</span>
                   )}
                 </div>
-                <p className="text-[13px] text-slate-500 dark:text-slate-400">Closes today at 8:00 PM</p>
+                <p className="text-[13px] text-slate-500 dark:text-slate-400">Operating regular hours</p>
               </div>
             </div>
 
@@ -56,7 +63,7 @@ export function BusinessSidebar({ business = mockBusiness }: { business?: typeof
               <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
               <div>
                 <span className="font-semibold text-[14px] text-slate-900 dark:text-white block mb-0.5">Location:</span>
-                <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed">{business.location}</p>
+                <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed">{locationText}</p>
               </div>
             </div>
           </div>

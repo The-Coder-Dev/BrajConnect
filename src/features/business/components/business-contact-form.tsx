@@ -18,6 +18,9 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
+import { createBusinessLead } from "@/server/actions/business/leads";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   fullName: z.string().min(2, "Name is too short"),
@@ -32,10 +35,12 @@ const formSchema = z.object({
 });
 
 export function BusinessContactForm({
-  business = mockBusiness,
+  business,
 }: {
-  business?: typeof mockBusiness;
+  business?: any;
 }) {
+  if (!business) return null;
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,9 +56,30 @@ export function BusinessContactForm({
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Mock Submit:", values);
-    setIsSubmitted(true);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    try {
+      const res = await createBusinessLead({
+        businessId: business.id,
+        visitorName: values.fullName,
+        email: values.email,
+        phone: values.phone,
+        preferredContact: values.preferredContact,
+        subject: values.subject,
+        message: values.message,
+      });
+
+      if (res.success) {
+        setIsSubmitted(true);
+        toast.success("Enquiry sent successfully!");
+      } else {
+        toast.error(res.error || "Failed to send message.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send message.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -247,9 +273,17 @@ export function BusinessContactForm({
 
                   <Button
                     type="submit"
+                    disabled={isSubmitting}
                     className="w-full h-12 text-[15px] font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-[0_2px_10px_rgba(37,99,235,0.2)] transition-transform active:scale-[0.98]"
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Sending Message...
+                      </>
+                    ) : (
+                      "Send Message"
+                    )}
                   </Button>
                 </form>
               </div>

@@ -76,14 +76,18 @@ export async function POST(request: Request) {
     }
 
     // 8. Upload to Supabase Storage with strict business directory scoping
+    console.log(`[API Upload Document] Uploading file "${file.name}" for businessId: ${businessId}, Type: ${type}`);
     const res = await uploadDocument(file, businessId, type);
 
     if (res.error) {
+      console.error(`[API Upload Document] Storage upload failed for ${businessId}:`, res.error);
       return NextResponse.json(
         { error: res.error || "Failed to upload document to storage" },
         { status: 500 }
       );
     }
+
+    console.log(`[API Upload Document] Upload success. Generated Storage Path: "${res.path}"`);
 
     // 9. Return storage path, file metadata
     return NextResponse.json({

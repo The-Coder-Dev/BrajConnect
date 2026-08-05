@@ -9,6 +9,8 @@ import { Toaster } from "@/components/ui/sonner";
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+  display: "swap",
+  adjustFontFallback: false,
 });
 
 

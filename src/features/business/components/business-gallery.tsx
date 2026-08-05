@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
-export function BusinessGallery({ business = mockBusiness }: { business?: typeof mockBusiness }) {
-  const images = business.images || [];
+export function BusinessGallery({ business }: { business?: any }) {
+  if (!business) return null;
+  const images = (Array.isArray(business.gallery) && business.gallery.length > 0 ? business.gallery : business.images) || [];
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -59,7 +60,7 @@ export function BusinessGallery({ business = mockBusiness }: { business?: typeof
         </div>
 
         {/* Grid of 4 smaller images */}
-        {sideImages.map((img, idx) => (
+        {sideImages.map((img: any, idx: number) => (
           <div 
             key={idx} 
             onClick={() => openLightbox(idx + 1)}

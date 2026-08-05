@@ -18,6 +18,8 @@ export async function submitBusinessForReview(businessId: string) {
 
     const userId = session.user.id;
 
+    console.log(`[submitBusinessForReview] Submitting businessId: ${businessId} for userId: ${userId}`);
+
     // We use a transaction to validate everything and update the status
     return await db.transaction(async (tx) => {
       // Verify ownership & get current state
@@ -33,8 +35,11 @@ export async function submitBusinessForReview(businessId: string) {
       });
 
       if (!existing) {
+        console.warn(`[submitBusinessForReview] Business ${businessId} not found or not owned by user ${userId}`);
         throw new Error("Business not found or unauthorized");
       }
+
+      console.log(`[submitBusinessForReview] Validating business state. Current Status: '${existing.status}', Document Count: ${existing.documents?.length || 0}`);
 
       // Task 8: Validate business workflow state transition
       if (!isValidStatusTransition(existing.status, "pending_review")) {
@@ -62,6 +67,7 @@ export async function submitBusinessForReview(businessId: string) {
       
       // Task 9: Re-enable required verification document validation
       if (!existing.documents || existing.documents.length === 0) {
+        console.warn(`[submitBusinessForReview] Missing verification documents for businessId: ${businessId}`);
         throw new Error("At least one verification document is required before submitting for review.");
       }
 
@@ -69,6 +75,8 @@ export async function submitBusinessForReview(businessId: string) {
       await tx.update(business)
         .set({ status: "pending_review", updatedAt: new Date() })
         .where(eq(business.id, businessId));
+
+      console.log(`[submitBusinessForReview] Business ${businessId} successfully transitioned to 'pending_review' status.`);
 
       return { success: true };
     });

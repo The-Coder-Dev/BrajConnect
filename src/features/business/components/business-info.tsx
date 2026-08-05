@@ -1,15 +1,14 @@
-import { mockBusiness } from '../data/mock-business';
 import { Info, Users, Briefcase, Languages, Calendar, Clock, DollarSign, Activity } from 'lucide-react';
 
-export function BusinessInfo({ business = mockBusiness }: { business?: typeof mockBusiness }) {
+export function BusinessInfo({ business }: { business?: any }) {
+  if (!business) return null;
   const highlights = [
-    { label: "Established", value: business.highlights.established || "2015", icon: Calendar },
-    { label: "Owner", value: "Priya Sharma", icon: Users }, // Following wireframe example "Owner"
-    { label: "Languages", value: business.highlights.languages || "English, Hindi", icon: Languages },
-    { label: "Price Range", value: "$$ - $$$", icon: DollarSign },
-    { label: "Team Size", value: business.highlights.employees || "10-50", icon: Users },
-    { label: "Business Type", value: "Premium Salon", icon: Briefcase }, // Following wireframe example
+    { label: "Owner", value: business.owner?.name || "Business Owner", icon: Users },
+    { label: "Languages", value: business.highlights?.languages || "English, Hindi", icon: Languages },
+    { label: "Category", value: typeof business.category === 'object' ? business.category?.name : (business.category || 'General'), icon: Briefcase },
   ];
+
+  const descriptionText = business.fullDescription || business.shortDescription || business.description || "No description provided.";
 
   return (
     <div className="w-full space-y-8">
@@ -17,7 +16,7 @@ export function BusinessInfo({ business = mockBusiness }: { business?: typeof mo
       <div>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">About the Business</h2>
         <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-[15px]">
-          {business.description}
+          {descriptionText}
         </p>
       </div>
 
