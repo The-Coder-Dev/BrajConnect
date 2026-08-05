@@ -354,7 +354,7 @@ export default async function BusinessDetailsPage({ params }: { params: Promise<
                         <FileText className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-foreground truncate max-w-[250px]">{doc.fileName}</p>
+                        <p className="text-sm font-bold text-foreground truncate max-w-62.5">{doc.fileName}</p>
                         <p className="text-[10px] text-muted-foreground uppercase font-semibold">
                           {doc.documentType} · Uploaded {new Date(doc.uploadedAt).toLocaleDateString()}
                         </p>
@@ -524,7 +524,7 @@ export default async function BusinessDetailsPage({ params }: { params: Promise<
               <div className="space-y-2 text-xs">
                 {biz.socials.map((s: any) => (
                   <div key={s.id} className="flex items-center gap-2 py-1.5 border-b last:border-0">
-                    <span className="font-semibold capitalize text-foreground min-w-[70px]">{s.platform}:</span>
+                    <span className="font-semibold capitalize text-foreground min-w-17.5">{s.platform}:</span>
                     <a
                       href={s.url}
                       target="_blank"

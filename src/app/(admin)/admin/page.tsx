@@ -214,7 +214,7 @@ export default async function AdminDashboardPage() {
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {stats.recentActivities.map((act: any) => (
                     <div key={act.id} className="relative group">
-                      <div className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-background" />
+                      <div className="absolute -left-5.25 top-1 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-background" />
                       <div className="space-y-1">
                         <p className="text-xs font-semibold leading-tight">
                           <span className="capitalize text-primary">{act.action?.replace("_", " ")}</span> on{" "}

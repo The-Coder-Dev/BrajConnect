@@ -7,8 +7,8 @@ import Link from "next/link";
 export function CTASection() {
   return (
     <section className="py-32 bg-white relative">
-      <div className="container mx-auto px-4 md:px-6 max-w-[1440px]">
-        <div className="relative rounded-[3rem] overflow-hidden bg-slate-950 p-10 md:p-24 text-center flex flex-col items-center justify-center min-h-[500px] shadow-2xl border border-slate-800">
+      <div className="container mx-auto px-4 md:px-6 max-w-360">
+        <div className="relative rounded-[3rem] overflow-hidden bg-slate-950 p-10 md:p-24 text-center flex flex-col items-center justify-center min-h-125 shadow-2xl border border-slate-800">
           {/* Animated Background Gradients & Parallax Shapes */}
           <div className="absolute inset-0 overflow-hidden z-0">
             <div className="absolute inset-0">

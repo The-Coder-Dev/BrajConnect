@@ -233,7 +233,7 @@ export function BusinessContactForm({
                     </label>
                     <Textarea
                       placeholder="Write your message here..."
-                      className="min-h-[140px] rounded-lg border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 focus-visible:ring-blue-500 resize-none p-4"
+                      className="min-h-35 rounded-lg border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 focus-visible:ring-blue-500 resize-none p-4"
                       {...form.register("message")}
                     />
                     {form.formState.errors.message && (

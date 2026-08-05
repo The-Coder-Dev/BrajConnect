@@ -90,7 +90,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
           <Button
             onClick={() => reset()}
             size="lg"
-            className="w-full sm:w-auto min-w-[140px] gap-2 font-semibold cursor-pointer shadow-md hover:shadow-lg transition-all"
+            className="w-full sm:w-auto min-w-35 gap-2 font-semibold cursor-pointer shadow-md hover:shadow-lg transition-all"
           >
             <RefreshCw className="w-4 h-4" />
             Try Again
@@ -99,7 +99,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
           <Button
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto min-w-[140px] gap-2 cursor-pointer hover:bg-muted transition-colors"
+            className="w-full sm:w-auto min-w-35 gap-2 cursor-pointer hover:bg-muted transition-colors"
             render={<Link href="/" />}
           >
             <Home className="w-4 h-4" />

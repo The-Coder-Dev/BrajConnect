@@ -8,7 +8,7 @@ export function Footer() {
       {/* Decorative background element */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-linear-to-r from-transparent via-slate-300 to-transparent" />
       
-      <div className="container mx-auto px-6 md:px-12 max-w-[1440px] relative z-10">
+      <div className="container mx-auto px-6 md:px-12 max-w-360 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-8 mb-24">
           
           <div className="lg:col-span-5 pr-8">

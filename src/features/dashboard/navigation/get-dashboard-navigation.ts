@@ -148,15 +148,16 @@ export function getDashboardNavigation({
   // --- STATE E: PUBLISHED BUSINESS OWNER SIDEBAR ---
   if (status === "published") {
     const businessSlugOrId = activeBusiness.slug || activeBusiness.id;
+    const editBaseUrl = `/dashboard/businesses/${activeBusiness.id}/edit`;
 
     navGroups.push({
       label: "Business Operations",
       items: [
         { title: "Dashboard Overview", url: "/dashboard", icon: LayoutDashboard },
         { title: "Business Profile", url: `/business/${businessSlugOrId}`, icon: Building2 },
-        { title: "Edit Business", url: "/setup/business", icon: Pencil },
-        { title: "Gallery", url: "/setup/business", icon: ImageIcon },
-        { title: "Business Hours", url: "/setup/business", icon: Clock },
+        { title: "Edit Business", url: editBaseUrl, icon: Pencil },
+        { title: "Gallery", url: `${editBaseUrl}?tab=gallery`, icon: ImageIcon },
+        { title: "Business Hours", url: `${editBaseUrl}?tab=hours`, icon: Clock },
         { title: "Leads", url: "/dashboard", icon: MessageSquare },
         { title: "Reviews", url: "/dashboard", icon: Star },
         helperBuildItem({
@@ -174,11 +175,10 @@ export function getDashboardNavigation({
       items: [
         { title: "Add Another Business", url: "/setup/business", icon: Plus },
         helperBuildItem({
-          title: "Subscription",
+          title: "Pricing & Plans",
           url: "/dashboard/settings",
           icon: Sparkles,
         }),
-        { title: "Billing", url: "/dashboard/settings", icon: CreditCard, badge: "PRO" },
         { title: "My Profile", url: "/dashboard/profile", icon: User },
         { title: "Support", url: "/dashboard/support", icon: LifeBuoy },
       ],

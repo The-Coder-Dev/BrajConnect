@@ -43,7 +43,7 @@ export function BusinessHero({ business }: { business?: any }) {
         
         {/* Logo */}
         <div className="relative -mt-16 sm:-mt-20 z-10">
-          <div className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] p-1.5 bg-white dark:bg-slate-950 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+          <div className="w-30 h-30 sm:w-35 sm:h-35 p-1.5 bg-white dark:bg-slate-950 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
             <div className="w-full h-full rounded-full overflow-hidden bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
               <img 
                 src={logo} 

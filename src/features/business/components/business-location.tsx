@@ -1,14 +1,16 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { MapPin, Navigation, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { trackBusinessMetric } from '@/server/actions/analytics';
 import { toast } from 'sonner';
 
 export function BusinessLocation({ business }: { business?: any }) {
   if (!business) return null;
 
   const locationText = typeof business.location === 'object'
-    ? (business.location?.formattedAddress || `${business.location?.city || 'Mathura'}, ${business.location?.state || 'UP'}`)
+    ? (business.location?.address || business.location?.formattedAddress || `${business.location?.city || 'Mathura'}, ${business.location?.state || 'UP'}`)
     : (business.location || 'Mathura, UP');
 
   const lat = typeof business.location === 'object' ? (business.location?.latitude ?? 27.4924) : (business.coordinates?.lat ?? 27.4924);
@@ -19,23 +21,28 @@ export function BusinessLocation({ business }: { business?: any }) {
     toast.success("Address copied to clipboard");
   };
 
+  const handleDirections = () => {
+    trackBusinessMetric(business.id, 'direction_click');
+    window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Location</h2>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Location & Directions</h2>
       </div>
 
       <div className="overflow-hidden border border-slate-100 dark:border-slate-800/60 rounded-xl bg-white dark:bg-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col">
-        {/* Map Placeholder */}
-        <div className="w-full h-[240px] sm:h-[280px] bg-slate-100 dark:bg-slate-800 relative group flex items-center justify-center overflow-hidden">
+        {/* Map Header Box */}
+        <div className="w-full h-60 sm:h-70 bg-slate-100 dark:bg-slate-800 relative group flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 opacity-10 dark:opacity-5" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
           
           <div className="relative z-10 flex flex-col items-center p-5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-white/20 dark:border-slate-700/50">
             <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-3 shadow-sm">
               <MapPin className="w-5 h-5" />
             </div>
-            <p className="font-semibold text-slate-900 dark:text-white text-sm">Interactive Map</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">lat: {lat}, lng: {lng}</p>
+            <p className="font-semibold text-slate-900 dark:text-white text-sm">{locationText}</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">Coordinates: {lat}, {lng}</p>
           </div>
         </div>
 
@@ -52,13 +59,20 @@ export function BusinessLocation({ business }: { business?: any }) {
           </div>
           
           <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-slate-100 dark:border-slate-800/60">
-            <Button variant="outline" className="flex-1 sm:flex-none gap-2 rounded-lg h-9 border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-600 cursor-pointer" onClick={handleCopy}>
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none gap-2 rounded-lg h-9 border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-600 cursor-pointer"
+              onClick={handleCopy}
+            >
               <Copy className="w-3.5 h-3.5" />
-              Copy
+              Copy Address
             </Button>
-            <Button className="flex-1 sm:flex-none gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-[0_2px_10px_rgba(37,99,235,0.2)] h-9 transition-all cursor-pointer">
+            <Button
+              onClick={handleDirections}
+              className="flex-1 sm:flex-none gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-[0_2px_10px_rgba(37,99,235,0.2)] h-9 transition-all cursor-pointer"
+            >
               <Navigation className="w-3.5 h-3.5" />
-              Directions
+              Get Directions
             </Button>
           </div>
         </div>

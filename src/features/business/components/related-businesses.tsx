@@ -32,7 +32,7 @@ export function RelatedBusinesses({ business }: { business?: any }) {
               href={`/business/${rb.slug}`}
               className="group flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-white dark:bg-slate-900 hover:border-blue-200 dark:hover:border-slate-700 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all cursor-pointer"
             >
-              <div className="w-[84px] h-[84px] rounded-lg overflow-hidden shrink-0 border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
+              <div className="w-21 h-21 rounded-lg overflow-hidden shrink-0 border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
                 <img src={logo} alt={rb.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               
@@ -57,7 +57,7 @@ export function RelatedBusinesses({ business }: { business?: any }) {
                   </span>
                   <span className="flex items-center text-slate-500 dark:text-slate-400 truncate">
                     <MapPin className="w-3.5 h-3.5 mr-1 shrink-0" />
-                    <span className="truncate max-w-[100px]">{locationText}</span>
+                    <span className="truncate max-w-25">{locationText}</span>
                   </span>
                 </div>
               </div>

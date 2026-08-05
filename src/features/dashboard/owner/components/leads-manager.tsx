@@ -125,7 +125,7 @@ export function LeadsManager({ businessId, initialLeads = [] }: LeadsManagerProp
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Lead List */}
-          <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+          <div className="space-y-3 max-h-105 overflow-y-auto pr-1">
             {filteredLeads.map((lead) => (
               <div
                 key={lead.id}
@@ -137,7 +137,7 @@ export function LeadsManager({ businessId, initialLeads = [] }: LeadsManagerProp
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm truncate max-w-[140px]">{lead.visitorName}</span>
+                  <span className="font-bold text-sm truncate max-w-35">{lead.visitorName}</span>
                   {getStatusBadge(lead.status)}
                 </div>
                 <p className="text-xs text-muted-foreground line-clamp-1 font-medium">{lead.subject || lead.message}</p>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
+import { Analytics } from '@vercel/analytics/next';
 import { Toaster } from "@/components/ui/sonner";
 
 
@@ -31,6 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
+         <Analytics />
         <Toaster />
       </body>
     </html>

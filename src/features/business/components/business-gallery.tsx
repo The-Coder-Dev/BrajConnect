@@ -42,7 +42,7 @@ export function BusinessGallery({ business }: { business?: any }) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 h-[300px] sm:h-[400px]">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 h-75 sm:h-100">
         
         {/* Featured Image - Takes up left half on desktop */}
         <div 
@@ -87,7 +87,7 @@ export function BusinessGallery({ business }: { business?: any }) {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-[85vw] lg:max-w-[1200px] h-[90vh] p-0 bg-black/95 border-none shadow-2xl flex flex-col overflow-hidden rounded-2xl">
+        <DialogContent className="max-w-[95vw] sm:max-w-[85vw] lg:max-w-300 h-[90vh] p-0 bg-black/95 border-none shadow-2xl flex flex-col overflow-hidden rounded-2xl">
           <DialogTitle className="sr-only">Image Lightbox</DialogTitle>
           <DialogDescription className="sr-only">View images of {business.name}</DialogDescription>
           

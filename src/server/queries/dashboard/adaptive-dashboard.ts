@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { db } from "@/db";
-import { business, businessLeads, notifications, businessAnalytics } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { business, businessLeads, notifications, businessAnalytics, activityLogs, reviews } from "@/db/schema";
+import { eq, and, desc, avg, count } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getFriendlyErrorMessage } from "@/lib/utils";
+import { calculateBusinessHealthScore, HealthScoreResult } from "@/lib/utils/health-score";
 
 export type DashboardLifecycleState =
   | "NO_BUSINESS"
@@ -22,7 +23,7 @@ export interface DraftCompletionInfo {
 
 export interface ActivityTimelineItem {
   id: string;
-  type: "created" | "updated" | "submitted" | "published" | "rejected" | "lead" | "review";
+  type: string;
   title: string;
   description: string;
   time: Date;
@@ -80,6 +81,7 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
           businesses: [],
           activeBusiness: null,
           draftCompletion: null,
+          healthScore: null,
           metrics: {
             profileViews: 0,
             phoneClicks: 0,
@@ -133,6 +135,9 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
 
     console.log(`[Adaptive Dashboard] Active Business ID: ${activeBiz.id}, Name: "${activeBiz.name}", Status: '${activeBiz.status}', Resolved State: ${state}`);
 
+    // Compute Health Score dynamically
+    const healthScore: HealthScoreResult = calculateBusinessHealthScore(activeBiz);
+
     // Compute Draft completion if in DRAFT status
     let draftCompletion: DraftCompletionInfo | null = null;
     if (state === "DRAFT") {
@@ -160,9 +165,8 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
         orderBy: [desc(notifications.createdAt)],
         limit: 10,
       });
-      console.log(`[Adaptive Dashboard] Notifications loaded: ${userNotifications.length} items`);
     } catch (notifErr) {
-      console.warn("[Adaptive Dashboard] Notifications query skipped (table missing or unmigrated):", notifErr);
+      console.warn("[Adaptive Dashboard] Notifications query skipped:", notifErr);
       userNotifications = [];
     }
 
@@ -176,9 +180,8 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
         orderBy: [desc(businessLeads.createdAt)],
         limit: 10,
       });
-      console.log(`[Adaptive Dashboard] Business leads loaded: ${leads.length} items`);
     } catch (leadsErr) {
-      console.warn("[Adaptive Dashboard] Leads query skipped (table missing or unmigrated):", leadsErr);
+      console.warn("[Adaptive Dashboard] Leads query skipped:", leadsErr);
       leads = [];
     }
 
@@ -190,10 +193,61 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
       analyticsData = await db.query.businessAnalytics.findFirst({
         where: eq(businessAnalytics.businessId, activeBiz.id),
       });
-      console.log("[Adaptive Dashboard] Business analytics loaded:", analyticsData ? "Found" : "Default");
     } catch (analyticsErr) {
-      console.warn("[Adaptive Dashboard] Analytics query skipped (table missing or unmigrated):", analyticsErr);
+      console.warn("[Adaptive Dashboard] Analytics query skipped:", analyticsErr);
       analyticsData = null;
+    }
+
+    // 4. Reviews summary
+    let reviewsList: any[] = [];
+    let avgRatingVal = 5.0;
+    try {
+      reviewsList = await db.query.reviews.findMany({
+        where: eq(reviews.businessId, activeBiz.id),
+        orderBy: [desc(reviews.createdAt)],
+      });
+
+      const approvedReviews = reviewsList.filter((r) => r.status === "approved");
+      if (approvedReviews.length > 0) {
+        const sum = approvedReviews.reduce((acc, r) => acc + (r.rating || 5), 0);
+        avgRatingVal = parseFloat((sum / approvedReviews.length).toFixed(1));
+      }
+    } catch (revErr) {
+      console.warn("[Adaptive Dashboard] Reviews query skipped:", revErr);
+      reviewsList = [];
+    }
+
+    // 5. Activity Timeline Audit Log from database
+    let activities: ActivityTimelineItem[] = [];
+    try {
+      const dbActivities = await db.query.activityLogs.findMany({
+        where: eq(activityLogs.businessId, activeBiz.id),
+        orderBy: [desc(activityLogs.createdAt)],
+        limit: 15,
+      });
+
+      activities = dbActivities.map((a) => ({
+        id: a.id,
+        type: a.type,
+        title: a.title,
+        description: a.description,
+        time: new Date(a.createdAt),
+      }));
+    } catch (actErr) {
+      console.warn("[Adaptive Dashboard] Activity logs query skipped:", actErr);
+      activities = [];
+    }
+
+    // Fallback activity generation if database log table is empty
+    if (activities.length === 0) {
+      const createdAtDate = new Date(activeBiz.createdAt || Date.now());
+      activities.push({
+        id: `${activeBiz.id}-created`,
+        type: "created",
+        title: "Business Listing Created",
+        description: `"${activeBiz.name}" was registered on BachatLal.`,
+        time: createdAtDate,
+      });
     }
 
     const metrics = {
@@ -205,81 +259,11 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
       shareCount: analyticsData?.shareCount ?? 0,
       totalLeads: leads.length,
       unreadLeads: unreadLeadsCount,
-      averageRating: 4.8,
-      reviewsCount: 12,
+      averageRating: avgRatingVal,
+      reviewsCount: reviewsList.length,
     };
 
-    // --- ACTIVITY AUDIT TIMELINE GENERATION ---
-    const activities: ActivityTimelineItem[] = [];
-
-    const createdAtDate = new Date(activeBiz.createdAt || Date.now());
-    const updatedAtDate = new Date(activeBiz.updatedAt || Date.now());
-
-    // Created event
-    activities.push({
-      id: `${activeBiz.id}-created`,
-      type: "created",
-      title: "Business Draft Created",
-      description: `"${activeBiz.name}" was initially registered.`,
-      time: createdAtDate,
-    });
-
-    // Updates
-    if (updatedAtDate.getTime() - createdAtDate.getTime() > 10000) {
-      activities.push({
-        id: `${activeBiz.id}-updated`,
-        type: "updated",
-        title: "Profile Updated",
-        description: `"${activeBiz.name}" details were edited.`,
-        time: updatedAtDate,
-      });
-    }
-
-    // Status transition events
-    if (activeBiz.status === "pending_review") {
-      activities.push({
-        id: `${activeBiz.id}-submitted`,
-        type: "submitted",
-        title: "Submitted for Review",
-        description: `"${activeBiz.name}" is undergoing manual verification.`,
-        time: updatedAtDate,
-      });
-    } else if (activeBiz.status === "published") {
-      const publishedDate = new Date(activeBiz.publishedAt || activeBiz.updatedAt || Date.now());
-      activities.push({
-        id: `${activeBiz.id}-published`,
-        type: "published",
-        title: "Business Approved & Published",
-        description: `"${activeBiz.name}" is live on BrajConnect.`,
-        time: publishedDate,
-      });
-    } else if (activeBiz.status === "rejected") {
-      activities.push({
-        id: `${activeBiz.id}-rejected`,
-        type: "rejected",
-        title: "Submission Rejected",
-        description: `Reason: ${activeBiz.rejectionReason || "Verification criteria incomplete."}`,
-        time: updatedAtDate,
-      });
-    }
-
-    // Add Lead events to activity timeline safely
-    (leads || []).forEach((l) => {
-      if (l && l.id) {
-        activities.push({
-          id: `act-${l.id}`,
-          type: "lead",
-          title: "Lead Received",
-          description: `${l.visitorName || "A visitor"} submitted a contact inquiry.`,
-          time: new Date(l.createdAt || Date.now()),
-        });
-      }
-    });
-
-    // Sort timeline desc safely
-    activities.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-
-    console.log(`[Adaptive Dashboard] Dashboard loaded successfully for business ${activeBiz.id}`);
+    console.log(`[Adaptive Dashboard] Loaded dashboard for ${activeBiz.name} (Health Score: ${healthScore.score}%)`);
 
     return {
       success: true,
@@ -289,11 +273,13 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
         businesses: ownerBusinesses,
         activeBusiness: activeBiz,
         draftCompletion,
+        healthScore,
         metrics,
         leads,
         notifications: userNotifications,
         unreadNotificationsCount,
-        activities: activities.slice(0, 10),
+        activities,
+        reviews: reviewsList,
       },
     };
   } catch (error: any) {

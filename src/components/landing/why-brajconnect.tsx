@@ -46,7 +46,7 @@ export function WhyBrajConnect() {
       {/* Subtle Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-blue-100/40 via-slate-50 to-slate-50 pointer-events-none" />
       
-      <div className="container mx-auto px-4 md:px-6 max-w-[1440px] relative z-10">
+      <div className="container mx-auto px-4 md:px-6 max-w-360 relative z-10">
         <div className="max-w-3xl mx-auto mb-20 text-center">
           <SectionHeader 
             title="Why Choose BrajConnect" 

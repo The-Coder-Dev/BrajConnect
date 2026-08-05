@@ -40,7 +40,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full pt-2">
           <Button
             size="lg"
-            className="w-full sm:w-auto min-w-[160px] gap-2 font-semibold cursor-pointer shadow-md hover:shadow-lg transition-all"
+            className="w-full sm:w-auto min-w-40 gap-2 font-semibold cursor-pointer shadow-md hover:shadow-lg transition-all"
             render={<Link href="/" />}
           >
             <Home className="w-4 h-4" />

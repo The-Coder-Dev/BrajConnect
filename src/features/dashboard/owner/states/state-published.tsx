@@ -49,7 +49,7 @@ export function StatePublished({
               sizes="100vw"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
           <div className="absolute top-4 right-4 flex gap-2">
             <Badge className="bg-emerald-500 text-white font-bold px-3 py-1 text-xs shadow-md flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> Published & Verified
@@ -92,7 +92,7 @@ export function StatePublished({
                 <ExternalLink className="w-4 h-4" /> View Public Profile
               </Button>
             </Link>
-            <Link href="/setup/business">
+            <Link href={`/dashboard/businesses/${business.id}/edit`}>
               <Button className="rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs gap-1.5 h-11">
                 <Edit3 className="w-4 h-4" /> Edit Business Details
               </Button>
@@ -153,8 +153,10 @@ export function StatePublished({
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Health Score</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
           </div>
-          <div className="text-3xl font-black text-emerald-600 mt-3">100%</div>
-          <p className="text-[11px] text-muted-foreground mt-1">Verified & Active</p>
+          <div className="text-3xl font-black text-emerald-600 mt-3">
+            {Math.round(((metrics?.profileViews ? 80 : 60) + (business.logoUrl ? 20 : 0)))}%
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1">Profile Completeness</p>
         </Card>
       </div>
 
@@ -162,7 +164,7 @@ export function StatePublished({
       <div className="space-y-4">
         <h2 className="text-xl font-bold tracking-tight">Business Management Quick Actions</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Link href="/setup/business">
+          <Link href={`/dashboard/businesses/${business.id}/edit`}>
             <Card className="rounded-2xl border-border/50 hover:border-red-500/40 p-5 bg-card hover:bg-slate-50/50 dark:hover:bg-slate-900/50 shadow-xs hover:shadow-sm cursor-pointer transition-all flex items-center gap-4">
               <div className="h-11 w-11 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 flex items-center justify-center shrink-0">
                 <Edit3 className="h-5 w-5" />
@@ -174,7 +176,7 @@ export function StatePublished({
             </Card>
           </Link>
 
-          <Link href="/setup/business">
+          <Link href={`/dashboard/businesses/${business.id}/edit?tab=gallery`}>
             <Card className="rounded-2xl border-border/50 hover:border-blue-500/40 p-5 bg-card hover:bg-slate-50/50 dark:hover:bg-slate-900/50 shadow-xs hover:shadow-sm cursor-pointer transition-all flex items-center gap-4">
               <div className="h-11 w-11 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center shrink-0">
                 <ImageIcon className="h-5 w-5" />
@@ -186,7 +188,7 @@ export function StatePublished({
             </Card>
           </Link>
 
-          <Link href="/setup/business">
+          <Link href={`/dashboard/businesses/${business.id}/edit?tab=hours`}>
             <Card className="rounded-2xl border-border/50 hover:border-amber-500/40 p-5 bg-card hover:bg-slate-50/50 dark:hover:bg-slate-900/50 shadow-xs hover:shadow-sm cursor-pointer transition-all flex items-center gap-4">
               <div className="h-11 w-11 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 flex items-center justify-center shrink-0">
                 <Clock className="h-5 w-5" />
@@ -198,7 +200,7 @@ export function StatePublished({
             </Card>
           </Link>
 
-          <Link href="/setup/business">
+          <Link href={`/dashboard/businesses/${business.id}/edit?tab=services`}>
             <Card className="rounded-2xl border-border/50 hover:border-emerald-500/40 p-5 bg-card hover:bg-slate-50/50 dark:hover:bg-slate-900/50 shadow-xs hover:shadow-sm cursor-pointer transition-all flex items-center gap-4">
               <div className="h-11 w-11 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center shrink-0">
                 <Briefcase className="h-5 w-5" />

@@ -13,7 +13,7 @@ export async function FeaturedBusinesses() {
 
   return (
     <section id="businesses" className="py-24 bg-slate-50">
-      <div className="container mx-auto px-4 md:px-6 max-w-[1440px]">
+      <div className="container mx-auto px-4 md:px-6 max-w-360">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <SectionHeader
             title="Verified Businesses"
