@@ -73,7 +73,7 @@ export function Footer() {
 
         <div className="pt-10 border-t border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-slate-500 font-medium">
-            © {new Date().getFullYear()} BrajConnect. All rights reserved.
+            © {new Date().getFullYear()} BachatLal. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <span className="font-medium text-slate-700 flex items-center bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">

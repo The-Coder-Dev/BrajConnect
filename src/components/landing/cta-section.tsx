@@ -36,7 +36,7 @@ export function CTASection() {
             <h2 className="text-5xl md:text-6xl lg:text-6xl font-extrabold text-white tracking-tight mb-8 leading-[1.1]">
               Grow your business with{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-red-400 to-orange-400">
-                BrajConnect
+                BachatLal
               </span>
             </h2>
 

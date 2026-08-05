@@ -87,7 +87,7 @@ export function LeadsManager({ businessId, initialLeads = [] }: LeadsManagerProp
             </Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Manage inquiries submitted by potential customers from your BrajConnect profile.
+            Manage inquiries submitted by potential customers from your BachatLal profile.
           </p>
         </div>
 

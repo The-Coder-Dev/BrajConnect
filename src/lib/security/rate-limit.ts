@@ -42,7 +42,7 @@ function getUpstashLimiter(requests: number, windowSeconds: number): Ratelimit |
     redis,
     limiter: Ratelimit.slidingWindow(requests, `${windowSeconds} s`),
     analytics: true,
-    prefix: "brajconnect:ratelimit",
+    prefix: "bachatlal:ratelimit",
   });
 
   limiterInstances.set(key, limiter);

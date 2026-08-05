@@ -4,10 +4,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { fadeSlideVariants } from "../animations";
-import { AssistantCard, AssistantQuestion } from "../components/ui/assistant-card";
+import {
+  AssistantCard,
+  AssistantQuestion,
+} from "../components/ui/assistant-card";
 import { Button } from "@/components/ui/button";
 import {
-  X, Loader2, CheckCircle2, AlertCircle, UploadCloud
+  X,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  UploadCloud,
 } from "lucide-react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { BusinessSetupInput } from "@/lib/validations/business/setup";
@@ -31,8 +38,15 @@ interface PendingFile {
 const uploadGalleryFile = (
   file: File,
   businessId: string,
-  onProgress: (pct: number) => void
-): Promise<{ url: string; publicId: string; format?: string; bytes?: number; width?: number; height?: number }> => {
+  onProgress: (pct: number) => void,
+): Promise<{
+  url: string;
+  publicId: string;
+  format?: string;
+  bytes?: number;
+  width?: number;
+  height?: number;
+}> => {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/upload/image");
@@ -73,7 +87,8 @@ const uploadGalleryFile = (
 export function StepGallery() {
   const { control } = useFormContext<BusinessSetupInput>();
   const { fields, remove } = useFieldArray({ control, name: "gallery" });
-  const { registerStepValidator, unregisterStepValidator, businessId } = useAssistant();
+  const { registerStepValidator, unregisterStepValidator, businessId } =
+    useAssistant();
 
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -119,19 +134,23 @@ export function StepGallery() {
 
           // Mark specific file as uploading
           setPendingFiles((prev) =>
-            prev.map((f) => (f.id === pf.id ? { ...f, status: "uploading", progress: 0 } : f))
+            prev.map((f) =>
+              f.id === pf.id ? { ...f, status: "uploading", progress: 0 } : f,
+            ),
           );
 
           try {
             const res = await uploadGalleryFile(pf.file, bId, (pct) => {
               setPendingFiles((prev) =>
-                prev.map((f) => (f.id === pf.id ? { ...f, progress: pct } : f))
+                prev.map((f) => (f.id === pf.id ? { ...f, progress: pct } : f)),
               );
             });
 
             // Mark file as success
             setPendingFiles((prev) =>
-              prev.map((f) => (f.id === pf.id ? { ...f, status: "success" } : f))
+              prev.map((f) =>
+                f.id === pf.id ? { ...f, status: "success" } : f,
+              ),
             );
 
             uploadedImages.push({
@@ -145,8 +164,14 @@ export function StepGallery() {
           } catch (uploadErr: any) {
             setPendingFiles((prev) =>
               prev.map((f) =>
-                f.id === pf.id ? { ...f, status: "error", error: uploadErr.message || "Failed" } : f
-              )
+                f.id === pf.id
+                  ? {
+                      ...f,
+                      status: "error",
+                      error: uploadErr.message || "Failed",
+                    }
+                  : f,
+              ),
             );
             throw uploadErr;
           }
@@ -155,7 +180,9 @@ export function StepGallery() {
         // Persist references to DB
         const saveRes = await saveBusinessGallery(bId, uploadedImages);
         if (!saveRes.success) {
-          throw new Error(saveRes.error || "Failed to save gallery in database");
+          throw new Error(
+            saveRes.error || "Failed to save gallery in database",
+          );
         }
 
         return true;
@@ -198,7 +225,9 @@ export function StepGallery() {
       // MIME type verification
       const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
       if (!allowedTypes.includes(file.type)) {
-        toast.error(`"${file.name}" has an unsupported format. Use JPEG, PNG or WebP.`);
+        toast.error(
+          `"${file.name}" has an unsupported format. Use JPEG, PNG or WebP.`,
+        );
         continue;
       }
 
@@ -248,17 +277,23 @@ export function StepGallery() {
 
         {/* Drop zone */}
         {!atLimit && (
-          <label className={cn(
-            "flex flex-col items-center justify-center h-40 rounded-2xl border-2 border-dashed cursor-pointer transition-all duration-300 group bg-slate-50/50",
-            isUploading
-              ? "pointer-events-none opacity-60"
-              : "border-slate-200 hover:border-red-400 hover:bg-red-50/30"
-          )}>
+          <label
+            className={cn(
+              "flex flex-col items-center justify-center h-40 rounded-2xl border-2 border-dashed cursor-pointer transition-all duration-300 group bg-slate-50/50",
+              isUploading
+                ? "pointer-events-none opacity-60"
+                : "border-slate-200 hover:border-red-400 hover:bg-red-50/30",
+            )}
+          >
             <div className="h-12 w-12 rounded-full bg-white shadow-sm text-red-600 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-red-100 transition-all duration-300">
               <UploadCloud className="h-6 w-6" />
             </div>
-            <span className="text-sm font-semibold text-slate-900 mb-1">Add Photos</span>
-            <span className="text-xs text-slate-500">PNG, JPG, WebP · Max 5MB each</span>
+            <span className="text-sm font-semibold text-slate-900 mb-1">
+              Add Photos
+            </span>
+            <span className="text-xs text-slate-500">
+              PNG, JPG, WebP · Max 5MB each
+            </span>
             <input
               type="file"
               multiple
@@ -320,7 +355,7 @@ export function StepGallery() {
                   alt="Pending upload"
                   className={cn(
                     "object-cover w-full h-full",
-                    pf.status === "uploading" && "opacity-50"
+                    pf.status === "uploading" && "opacity-50",
                   )}
                 />
 
@@ -328,7 +363,9 @@ export function StepGallery() {
                 {pf.status === "uploading" && (
                   <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center p-3">
                     <Loader2 className="h-6 w-6 text-white animate-spin mb-1" />
-                    <span className="text-white text-xs font-semibold">{pf.progress || 0}%</span>
+                    <span className="text-white text-xs font-semibold">
+                      {pf.progress || 0}%
+                    </span>
                     <div className="w-full bg-white/20 rounded-full h-1 mt-1 overflow-hidden">
                       <div
                         className="bg-white h-full transition-all duration-300"
@@ -366,15 +403,18 @@ export function StepGallery() {
                 )}
 
                 {/* Status badge */}
-                <div className={cn(
-                  "absolute bottom-2 left-2 text-white text-xs px-2 py-0.5 rounded-md font-medium shadow",
-                  pf.status === "pending" && "bg-blue-500",
-                  pf.status === "uploading" && "bg-yellow-500",
-                  pf.status === "success" && "bg-green-500",
-                  pf.status === "error" && "bg-red-500"
-                )}>
+                <div
+                  className={cn(
+                    "absolute bottom-2 left-2 text-white text-xs px-2 py-0.5 rounded-md font-medium shadow",
+                    pf.status === "pending" && "bg-blue-500",
+                    pf.status === "uploading" && "bg-yellow-500",
+                    pf.status === "success" && "bg-green-500",
+                    pf.status === "error" && "bg-red-500",
+                  )}
+                >
                   {pf.status === "pending" && "Ready"}
-                  {pf.status === "uploading" && `Uploading (${pf.progress || 0}%)`}
+                  {pf.status === "uploading" &&
+                    `Uploading (${pf.progress || 0}%)`}
                   {pf.status === "success" && "✓ Uploaded"}
                   {pf.status === "error" && "Failed"}
                 </div>

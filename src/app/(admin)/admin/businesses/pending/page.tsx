@@ -4,7 +4,7 @@ import { AdminBusinessTable } from "@/components/admin/business-table";
 import { Clock } from "lucide-react";
 
 export const metadata = {
-  title: "Pending Verification - Admin BrajConnect",
+  title: "Pending Verification - Admin BachatLal",
 };
 
 export default async function PendingBusinessesPage({

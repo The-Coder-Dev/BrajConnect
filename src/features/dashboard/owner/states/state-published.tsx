@@ -78,7 +78,7 @@ export function StatePublished({
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-1 max-w-2xl">
-                {business.shortDescription || "Live Business Listing on BrajConnect"}
+                {business.shortDescription || "Live Business Listing on BachatLal"}
               </p>
               <p className="text-xs text-slate-400 font-medium">
                 Published since {publishedDate}
@@ -254,7 +254,7 @@ export function StatePublished({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-500" />
-            <h4 className="font-bold text-base">Unlock BrajConnect Premium Business Tools</h4>
+            <h4 className="font-bold text-base">Unlock BachatLal Premium Business Tools</h4>
             <Badge className="bg-amber-500 text-white font-extrabold text-[10px]">PRO READY</Badge>
           </div>
           <p className="text-xs text-muted-foreground max-w-2xl">

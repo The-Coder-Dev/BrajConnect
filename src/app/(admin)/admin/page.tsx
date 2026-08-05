@@ -17,7 +17,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Admin Overview - BrajConnect",
+  title: "Admin Overview - BachatLal",
 };
 
 export default async function AdminDashboardPage() {

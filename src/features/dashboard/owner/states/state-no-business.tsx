@@ -20,7 +20,7 @@ export function StateNoBusiness({ userName }: StateNoBusinessProps) {
         <div className="relative z-10 max-w-2xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold backdrop-blur-md">
             <Building2 className="w-3.5 h-3.5 text-red-200" />
-            BrajConnect Owner Portal
+            BachatLal Owner Portal
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
             Welcome, {userName}! <br />
@@ -43,7 +43,7 @@ export function StateNoBusiness({ userName }: StateNoBusinessProps) {
       {/* Why Register Section */}
       <div className="space-y-6">
         <div className="text-center max-w-xl mx-auto">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">Why list your business on BrajConnect?</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Why list your business on BachatLal?</h2>
           <p className="text-muted-foreground text-sm mt-1">Everything you need to capture local customers and manage inquiries.</p>
         </div>
 
@@ -67,7 +67,7 @@ export function StateNoBusiness({ userName }: StateNoBusinessProps) {
               </div>
               <h3 className="font-bold text-lg">Verified Trust Badge</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Gain instant credibility with our official BrajConnect verification badge after document check.
+                Gain instant credibility with our official BachatLal verification badge after document check.
               </p>
             </CardContent>
           </Card>

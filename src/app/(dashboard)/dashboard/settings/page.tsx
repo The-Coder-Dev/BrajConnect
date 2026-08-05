@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Globe, Download, Trash2, Paintbrush } from "lucide-react";
 
 export const metadata = {
-  title: "Account Settings - BrajConnect",
+  title: "Account Settings - BachatLal",
 };
 
 export default async function SettingsPage() {

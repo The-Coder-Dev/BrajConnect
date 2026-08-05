@@ -2,7 +2,7 @@ import { requireAuth } from "@/lib/auth/guards";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 
 export const metadata = {
-  title: "My Profile - BrajConnect",
+  title: "My Profile - BachatLal",
 };
 
 export default async function ProfilePage() {

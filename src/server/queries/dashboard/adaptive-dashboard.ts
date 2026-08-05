@@ -250,7 +250,7 @@ export async function getAdaptiveDashboardData(selectedBusinessId?: string) {
         id: `${activeBiz.id}-published`,
         type: "published",
         title: "Business Approved & Published",
-        description: `"${activeBiz.name}" is live on BrajConnect.`,
+        description: `"${activeBiz.name}" is live on BachatLal.`,
         time: publishedDate,
       });
     } else if (activeBiz.status === "rejected") {

@@ -6,7 +6,7 @@ import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Verify your email - BrajConnect",
+  title: "Verify your email - BachatLal",
 };
 
 export default function VerifyEmailPage() {

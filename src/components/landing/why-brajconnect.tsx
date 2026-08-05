@@ -49,7 +49,7 @@ export function WhyBrajConnect() {
       <div className="container mx-auto px-4 md:px-6 max-w-[1440px] relative z-10">
         <div className="max-w-3xl mx-auto mb-20 text-center">
           <SectionHeader 
-            title="Why Choose BrajConnect" 
+            title="Why Choose BachatLal" 
             subtitle="We're building the most reliable and comprehensive business discovery platform for the Braj region, designed with a premium experience in mind."
             align="center"
           />

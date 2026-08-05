@@ -6,7 +6,7 @@ import { ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Unauthorized Access - BrajConnect",
+  title: "Unauthorized Access - BachatLal",
 };
 
 export default function UnauthorizedPage() {

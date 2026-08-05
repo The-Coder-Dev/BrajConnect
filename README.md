@@ -13,7 +13,6 @@
 ![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)
 ![Drizzle](https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=for-the-badge)
 ![BetterAuth](https://img.shields.io/badge/Better%20Auth-Authentication-black?style=for-the-badge)
-
 </div>
 
 ---

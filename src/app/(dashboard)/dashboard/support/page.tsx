@@ -4,7 +4,7 @@ import { LifeBuoy, BookOpen, MessageSquare } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/empty-state";
 
 export const metadata = {
-  title: "Support - BrajConnect",
+  title: "Support - BachatLal",
 };
 
 export default async function SupportPage() {

@@ -23,7 +23,7 @@ export function BottomCta() {
             <span className="text-red-200">Get discovered by thousands.</span>
           </h2>
           <p className="text-red-100/90 text-[17px] leading-relaxed max-w-xl">
-            Join BrajConnect to showcase your services, manage bookings, and build your brand presence in the local community.
+            Join BachatLal to showcase your services, manage bookings, and build your brand presence in the local community.
           </p>
         </div>
 

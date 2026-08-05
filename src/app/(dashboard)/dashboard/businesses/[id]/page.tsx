@@ -26,7 +26,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { BusinessDetailsActions } from "@/features/dashboard/owner";
 
 export const metadata = {
-  title: "Business Details - BrajConnect",
+  title: "Business Details - BachatLal",
 };
 
 export default async function BusinessDetailsPage({ params }: { params: Promise<{ id: string }> }) {

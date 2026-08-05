@@ -8,7 +8,7 @@ export function Logo() {
         <Building2 className="h-5 w-5" />
       </div>
       <div className="flex flex-col">
-        <span className="text-xl font-bold leading-none tracking-tight">BrajConnect</span>
+        <span className="text-xl font-bold leading-none tracking-tight">BachatLal</span>
         <span className="text-xs text-muted-foreground font-medium">Business Portal</span>
       </div>
     </Link>

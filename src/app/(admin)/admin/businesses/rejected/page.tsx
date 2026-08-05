@@ -4,7 +4,7 @@ import { AdminBusinessTable } from "@/components/admin/business-table";
 import { XCircle } from "lucide-react";
 
 export const metadata = {
-  title: "Rejected Businesses - Admin BrajConnect",
+  title: "Rejected Businesses - Admin BachatLal",
 };
 
 export default async function RejectedBusinessesPage({

@@ -10,8 +10,8 @@ import { SignUpForm } from "@/components/auth/sign-up-form";
 import { requireGuest } from "@/lib/auth/guards";
 
 export const metadata = {
-  title: "Create an Account - BrajConnect",
-  description: "Join BrajConnect and scale your business.",
+  title: "Create an Account - BachatLal",
+  description: "Join BachatLal and scale your business.",
 };
 
 export default async function SignUpPage() {
