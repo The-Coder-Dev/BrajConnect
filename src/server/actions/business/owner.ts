@@ -96,6 +96,7 @@ export async function getOwnerBusiness(businessId: string) {
             dynamicField: true,
           },
         },
+        categoryDetails: true,
         businessAmenities: {
           with: {
             amenity: true,
@@ -104,6 +105,7 @@ export async function getOwnerBusiness(businessId: string) {
         services: true,
       },
     });
+
 
     if (!biz) {
       return { success: false, error: "Business not found." };

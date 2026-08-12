@@ -28,6 +28,9 @@ import { createDraftBusiness } from "@/server/actions/business/onboarding/create
 import { saveBusinessBasic } from "@/server/actions/business/onboarding/save-basic";
 import { saveBusinessCategory } from "@/server/actions/business/onboarding/save-category";
 import { saveBusinessDynamicFields } from "@/server/actions/business/onboarding/save-dynamic-fields";
+import { saveBusinessCategoryDetails } from "@/server/actions/business/onboarding/save-category-details";
+
+
 import { saveBusinessContact } from "@/server/actions/business/onboarding/save-contact";
 import { saveBusinessLocation } from "@/server/actions/business/onboarding/save-location";
 import { saveBusinessHours } from "@/server/actions/business/onboarding/save-hours";
@@ -210,6 +213,11 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
             formData.dynamicFields = dynamicFields;
           }
 
+          if (draft.categoryDetails?.data) {
+            formData.categoryData = draft.categoryDetails.data as Record<string, unknown>;
+          }
+
+
           if (draft.services && draft.services.length > 0) {
             formData.services = draft.services.map((s: any) => ({
               name: s.title,
@@ -351,9 +359,17 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
         const res = await saveBusinessCategory(bId, data.categoryId);
         if (!res.success) throw new Error(res.error);
       } else if (stepId === "dynamic_fields" && bId) {
-        const res = await saveBusinessDynamicFields(bId, data.dynamicFields || {});
+        const res = await saveBusinessCategoryDetails(
+          bId,
+          data.categoryId,
+          (data.categoryData as Record<string, unknown>) || {}
+        );
         if (!res.success) throw new Error(res.error);
+        if (data.dynamicFields && Object.keys(data.dynamicFields).length > 0) {
+          await saveBusinessDynamicFields(bId, data.dynamicFields || {});
+        }
       } else if (stepId === "contact" && bId) {
+
         const res = await saveBusinessContact(bId, {
           primaryPhone: data.phone,
           whatsapp: data.whatsapp,

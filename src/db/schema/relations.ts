@@ -18,6 +18,7 @@ import { businessAmenities } from "./business-amenities";
 import { businessLeads } from "./leads";
 import { notifications } from "./notifications";
 import { businessAnalytics } from "./analytics";
+import { businessCategoryDetails } from "./category-details";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -65,7 +66,12 @@ export const businessRelations = relations(business, ({ one, many }) => ({
     fields: [business.id],
     references: [businessAnalytics.businessId],
   }),
+  categoryDetails: one(businessCategoryDetails, {
+    fields: [business.id],
+    references: [businessCategoryDetails.businessId],
+  }),
 }));
+
 
 export const categoryRelations = relations(category, ({ many }) => ({
   businessCategories: many(businessCategory),
@@ -202,3 +208,15 @@ export const businessAnalyticsRelations = relations(businessAnalytics, ({ one })
     references: [business.id],
   }),
 }));
+
+export const businessCategoryDetailsRelations = relations(businessCategoryDetails, ({ one }) => ({
+  business: one(business, {
+    fields: [businessCategoryDetails.businessId],
+    references: [business.id],
+  }),
+  category: one(category, {
+    fields: [businessCategoryDetails.categoryId],
+    references: [category.id],
+  }),
+}));
+

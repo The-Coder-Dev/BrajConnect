@@ -67,35 +67,6 @@ export function HeroSection() {
           >
             <SearchBar />
           </motion.div>
-          
-          {/* Trust Row */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm md:text-base font-medium text-slate-600 mb-12"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-slate-900 font-bold">5,000+</span>
-              <span>Businesses</span>
-            </div>
-            <div className="h-1 w-1 rounded-full bg-slate-300 hidden md:block"></div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-slate-900 font-bold">4.9</span>
-              <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-              <span>Average Rating</span>
-            </div>
-            <div className="h-1 w-1 rounded-full bg-slate-300 hidden md:block"></div>
-            <div className="flex items-center gap-2">
-              <span className="text-slate-900 font-bold">20+</span>
-              <span>Categories</span>
-            </div>
-            <div className="h-1 w-1 rounded-full bg-slate-300 hidden md:block"></div>
-            <div className="flex items-center gap-2">
-              <span className="text-slate-900 font-bold">40K+</span>
-              <span>Monthly Visitors</span>
-            </div>
-          </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}

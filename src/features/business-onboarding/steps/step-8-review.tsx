@@ -71,8 +71,31 @@ export function Step8Review() {
             <p><span className="font-medium text-foreground">Category:</span> {data.categoryId}</p>
           </Section>
           
+          {data.categoryData && Object.keys(data.categoryData).length > 0 && (
+            <Section title="Category Specific Details" onEdit={() => goToStep(3)}>
+              <div className="space-y-1">
+                {Object.entries(data.categoryData).map(([key, val]) => {
+                  if (val === undefined || val === null || val === "" || (Array.isArray(val) && val.length === 0)) return null;
+                  const displayKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                  let displayVal = String(val);
+                  if (Array.isArray(val)) {
+                    displayVal = val.map(v => typeof v === 'object' ? JSON.stringify(v) : String(v)).join(", ");
+                  } else if (typeof val === 'object') {
+                    displayVal = Object.entries(val as Record<string, unknown>).map(([k, v]) => `${k}: ${v}`).join(" | ");
+                  }
+                  return (
+                    <p key={key} className="text-xs">
+                      <span className="font-medium text-slate-900">{displayKey}:</span> {displayVal}
+                    </p>
+                  );
+                })}
+              </div>
+            </Section>
+          )}
+
           <Section title="Contact Information" onEdit={() => goToStep(4)}>
             <p><span className="font-medium text-foreground">Phone:</span> {data.phone}</p>
+
             {data.whatsapp && <p><span className="font-medium text-foreground">WhatsApp:</span> {data.whatsapp}</p>}
             <p><span className="font-medium text-foreground">Email:</span> {data.email}</p>
             {data.website && <p><span className="font-medium text-foreground">Website:</span> {data.website}</p>}

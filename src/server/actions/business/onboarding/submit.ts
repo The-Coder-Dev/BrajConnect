@@ -29,7 +29,10 @@ export async function submitBusinessForReview(businessId: string) {
           contact: true,
           location: true,
           hours: true,
-          businessCategories: true,
+          businessCategories: {
+            with: { category: true },
+          },
+          categoryDetails: true,
           documents: true,
         }
       });
@@ -41,16 +44,31 @@ export async function submitBusinessForReview(businessId: string) {
 
       console.log(`[submitBusinessForReview] Validating business state. Current Status: '${existing.status}', Document Count: ${existing.documents?.length || 0}`);
 
-      // Task 8: Validate business workflow state transition
+      // Validate business workflow state transition
       if (!isValidStatusTransition(existing.status, "pending_review")) {
         throw new Error(`Cannot submit business in status '${existing.status}' for review.`);
       }
 
-      // 9. Before changing status, validate required sections are complete
+      // Validate required universal sections are complete
       if (!existing.name) throw new Error("Business name is required");
       
       if (!existing.businessCategories || existing.businessCategories.length === 0) {
         throw new Error("Business category is required");
+      }
+
+      const primaryCategory = existing.businessCategories[0]?.category;
+      if (primaryCategory) {
+        const { getCategoryConfig } = await import("@/config/business-categories");
+        const { validateCategorySubmission } = await import("@/lib/onboarding/validation");
+        const config = getCategoryConfig(primaryCategory.slug) || getCategoryConfig(primaryCategory.id);
+
+        if (config) {
+          const categoryData = (existing.categoryDetails?.data as Record<string, unknown>) || {};
+          const validationResult = validateCategorySubmission(config, categoryData);
+          if (!validationResult.success) {
+            throw new Error(`Category details incomplete: ${validationResult.error}`);
+          }
+        }
       }
 
       if (!existing.contact) {
@@ -65,11 +83,11 @@ export async function submitBusinessForReview(businessId: string) {
         throw new Error("Business hours are required");
       }
       
-      // Task 9: Re-enable required verification document validation
       if (!existing.documents || existing.documents.length === 0) {
         console.warn(`[submitBusinessForReview] Missing verification documents for businessId: ${businessId}`);
         throw new Error("At least one verification document is required before submitting for review.");
       }
+
 
       // 10. Use BusinessStatus enum
       await tx.update(business)

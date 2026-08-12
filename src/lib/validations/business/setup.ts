@@ -88,8 +88,11 @@ export const businessSetupSchema = z.object({
   // Documents
   documents: z.array(documentUploadSchema).default([]),
 
-  // Dynamic Fields
-  dynamicFields: z.record(z.string(), z.any()).default({}),
+  // Dynamic Fields (Legacy)
+  dynamicFields: z.record(z.string(), z.unknown()).default({}),
+
+  // Category Data (New Dynamic Category Engine)
+  categoryData: z.record(z.string(), z.unknown()).default({}),
 
   // Services
   services: z.array(z.object({
@@ -139,7 +142,9 @@ export const defaultBusinessSetupValues: Partial<BusinessSetupInput> = {
   ],
   documents: [],
   dynamicFields: {},
+  categoryData: {},
   services: [],
   amenities: [],
   preferredContactMethod: "phone",
 };
+

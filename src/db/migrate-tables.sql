@@ -217,3 +217,18 @@ CREATE INDEX IF NOT EXISTS "featured_idx" ON "business" ("featured")
 CREATE INDEX IF NOT EXISTS "location_business_id_idx" ON "location" ("businessId")
 ---BREAK---
 CREATE INDEX IF NOT EXISTS "location_city_idx" ON "location" ("city")
+---BREAK---
+CREATE TABLE IF NOT EXISTS "business_category_details" (
+	"id" text PRIMARY KEY NOT NULL,
+	"businessId" text NOT NULL REFERENCES "business"("id") ON DELETE CASCADE,
+	"categoryId" text NOT NULL REFERENCES "category"("id") ON DELETE CASCADE,
+	"data" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "business_category_details_business_id_unique" UNIQUE("businessId")
+)
+---BREAK---
+CREATE INDEX IF NOT EXISTS "biz_cat_details_biz_id_idx" ON "business_category_details" ("businessId")
+---BREAK---
+CREATE INDEX IF NOT EXISTS "biz_cat_details_cat_id_idx" ON "business_category_details" ("categoryId")
+
