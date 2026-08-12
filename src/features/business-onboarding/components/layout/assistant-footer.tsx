@@ -19,7 +19,7 @@ export function AssistantFooter() {
     requestLeave,
   } = useAssistant();
 
-  const isReviewStep = currentStepIndex === steps.length - 2;
+  const isReviewStep = currentStep?.id === "review";
 
   // Derive button label for the primary action
   const getPrimaryLabel = () => {
@@ -27,7 +27,6 @@ export function AssistantFooter() {
       if (isReviewStep) return "Submitting...";
       if (
         currentStep.id === "brand" ||
-        currentStep.id === "gallery" ||
         currentStep.id === "documents"
       )
         return "Uploading...";
@@ -48,7 +47,7 @@ export function AssistantFooter() {
 
   return (
     <div className="fixed bottom-6 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
-      <footer className="w-full max-w-3xl px-4 py-3 border border-white/40 bg-white/60 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl flex items-center justify-between pointer-events-auto transition-all duration-300">
+      <footer className="w-full max-w-5xl px-4 py-3 border border-white/40 bg-white/60 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl flex items-center justify-between pointer-events-auto transition-all duration-300">
         {/* Left: Previous */}
         <div className="flex items-center gap-2">
           {!isFirstStep && (

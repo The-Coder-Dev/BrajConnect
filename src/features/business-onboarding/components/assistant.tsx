@@ -12,13 +12,9 @@ import { StepDynamicFields } from "../steps/step-dynamic-fields";
 import { Step4Contact } from "../steps/step-4-contact";
 import { Step5Location } from "../steps/step-5-location";
 import { StepHours } from "../steps/step-hours";
-import { StepSocial } from "../steps/step-social";
 import { Step6Brand } from "../steps/step-6-brand";
-import { StepGallery } from "../steps/step-gallery";
 import { Step7About } from "../steps/step-7-about";
 import { StepDocuments } from "../steps/step-documents";
-import { StepServices } from "../steps/step-services";
-import { StepAmenities } from "../steps/step-amenities";
 import { Step8Review } from "../steps/step-8-review";
 import { Step9Success } from "../steps/step-9-success";
 
@@ -34,13 +30,9 @@ function StepRenderer() {
       case "contact": return <Step4Contact key="contact" />;
       case "location": return <Step5Location key="location" />;
       case "hours": return <StepHours key="hours" />;
-      case "social": return <StepSocial key="social" />;
       case "brand": return <Step6Brand key="brand" />;
-      case "gallery": return <StepGallery key="gallery" />;
       case "about": return <Step7About key="about" />;
       case "documents": return <StepDocuments key="documents" />;
-      case "services": return <StepServices key="services" />;
-      case "amenities": return <StepAmenities key="amenities" />;
       case "review": return <Step8Review key="review" />;
       case "success": return <Step9Success key="success" />;
       default: return null;

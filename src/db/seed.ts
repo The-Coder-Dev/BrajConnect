@@ -22,27 +22,27 @@ const db = drizzle(client);
 // Categories
 // ─────────────────────────────────────────────────────────────────────────────
 const CATEGORIES = [
-  // 11 Top-Level Primary Onboarding Categories
-  { id: "cat_hotel",      slug: "hotel",      name: "Hotel",                   icon: "Hotel",         sortOrder: 1 },
-  { id: "cat_restaurant", slug: "restaurant", name: "Restaurant",              icon: "Utensils",      sortOrder: 2 },
-  { id: "cat_college",    slug: "college",    name: "College",                 icon: "GraduationCap", sortOrder: 3 },
-  { id: "cat_school",     slug: "school",     name: "School",                  icon: "School",        sortOrder: 4 },
-  { id: "cat_loan",       slug: "loan",       name: "Loan",                    icon: "Banknote",      sortOrder: 5 },
-  { id: "cat_property",   slug: "property",   name: "Property Listing",        icon: "Building",      sortOrder: 6 },
-  { id: "cat_salon",      slug: "salon",      name: "Salon",                   icon: "Scissors",      sortOrder: 7 },
-  { id: "cat_dental",     slug: "dental",     name: "Dental",                  icon: "Smile",         sortOrder: 8 },
-  { id: "cat_doctor",     slug: "doctor",     name: "Doctor",                  icon: "Stethoscope",   sortOrder: 9 },
-  { id: "cat_coaching",   slug: "coaching",   name: "Coaching",                icon: "BookOpen",      sortOrder: 10 },
-  { id: "cat_hospital",   slug: "hospital",   name: "Hospital",                icon: "Cross",         sortOrder: 11 },
+  // 11 Top-Level Primary Onboarding Categories (Active)
+  { id: "cat_hotel",      slug: "hotel",      name: "Hotel",                   icon: "Hotel",         sortOrder: 1,  active: true },
+  { id: "cat_restaurant", slug: "restaurant", name: "Restaurant",              icon: "Utensils",      sortOrder: 2,  active: true },
+  { id: "cat_college",    slug: "college",    name: "College",                 icon: "GraduationCap", sortOrder: 3,  active: true },
+  { id: "cat_school",     slug: "school",     name: "School",                  icon: "School",        sortOrder: 4,  active: true },
+  { id: "cat_loan",       slug: "loan",       name: "Loan",                    icon: "Banknote",      sortOrder: 5,  active: true },
+  { id: "cat_property",   slug: "property",   name: "Property Listing",        icon: "Building",      sortOrder: 6,  active: true },
+  { id: "cat_salon",      slug: "salon",      name: "Salon",                   icon: "Scissors",      sortOrder: 7,  active: true },
+  { id: "cat_dental",     slug: "dental",     name: "Dental",                  icon: "Smile",         sortOrder: 8,  active: true },
+  { id: "cat_doctor",     slug: "doctor",     name: "Doctor",                  icon: "Stethoscope",   sortOrder: 9,  active: true },
+  { id: "cat_coaching",   slug: "coaching",   name: "Coaching",                icon: "BookOpen",      sortOrder: 10, active: true },
+  { id: "cat_hospital",   slug: "hospital",   name: "Hospital",                icon: "Cross",         sortOrder: 11, active: true },
 
-  // General & Legacy Categories (Backward Compatibility)
-  { id: "cat_retail",     slug: "retail",     name: "Retail & Shopping",       icon: "Store",         sortOrder: 12 },
-  { id: "cat_home",       slug: "home",       name: "Home Services",           icon: "Wrench",        sortOrder: 13 },
-  { id: "cat_prof",       slug: "prof",       name: "Professional Services",   icon: "Briefcase",     sortOrder: 14 },
-  { id: "cat_tech",       slug: "tech",       name: "Tech & Software",         icon: "Code",          sortOrder: 15 },
-  { id: "cat_ent",        slug: "ent",        name: "Entertainment",           icon: "MonitorPlay",   sortOrder: 16 },
-  { id: "cat_cafe",       slug: "cafe",       name: "Cafe & Bakery",           icon: "Coffee",        sortOrder: 17 },
-  { id: "cat_auto",       slug: "auto",       name: "Automotive",              icon: "Car",           sortOrder: 18 },
+  // General & Legacy Categories (Deactivated for Onboarding, Preserved for Historical Compatibility)
+  { id: "cat_retail",     slug: "retail",     name: "Retail & Shopping",       icon: "Store",         sortOrder: 12, active: false },
+  { id: "cat_home",       slug: "home",       name: "Home Services",           icon: "Wrench",        sortOrder: 13, active: false },
+  { id: "cat_prof",       slug: "prof",       name: "Professional Services",   icon: "Briefcase",     sortOrder: 14, active: false },
+  { id: "cat_tech",       slug: "tech",       name: "Tech & Software",         icon: "Code",          sortOrder: 15, active: false },
+  { id: "cat_ent",        slug: "ent",        name: "Entertainment",           icon: "MonitorPlay",   sortOrder: 16, active: false },
+  { id: "cat_cafe",       slug: "cafe",       name: "Cafe & Bakery",           icon: "Coffee",        sortOrder: 17, active: false },
+  { id: "cat_auto",       slug: "auto",       name: "Automotive",              icon: "Car",           sortOrder: 18, active: false },
 ];
 
 
@@ -179,8 +179,17 @@ async function seed() {
   for (const cat of CATEGORIES) {
     await db
       .insert(category)
-      .values({ ...cat, active: true })
-      .onConflictDoNothing({ target: category.slug });
+      .values(cat)
+      .onConflictDoUpdate({
+        target: category.slug,
+        set: {
+          active: cat.active,
+          name: cat.name,
+          icon: cat.icon,
+          sortOrder: cat.sortOrder,
+          updatedAt: new Date(),
+        },
+      });
   }
   console.log(`   ✓ ${CATEGORIES.length} categories processed`);
 

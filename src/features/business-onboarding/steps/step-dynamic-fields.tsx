@@ -220,7 +220,7 @@ export function StepDynamicFields() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="max-w-3xl mx-auto mt-8"
+      className="max-w-4xl mx-auto mt-4"
     >
       <AssistantCard>
         <AssistantQuestion>

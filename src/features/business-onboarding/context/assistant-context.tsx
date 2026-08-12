@@ -66,23 +66,25 @@ const AssistantContext = createContext<ExtendedAssistantContextType | undefined>
 
 function calculateIncompleteStepIndex(draft: any): number {
   if (!draft) return 0;
-  // 1. Name step
+  // 1. Business Basics
   if (!draft.name) return 1;
-  // 2. Category step
+  // 2. Category
   if (!draft.businessCategories || draft.businessCategories.length === 0) return 2;
-  // 3. Dynamic fields step (optional lookup, default to proceed if empty/complete)
-  // 4. Contact step
+  // 3. Category Details (dynamic_fields)
+  // 4. Contact & Social
   if (!draft.contact || !draft.contact.primaryPhone) return 4;
-  // 5. Location step
+  // 5. Location
   if (!draft.location || !draft.location.address) return 5;
-  // 6. Business Hours step
+  // 6. Business Hours
   if (!draft.hours || draft.hours.length === 0) return 6;
-  // 8. Brand step (logo & cover image)
-  if (!draft.logoUrl || !draft.coverUrl) return 8;
-  // 10. About step
-  if (!draft.shortDescription || !draft.fullDescription) return 10;
-  // default to review step
-  return 12; 
+  // 7. Brand & Media
+  if (!draft.logoUrl || !draft.coverUrl) return 7;
+  // 8. About Business
+  if (!draft.shortDescription || !draft.fullDescription) return 8;
+  // 9. Verification Documents
+  if (!draft.documents || draft.documents.length === 0) return 9;
+  // Default to Review step
+  return 10; 
 }
 
 
@@ -369,15 +371,22 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
           await saveBusinessDynamicFields(bId, data.dynamicFields || {});
         }
       } else if (stepId === "contact" && bId) {
-
-        const res = await saveBusinessContact(bId, {
+        const resContact = await saveBusinessContact(bId, {
           primaryPhone: data.phone,
           whatsapp: data.whatsapp,
           email: data.email,
           website: data.website,
           preferredContactMethod: data.preferredContactMethod,
         });
-        if (!res.success) throw new Error(res.error);
+        if (!resContact.success) throw new Error(resContact.error);
+
+        if (data.socialLinks && Array.isArray(data.socialLinks)) {
+          const validLinks = data.socialLinks
+            .filter((l: any) => l.url && l.url.trim().length > 0)
+            .map((l: any) => ({ platform: l.platform, url: l.url as string }));
+          const resSocial = await saveBusinessSocials(bId, validLinks);
+          if (!resSocial.success) throw new Error((resSocial as any).error);
+        }
       } else if (stepId === "location" && bId) {
         const res = await saveBusinessLocation(bId, {
           country: data.country,
@@ -395,12 +404,6 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
       } else if (stepId === "hours" && bId) {
         const res = await saveBusinessHours(bId, data.hours);
         if (!res.success) throw new Error((res as any).error);
-      } else if (stepId === "social" && bId) {
-        const validLinks = data.socialLinks
-          .filter((l: any) => l.url && l.url.trim().length > 0)
-          .map((l: any) => ({ platform: l.platform, url: l.url as string }));
-        const res = await saveBusinessSocials(bId, validLinks);
-        if (!res.success) throw new Error((res as any).error);
       } else if (stepId === "about" && bId) {
         const res = await saveBusinessBasic(bId, {
           shortDescription: data.shortDescription,
@@ -408,14 +411,8 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
           establishedYear: data.establishedYear,
         });
         if (!res.success) throw new Error((res as any).error);
-      } else if (stepId === "services" && bId) {
-        const res = await saveBusinessServices(bId, data.services);
-        if (!res.success) throw new Error((res as any).error);
-      } else if (stepId === "amenities" && bId) {
-        const res = await saveBusinessAmenities(bId, data.amenities);
-        if (!res.success) throw new Error((res as any).error);
       }
-      // Brand, Gallery, Documents are handled by their custom step validators.
+      // Brand & Media and Documents are handled by their registered custom step validators.
 
       return true;
     } catch (e: any) {

@@ -7,13 +7,39 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 
-// Estimated minutes remaining per step (rough average)
-const STEP_TIME_MINUTES = [0, 1, 1, 2, 1, 2, 1, 1, 2, 2, 1, 1, 0, 0];
+// Explicitly tracked steps (Welcome and Success are untracked)
+const TRACKED_STEP_IDS = [
+  "name",
+  "category",
+  "dynamic_fields",
+  "contact",
+  "location",
+  "hours",
+  "brand",
+  "about",
+  "documents",
+  "review",
+] as const;
+
+// Estimated minutes per tracked step
+const STEP_TIME_MAP: Record<string, number> = {
+  name: 1,
+  category: 1,
+  dynamic_fields: 2,
+  contact: 1,
+  location: 1,
+  hours: 1,
+  brand: 2,
+  about: 1,
+  documents: 2,
+  review: 1,
+};
 
 export function AssistantHeader() {
   const {
     currentStepIndex,
     steps,
+    currentStep,
     requestLeave,
     showLeaveDialog,
     confirmLeave,
@@ -21,15 +47,19 @@ export function AssistantHeader() {
     businessId,
   } = useAssistant();
 
-  // Don't show progress on first step (Welcome) or last step (Success)
-  const showProgress = currentStepIndex > 0 && currentStepIndex < steps.length - 1;
+  const trackedStepIndex = TRACKED_STEP_IDS.indexOf(currentStep?.id as any);
+  const showProgress = trackedStepIndex !== -1;
+  const currentTrackedStepNumber = trackedStepIndex + 1; // 1 to 10
+  const totalTrackedSteps = TRACKED_STEP_IDS.length; // 10
+
   const progressPercentage = showProgress
-    ? Math.round((currentStepIndex / (steps.length - 2)) * 100)
+    ? Math.round((currentTrackedStepNumber / totalTrackedSteps) * 100)
     : 0;
 
   // Estimated time remaining
-  const remainingMins = STEP_TIME_MINUTES.slice(currentStepIndex + 1).reduce(
-    (acc, t) => acc + t,
+  const remainingTrackedSteps = TRACKED_STEP_IDS.slice(trackedStepIndex + 1);
+  const remainingMins = remainingTrackedSteps.reduce(
+    (acc, sId) => acc + (STEP_TIME_MAP[sId] || 1),
     0
   );
   const timeLabel = remainingMins <= 1 ? "~1 min" : `~${remainingMins} min`;
@@ -37,7 +67,7 @@ export function AssistantHeader() {
   return (
     <>
       <header className="w-full h-20 flex items-center justify-center border-b border-white/20 bg-white/40 backdrop-blur-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] sticky top-0 z-40">
-        <div className="w-full max-w-3xl px-6 flex items-center justify-between gap-4">
+        <div className="w-full max-w-5xl px-6 flex items-center justify-between gap-4">
           {/* Left: Back to Dashboard */}
           <Button
             variant="ghost"
@@ -52,11 +82,11 @@ export function AssistantHeader() {
           {/* Center: Step title + step count */}
           <div className="flex-1 text-center">
             <h2 className="font-semibold text-base sm:text-lg tracking-tight text-slate-900 truncate">
-              {showProgress ? steps[currentStepIndex].title : "Business Setup"}
+              {showProgress ? currentStep.title : "Business Setup"}
             </h2>
             {showProgress && (
               <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Step {currentStepIndex} of {steps.length - 2}
+                Step {currentTrackedStepNumber} of {totalTrackedSteps}
               </p>
             )}
           </div>

@@ -57,18 +57,22 @@ export async function submitBusinessForReview(businessId: string) {
       }
 
       const primaryCategory = existing.businessCategories[0]?.category;
-      if (primaryCategory) {
-        const { getCategoryConfig } = await import("@/config/business-categories");
-        const { validateCategorySubmission } = await import("@/lib/onboarding/validation");
-        const config = getCategoryConfig(primaryCategory.slug) || getCategoryConfig(primaryCategory.id);
+      if (!primaryCategory) {
+        throw new Error("Valid business category is required");
+      }
 
-        if (config) {
-          const categoryData = (existing.categoryDetails?.data as Record<string, unknown>) || {};
-          const validationResult = validateCategorySubmission(config, categoryData);
-          if (!validationResult.success) {
-            throw new Error(`Category details incomplete: ${validationResult.error}`);
-          }
-        }
+      const { getCategoryConfig } = await import("@/config/business-categories");
+      const { validateCategorySubmission } = await import("@/lib/onboarding/validation");
+      const config = getCategoryConfig(primaryCategory.slug) || getCategoryConfig(primaryCategory.id);
+
+      if (!config) {
+        throw new Error("The selected category is not supported. Please choose from the approved categories.");
+      }
+
+      const categoryData = (existing.categoryDetails?.data as Record<string, unknown>) || {};
+      const validationResult = validateCategorySubmission(config, categoryData);
+      if (!validationResult.success) {
+        throw new Error(`Category details incomplete: ${validationResult.error}`);
       }
 
       if (!existing.contact) {
