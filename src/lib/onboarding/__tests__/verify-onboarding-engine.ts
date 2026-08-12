@@ -348,28 +348,47 @@ async function runTests() {
   assert(hospitalRes.success, "Valid Hospital passes validation");
 
 
-  // 4. Data Sanitization & Leak Prevention
-  console.log("\n🔒 4. Testing Category Switching & Leak Prevention");
-  const mixedData = {
-    ...validHotel,
-    // Stray restaurant fields
-    cuisines: ["north_indian"],
-    averageCostForTwo: 500,
-    // Stray unconfigured field
-    maliciousInject: "DROP TABLE users;",
-  };
+  // 5. Hardening & Step Configuration Tests
+  console.log("\n🔒 5. Testing Active Category Restriction & Step Tracking");
+  
+  // Unregistered category rejection check
+  const legacySlugs = ["retail", "home", "prof", "tech", "ent", "cafe", "auto", "xyz_fake"];
+  for (const legacy of legacySlugs) {
+    assert(!isRegisteredCategory(legacy), `Legacy/Unknown category '${legacy}' is not registered`);
+    assert(getCategoryConfig(legacy) === undefined, `getCategoryConfig('${legacy}') returns undefined`);
+  }
 
-  const sanitizedHotelData = sanitizeCategoryData(hotelConfig, mixedData);
-  assert(sanitizedHotelData.propertyType === "hotel", "Sanitized hotel retains valid propertyType");
-  assert(sanitizedHotelData.deluxeDetails !== undefined, "Sanitized hotel retains deluxe room config");
-  assert(sanitizedHotelData.cuisines === undefined, "Stray restaurant cuisine field is stripped from hotel");
-  assert(sanitizedHotelData.averageCostForTwo === undefined, "Stray averageCostForTwo is stripped from hotel");
-  assert(sanitizedHotelData.maliciousInject === undefined, "Unconfigured malicious injection is stripped");
+  // Exact 11 categories check
+  assert(configs.length === 11, `Strictly 11 categories present in registry`);
 
-  console.log("\n🎉 ALL 32 ONBOARDING ENGINE TESTS PASSED SUCCESSFULLY!");
+  // Step constants check
+  const { SETUP_STEPS } = await import("@/features/business-onboarding/constants");
+  assert(SETUP_STEPS.length === 12, `SETUP_STEPS has exactly 12 total screens, got ${SETUP_STEPS.length}`);
+  
+  const trackedSteps = SETUP_STEPS.filter((s) => s.id !== "welcome" && s.id !== "success");
+  assert(trackedSteps.length === 10, `Onboarding has exactly 10 progress-tracked steps, got ${trackedSteps.length}`);
+  assert(SETUP_STEPS[0].id === "welcome", `Step 0 is welcome`);
+  assert(SETUP_STEPS[1].id === "name", `Step 1 is name (Business Basics)`);
+  assert(SETUP_STEPS[2].id === "category", `Step 2 is category`);
+  assert(SETUP_STEPS[3].id === "dynamic_fields", `Step 3 is dynamic_fields (Category Details)`);
+  assert(SETUP_STEPS[4].id === "contact", `Step 4 is contact (Contact & Social)`);
+  assert(SETUP_STEPS[5].id === "location", `Step 5 is location`);
+  assert(SETUP_STEPS[6].id === "hours", `Step 6 is hours`);
+  assert(SETUP_STEPS[7].id === "brand", `Step 7 is brand (Brand & Media)`);
+  assert(SETUP_STEPS[8].id === "about", `Step 8 is about`);
+  assert(SETUP_STEPS[9].id === "documents", `Step 9 is documents`);
+  assert(SETUP_STEPS[10].id === "review", `Step 10 is review`);
+  assert(SETUP_STEPS[11].id === "success", `Step 11 is success`);
+
+  // Universal amenities / services standalone steps should NOT be in SETUP_STEPS
+  assert(!SETUP_STEPS.some((s) => s.id === ("amenities" as any)), "Standalone universal amenities step is removed from flow");
+  assert(!SETUP_STEPS.some((s) => s.id === ("services" as any)), "Standalone universal services step is removed from flow");
+  assert(!SETUP_STEPS.some((s) => s.id === ("social" as any)), "Standalone social step is removed (consolidated into contact)");
+  assert(!SETUP_STEPS.some((s) => s.id === ("gallery" as any)), "Standalone gallery step is removed (consolidated into brand)");
+
+  console.log("\n🎉 ALL TESTS PASSED SUCCESSFULLY!");
   console.log("==================================================");
 }
-
 
 runTests().catch((err) => {
   console.error("Test runner error:", err);

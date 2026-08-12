@@ -5,10 +5,12 @@ import { category } from "@/db/schema/category";
 import { dynamicFields } from "@/db/schema/dynamic-fields";
 import { eq, and, asc } from "drizzle-orm";
 
+import { isRegisteredCategory } from "@/config/business-categories";
+
 /**
- * Fetches all active categories from PostgreSQL.
+ * Fetches all active approved categories from PostgreSQL.
  * Returns an empty array if none exist — callers must handle this gracefully.
- * Never falls back to mock data; mock IDs violate FK constraints when saved.
+ * Excludes deactivated/legacy categories and returns only approved registered categories.
  */
 export async function getCategories() {
   try {
@@ -18,7 +20,8 @@ export async function getCategories() {
       .where(eq(category.active, true))
       .orderBy(asc(category.sortOrder));
 
-    return categories;
+    // Filter to ensure only registered approved categories are returned
+    return categories.filter((c) => isRegisteredCategory(c.slug) || isRegisteredCategory(c.id));
   } catch (error) {
     console.error("Failed to fetch categories:", error);
     return [];

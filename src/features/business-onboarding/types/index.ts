@@ -9,13 +9,9 @@ export type StepId =
   | "contact"
   | "location"
   | "hours"
-  | "social"
   | "brand"
-  | "gallery"
   | "about"
   | "documents"
-  | "services"
-  | "amenities"
   | "review"
   | "success";
 

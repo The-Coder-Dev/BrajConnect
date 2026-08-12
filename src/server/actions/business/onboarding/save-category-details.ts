@@ -45,26 +45,28 @@ export async function saveBusinessCategoryDetails(
     // 2. Resolve category configuration by categoryId (or slug)
     const categoryRecord = await db.query.category.findFirst({
       where: (cat, { eq }) => eq(cat.id, categoryId),
-      columns: { id: true, slug: true, name: true },
+      columns: { id: true, slug: true, name: true, active: true },
     });
-
 
     const categorySlug = categoryRecord?.slug || categoryId;
     const config = getCategoryConfig(categorySlug) || getCategoryConfig(categoryId);
 
-    let sanitizedData: Record<string, unknown> = categoryData || {};
-
-    // 3. If configuration is registered, run authoritative server-side validation
-    if (config) {
-      const validationResult = validateCategorySubmission(config, categoryData || {});
-      if (!validationResult.success) {
-        return {
-          success: false,
-          error: validationResult.error || "Category validation failed.",
-        };
-      }
-      sanitizedData = validationResult.data;
+    if (!config || (categoryRecord && !categoryRecord.active)) {
+      return {
+        success: false,
+        error: "The selected category is not supported. Please choose from the approved categories.",
+      };
     }
+
+    // 3. Authoritative server-side validation & field sanitization
+    const validationResult = validateCategorySubmission(config, categoryData || {});
+    if (!validationResult.success) {
+      return {
+        success: false,
+        error: validationResult.error || "Category validation failed.",
+      };
+    }
+    const sanitizedData = validationResult.data;
 
     // 4. Upsert into businessCategoryDetails
     await db.transaction(async (tx) => {

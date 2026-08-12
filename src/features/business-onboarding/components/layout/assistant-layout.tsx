@@ -62,7 +62,14 @@ function DraftRecoveryDialog() {
 }
 
 export function AssistantLayout({ children }: { children: React.ReactNode }) {
-  const { isLastStep } = useAssistant();
+  const { isLastStep, currentStep } = useAssistant();
+
+  const isWiderStep =
+    currentStep?.id === "category" ||
+    currentStep?.id === "dynamic_fields" ||
+    currentStep?.id === "brand" ||
+    currentStep?.id === "documents" ||
+    currentStep?.id === "review";
 
   return (
     <div className="min-h-screen relative flex flex-col items-center bg-[#F8FAFC] overflow-hidden">
@@ -81,10 +88,14 @@ export function AssistantLayout({ children }: { children: React.ReactNode }) {
         }}
       />
 
-      <div className="relative z-10 flex flex-col w-full h-full min-h-screen items-center justify-between pb-6">
+      <div className="relative z-10 flex flex-col w-full h-full min-h-screen items-center justify-between pb-36">
         {!isLastStep && <AssistantHeader />}
 
-        <main className="flex-1 w-full max-w-2xl px-6 py-12 md:py-20 flex flex-col">
+        <main
+          className={`flex-1 w-full px-4 sm:px-6 py-8 md:py-12 flex flex-col transition-all duration-300 ${
+            isWiderStep ? "max-w-4xl lg:max-w-5xl" : "max-w-2xl sm:max-w-3xl"
+          }`}
+        >
           <div className="flex-1 w-full relative">{children}</div>
         </main>
 
