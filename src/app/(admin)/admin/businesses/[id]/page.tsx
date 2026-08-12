@@ -168,12 +168,31 @@ export default async function AdminBusinessReviewPage({ params }: { params: Prom
             </div>
           </Card>
 
-          {/* Dynamic Fields Details */}
+          {/* Category Details */}
           <Card className="rounded-2xl border border-border/50 p-6">
             <h3 className="text-base font-bold mb-4 flex items-center gap-2">
-              <Layers className="h-5 w-5 text-primary" /> Dynamic Fields Specifics
+              <Layers className="h-5 w-5 text-primary" /> Category Specific Details
             </h3>
-            {biz.businessFields && biz.businessFields.length > 0 ? (
+            {biz.categoryDetails?.data && Object.keys(biz.categoryDetails.data).length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {Object.entries(biz.categoryDetails.data as Record<string, unknown>).map(([k, val]) => {
+                  if (val === undefined || val === null || val === "" || (Array.isArray(val) && val.length === 0)) return null;
+                  const displayKey = k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                  let displayVal = String(val);
+                  if (Array.isArray(val)) {
+                    displayVal = val.map(v => typeof v === 'object' ? JSON.stringify(v) : String(v)).join(", ");
+                  } else if (typeof val === 'object') {
+                    displayVal = Object.entries(val as Record<string, unknown>).map(([subK, subV]) => `${subK}: ${subV}`).join(" | ");
+                  }
+                  return (
+                    <div key={k} className="p-3 border rounded-xl bg-muted/20 border-border/40 text-xs">
+                      <p className="font-semibold text-muted-foreground">{displayKey}</p>
+                      <p className="font-bold text-foreground mt-0.5">{displayVal}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : biz.businessFields && biz.businessFields.length > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2">
                 {biz.businessFields.map((f: any) => (
                   <div key={f.id} className="p-3 border rounded-xl bg-muted/20 border-border/40 text-xs">
@@ -190,6 +209,7 @@ export default async function AdminBusinessReviewPage({ params }: { params: Prom
               <p className="text-xs text-muted-foreground italic">No category-specific fields added.</p>
             )}
           </Card>
+
 
           {/* Amenities & Services Grid */}
           <div className="grid gap-6 sm:grid-cols-2">

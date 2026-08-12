@@ -12,9 +12,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAssistant } from "../context/assistant-context";
+import { useFormContext } from "react-hook-form";
 import { saveBusinessDocuments } from "@/server/actions/business/onboarding/save-documents";
+import { getCategoryConfig } from "@/config/business-categories";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { FileText, ShieldCheck } from "lucide-react";
+
 
 type DocStatus = "pending" | "uploading" | "success" | "error";
 
@@ -88,7 +92,12 @@ const uploadDocFile = (
 
 export function StepDocuments() {
   const { registerStepValidator, unregisterStepValidator, businessId } = useAssistant();
+  const { watch } = useFormContext();
+  const categoryId = watch("categoryId");
+  const categoryConfig = getCategoryConfig(categoryId);
+
   const [pendingDocs, setPendingDocs] = useState<PendingDoc[]>([]);
+
   const [currentType, setCurrentType] = useState<string>("gst");
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -241,9 +250,32 @@ export function StepDocuments() {
           These documents are required to verify your business and will not be shared publicly.
         </p>
 
+        {categoryConfig && categoryConfig.documentRequirements.length > 0 && (
+          <div className="mt-6 p-4 rounded-2xl bg-blue-50/60 border border-blue-100 text-blue-900 space-y-2.5">
+            <div className="flex items-center gap-2 font-semibold text-xs text-blue-800 uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <span>Recommended Documents for {categoryConfig.name}</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              {categoryConfig.documentRequirements.map((req) => (
+                <div key={req.id} className="flex items-start gap-2 text-xs bg-white/80 p-2.5 rounded-xl border border-blue-100/80">
+                  <FileText className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
+                  <div className="flex flex-col">
+                    <span className="font-medium text-slate-900">
+                      {req.label} {req.required && <span className="text-red-500 font-bold">*</span>}
+                    </span>
+                    <span className="text-[11px] text-slate-500">{req.description}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="space-y-6 mt-8">
           {/* Add Document Control */}
           <div className="p-4 border rounded-xl border-dashed bg-muted/30 space-y-3">
+
             <Label className="block font-medium">Add New Document</Label>
             <div className="flex gap-3 flex-col sm:flex-row">
               <Select

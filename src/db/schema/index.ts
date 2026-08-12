@@ -21,3 +21,5 @@ export * from "./notifications";
 export * from "./analytics";
 export * from "./activity-logs";
 export * from "./reviews";
+export * from "./category-details";
+
