@@ -4,7 +4,7 @@ import { AdminBusinessTable } from "@/components/admin/business-table";
 import { Building2 } from "lucide-react";
 
 export const metadata = {
-  title: "All Businesses - Admin BrajConnect",
+  title: "All Businesses - Admin BachatLal",
 };
 
 export default async function AllBusinessesPage({

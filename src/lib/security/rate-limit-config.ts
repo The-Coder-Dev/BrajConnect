@@ -13,6 +13,7 @@ export const RATE_LIMIT_CONFIG = {
   password_reset: { limit: 3, windowSeconds: 60 },
   verification: { limit: 5, windowSeconds: 60 },
   public_api: { limit: 60, windowSeconds: 60 },
+  contact: { limit: 5, windowSeconds: 60 },
 } as const;
 
 export type RateLimitCategory = keyof typeof RATE_LIMIT_CONFIG;

@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 import { EditBusinessClient } from "@/features/dashboard/owner";
 
 export const metadata = {
-  title: "Edit Business - BrajConnect",
+  title: "Edit Business - BachatLal",
 };
 
 export default async function EditBusinessPage({ params }: { params: Promise<{ id: string }> }) {

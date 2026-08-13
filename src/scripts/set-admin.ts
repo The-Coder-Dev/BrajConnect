@@ -13,7 +13,7 @@ const targetEmail = process.argv[2];
 
 if (!targetEmail) {
   console.log("Usage: pnpm set-admin <email>");
-  console.log("Example: pnpm set-admin admin@brajconnect.com");
+  console.log("Example: pnpm set-admin admin@bachatlal.com");
   process.exit(1);
 }
 
@@ -25,7 +25,7 @@ async function setAdminRole() {
 
     if (users.length === 0) {
       console.error(`❌ User with email "${targetEmail}" was not found in the database.`);
-      console.log("Tip: The user must sign up / create an account on BrajConnect first!");
+      console.log("Tip: The user must sign up / create an account on BachatLal first!");
       process.exit(1);
     }
 

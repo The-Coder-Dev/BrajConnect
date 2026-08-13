@@ -4,7 +4,7 @@ import { AdminBusinessTable } from "@/components/admin/business-table";
 import { FileEdit } from "lucide-react";
 
 export const metadata = {
-  title: "Draft Businesses - Admin BrajConnect",
+  title: "Draft Businesses - Admin BachatLal",
 };
 
 export default async function DraftBusinessesPage({

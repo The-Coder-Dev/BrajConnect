@@ -28,7 +28,7 @@ import { AdminReviewActionPanel } from "@/components/admin/review-action-panel";
 import { AdminDocumentViewer } from "@/components/admin/document-viewer";
 
 export const metadata = {
-  title: "Review Business Submission - Admin BrajConnect",
+  title: "Review Business Submission - Admin BachatLal",
 };
 
 export default async function AdminBusinessReviewPage({ params }: { params: Promise<{ id: string }> }) {

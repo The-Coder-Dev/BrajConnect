@@ -10,7 +10,7 @@ import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 import { requireGuest } from "@/lib/auth/guards";
 
 export const metadata = {
-  title: "Forgot Password - BrajConnect",
+  title: "Forgot Password - BachatLal",
 };
 
 export default async function ForgotPasswordPage() {

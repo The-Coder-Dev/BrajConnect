@@ -6,7 +6,7 @@ import { ResetPasswordForm } from "@/components/auth/reset-password-form";
 import { requireGuest } from "@/lib/auth/guards";
 
 export const metadata = {
-  title: "Set new password - BrajConnect",
+  title: "Set new password - BachatLal",
 };
 
 export default async function ResetPasswordPage() {

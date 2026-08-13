@@ -6,7 +6,7 @@ import { Clock } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Session Expired - BrajConnect",
+  title: "Session Expired - BachatLal",
 };
 
 export default function SessionExpiredPage() {
