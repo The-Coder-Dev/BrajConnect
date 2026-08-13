@@ -10,6 +10,7 @@ import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { isValidStatusTransition } from "@/lib/security/workflow";
 import { invalidateAllPublicBusinessCaches } from "@/lib/cache/business-cache";
+import { sendBusinessStatusEmail } from "@/lib/email";
 
 export interface AdminBusinessFilterParams {
   status?: string;
@@ -261,6 +262,17 @@ export async function approveBusiness(businessId: string) {
     // Invalidate public feed and detail caches
     await invalidateAllPublicBusinessCaches({ businessId, slug: targetSlug });
 
+    // Notify business owner via transactional email
+    try {
+      await sendBusinessStatusEmail({
+        type: "BUSINESS_APPROVED",
+        businessId,
+        businessSlug: targetSlug,
+      });
+    } catch (emailErr) {
+      console.error(`[Email Notification Error] Failed to send approval email for ${businessId}:`, emailErr);
+    }
+
     revalidatePath("/admin/businesses");
     revalidatePath(`/admin/businesses/${businessId}`);
 
@@ -331,6 +343,18 @@ export async function rejectBusiness(businessId: string, reason: string) {
     });
 
     await invalidateAllPublicBusinessCaches({ businessId, slug: targetSlug });
+
+    // Notify business owner via transactional email with the exact admin reason
+    try {
+      await sendBusinessStatusEmail({
+        type: "BUSINESS_REJECTED",
+        businessId,
+        businessSlug: targetSlug,
+        rejectionReason: reason.trim(),
+      });
+    } catch (emailErr) {
+      console.error(`[Email Notification Error] Failed to send rejection email for ${businessId}:`, emailErr);
+    }
 
     revalidatePath("/admin/businesses");
     revalidatePath(`/admin/businesses/${businessId}`);
