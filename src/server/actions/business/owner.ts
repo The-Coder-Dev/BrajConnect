@@ -9,6 +9,7 @@ import { eq, and, desc } from "drizzle-orm";
 import { getSession } from "@/lib/auth/guards";
 import { getFriendlyErrorMessage } from "@/lib/utils";
 import { isValidStatusTransition } from "@/lib/security/workflow";
+import { sendBusinessStatusEmail } from "@/lib/email";
 
 // Helper to verify owner session — uses the request-scoped cached session
 // so calling it multiple times never issues extra DB round-trips.
@@ -239,6 +240,17 @@ export async function resubmitBusiness(businessId: string) {
       .update(business)
       .set({ status: "pending_review", rejectionReason: null, updatedAt: new Date() })
       .where(eq(business.id, businessId));
+
+    // Notify business owner via transactional email
+    try {
+      await sendBusinessStatusEmail({
+        type: "BUSINESS_RESUBMITTED",
+        businessId,
+        userId,
+      });
+    } catch (emailErr) {
+      console.error(`[Email Notification Error] Failed to send resubmission email for ${businessId}:`, emailErr);
+    }
 
     return { success: true };
   } catch (error: any) {

@@ -19,6 +19,7 @@ import { businessLeads } from "./leads";
 import { notifications } from "./notifications";
 import { businessAnalytics } from "./analytics";
 import { businessCategoryDetails } from "./category-details";
+import { emailLogs } from "./email-logs";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -217,6 +218,17 @@ export const businessCategoryDetailsRelations = relations(businessCategoryDetail
   category: one(category, {
     fields: [businessCategoryDetails.categoryId],
     references: [category.id],
+  }),
+}));
+
+export const emailLogsRelations = relations(emailLogs, ({ one }) => ({
+  user: one(user, {
+    fields: [emailLogs.userId],
+    references: [user.id],
+  }),
+  business: one(business, {
+    fields: [emailLogs.businessId],
+    references: [business.id],
   }),
 }));
 

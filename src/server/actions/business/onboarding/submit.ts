@@ -8,6 +8,7 @@ import { headers } from "next/headers";
 
 import { getFriendlyErrorMessage } from "@/lib/utils";
 import { isValidStatusTransition } from "@/lib/security/workflow";
+import { sendBusinessStatusEmail } from "@/lib/email";
 
 export async function submitBusinessForReview(businessId: string) {
   try {
@@ -20,8 +21,11 @@ export async function submitBusinessForReview(businessId: string) {
 
     console.log(`[submitBusinessForReview] Submitting businessId: ${businessId} for userId: ${userId}`);
 
+    let submittedName = "";
+    let submittedSlug = "";
+
     // We use a transaction to validate everything and update the status
-    return await db.transaction(async (tx) => {
+    await db.transaction(async (tx) => {
       // Verify ownership & get current state
       const existing = await tx.query.business.findFirst({
         where: and(eq(business.id, businessId), eq(business.ownerId, userId)),
@@ -92,6 +96,8 @@ export async function submitBusinessForReview(businessId: string) {
         throw new Error("At least one verification document is required before submitting for review.");
       }
 
+      submittedName = existing.name;
+      submittedSlug = existing.slug;
 
       // 10. Use BusinessStatus enum
       await tx.update(business)
@@ -99,9 +105,24 @@ export async function submitBusinessForReview(businessId: string) {
         .where(eq(business.id, businessId));
 
       console.log(`[submitBusinessForReview] Business ${businessId} successfully transitioned to 'pending_review' status.`);
-
-      return { success: true };
     });
+
+    // Transaction committed successfully — notify business owner via transactional email
+    try {
+      await sendBusinessStatusEmail({
+        type: "BUSINESS_SUBMITTED",
+        businessId,
+        businessName: submittedName,
+        businessSlug: submittedSlug,
+        recipientEmail: session.user.email,
+        recipientName: session.user.name,
+        userId: session.user.id,
+      });
+    } catch (emailErr) {
+      console.error("[Email Notification Error] Failed to send submission email:", emailErr);
+    }
+
+    return { success: true };
   } catch (error: unknown) {
     console.error("Failed to submit business:", error);
     return { success: false, error: getFriendlyErrorMessage(error, "Unable to submit business. Please try again.") };
