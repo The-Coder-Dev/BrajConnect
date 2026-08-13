@@ -4,7 +4,7 @@ import { AdminBusinessTable } from "@/components/admin/business-table";
 import { CheckCircle2 } from "lucide-react";
 
 export const metadata = {
-  title: "Published Businesses - Admin BrajConnect",
+  title: "Published Businesses - Admin BachatLal",
 };
 
 export default async function PublishedBusinessesPage({
@@ -13,19 +13,14 @@ export default async function PublishedBusinessesPage({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
   const params = await searchParams;
-  const search = params.search || "";
-  const sort = (params.sort as "newest" | "oldest") || "newest";
-  const page = parseInt(params.page || "1", 10);
+  const page = Number(params?.page) || 1;
+  const search = params?.search || "";
 
-  const res = await getAdminBusinesses({
+  const { data } = await getAdminBusinesses({
     status: "published",
-    search,
-    sort,
     page,
-    limit: 10,
+    search,
   });
-
-  const data = res.success && res.data ? res.data : { items: [], pagination: { page: 1, totalPages: 1, total: 0 } };
 
   return (
     <div className="space-y-6">
@@ -35,7 +30,7 @@ export default async function PublishedBusinessesPage({
           <h1 className="text-2xl font-extrabold tracking-tight">Published Businesses</h1>
         </div>
         <p className="text-muted-foreground text-sm">
-          Active, verified business listings currently live on BrajConnect.
+          Active, verified business listings currently live on BachatLal.
         </p>
       </div>
 

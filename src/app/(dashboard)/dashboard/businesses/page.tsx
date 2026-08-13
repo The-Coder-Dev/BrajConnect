@@ -4,7 +4,7 @@ import { BusinessesClient } from "@/features/dashboard/owner";
 import { AlertTriangle } from "lucide-react";
 
 export const metadata = {
-  title: "My Businesses - BrajConnect",
+  title: "My Businesses - BachatLal",
 };
 
 export default async function MyBusinessesPage() {

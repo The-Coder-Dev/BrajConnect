@@ -9,8 +9,8 @@ import { SignInForm } from "@/components/auth/sign-in-form";
 import { requireGuest } from "@/lib/auth/guards";
 
 export const metadata = {
-  title: "Sign In - BrajConnect",
-  description: "Sign in to your BrajConnect Business Portal.",
+  title: "Sign In - BachatLal",
+  description: "Sign in to your BachatLal Business Portal.",
 };
 
 export default async function SignInPage() {

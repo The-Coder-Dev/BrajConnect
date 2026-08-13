@@ -3,7 +3,7 @@ import { requireAuth } from "@/lib/auth/guards";
 import { Suspense } from "react";
 
 export const metadata = {
-  title: "Setup Business - BrajConnect",
+  title: "Setup Business - BachatLal",
 };
 
 export default async function BusinessSetupPage() {

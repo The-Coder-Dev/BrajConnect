@@ -2,11 +2,10 @@ import Link from "next/link";
 
 export const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Categories", href: "/#categories" },
   { name: "Businesses", href: "/#businesses" },
-  { name: "Pricing", href: "/#pricing" },
-  { name: "About", href: "/#about" },
-  { name: "Contact", href: "/#contact" },
+  { name: "Pricing", href: "/pricing" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
 ];
 
 export function DesktopNav({ isScrolled, variant = "transparent" }: { isScrolled: boolean, variant?: "transparent" | "solid" }) {

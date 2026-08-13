@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Email Sent - BrajConnect",
+  title: "Email Sent - BachatLal",
 };
 
 export default function EmailSentPage() {

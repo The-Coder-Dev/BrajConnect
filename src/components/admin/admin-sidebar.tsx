@@ -191,7 +191,7 @@ export function AdminSidebar({ user }: { user: any }) {
                 Admin Console
               </span>
               <span className="truncate text-[11px] text-muted-foreground font-medium">
-                BrajConnect Control
+                BachatLal Control
               </span>
             </div>
           )}

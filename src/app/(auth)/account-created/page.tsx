@@ -6,7 +6,7 @@ import { Rocket } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Account Created - BrajConnect",
+  title: "Account Created - BachatLal",
 };
 
 export default function AccountCreatedPage() {

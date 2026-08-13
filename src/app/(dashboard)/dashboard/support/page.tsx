@@ -4,10 +4,10 @@ import { LifeBuoy, BookOpen, MessageSquare } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/empty-state";
 
 export const metadata = {
-  title: "Support - BrajConnect",
+  title: "Support - BachatLal",
 };
 
-export default async function SupportPage() {
+export default function SupportPage() {
 
   return (
     <div className="space-y-6">
@@ -22,7 +22,7 @@ export default async function SupportPage() {
         <Card className="rounded-xl shadow-sm border-border/50 h-full hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
           <CardHeader>
             <div className="bg-blue-50 w-fit p-3 rounded-lg mb-2">
-              <BookOpen className="h-6 w-6 text-blue-600" />
+              <BookOpen className="h-6 w-6 text-red-600" />
             </div>
             <CardTitle>Documentation</CardTitle>
             <CardDescription>Browse our guides and FAQs to find answers quickly.</CardDescription>
@@ -35,7 +35,7 @@ export default async function SupportPage() {
         <Card className="rounded-xl shadow-sm border-border/50 h-full hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
           <CardHeader>
             <div className="bg-blue-50 w-fit p-3 rounded-lg mb-2">
-              <MessageSquare className="h-6 w-6 text-blue-600" />
+              <MessageSquare className="h-6 w-6 text-red-600" />
             </div>
             <CardTitle>Contact Support</CardTitle>
             <CardDescription>Can&apos;t find what you&apos;re looking for? Send us a message.</CardDescription>

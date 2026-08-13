@@ -3,79 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Sparkles, Lock, ShieldCheck, Zap, Star } from "lucide-react";
 
+import { PRICING_PLANS } from "@/config/pricing";
+
 export const metadata = {
   title: "Pricing & Plans - BachatLal",
 };
 
 export default async function PricingPage() {
-  const plans = [
-    {
-      name: "Free Starter",
-      price: "₹0",
-      period: "forever",
-      description: "Essential listing features to list your local business.",
-      badge: "FREE",
-      highlight: false,
-      features: [
-        "1 Verified Business Listing",
-        "Basic Contact Details & Hours",
-        "Public Search Indexing",
-        "Standard Lead Form Enquiries",
-        "Customer Review Submissions",
-      ],
-      limits: "Standard placement",
-    },
-    {
-      name: "Business Pro",
-      price: "₹499",
-      period: "per month",
-      description: "Enhanced tools to drive calls, leads & customer trust.",
-      badge: "POPULAR",
-      highlight: true,
-      features: [
-        "Everything in Free",
-        "Verified Green Trust Badge",
-        "Featured Search Placement",
-        "Image Gallery (up to 15 photos)",
-        "Direct Call & WhatsApp Tracking",
-        "Customer Inquiry CSV Export",
-      ],
-      limits: "Priority placement",
-    },
-    {
-      name: "Premium Scale",
-      price: "₹999",
-      period: "per month",
-      description: "Maximum visibility, analytics & multi-category reach.",
-      badge: "GROWTH",
-      highlight: false,
-      features: [
-        "Everything in Business Pro",
-        "Multi-Category Listing (up to 3)",
-        "Competitor Benchmark Analytics",
-        "Priority Customer Support",
-        "Promotional Badge Highlights",
-        "Automated Review Moderation",
-      ],
-      limits: "Top 3 search placement",
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      period: "annual billing",
-      description: "Dedicated account manager & multi-location chain management.",
-      badge: "ENTERPRISE",
-      highlight: false,
-      features: [
-        "Unlimited Business Locations",
-        "Custom API Integrations",
-        "Dedicated Account Specialist",
-        "Custom SLA & Uptime Guarantee",
-        "Full Branding Customization",
-      ],
-      limits: "Unlimited scale",
-    },
-  ];
+  const plans = PRICING_PLANS;
 
   return (
     <div className="space-y-8 py-4 max-w-7xl mx-auto">

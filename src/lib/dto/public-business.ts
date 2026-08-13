@@ -90,7 +90,7 @@ export function toPublicBusinessDetailsDTO(raw: any, relatedBusinessesRaw: any[]
   const contact = {
     phone: raw.contact?.phone || raw.contact?.primaryPhone || "+91 98765 43210",
     whatsapp: raw.contact?.whatsapp || raw.contact?.primaryPhone || "+91 98765 43210",
-    email: raw.contact?.email || raw.owner?.email || "contact@brajconnect.com",
+    email: raw.contact?.email || raw.owner?.email || "contact@bachatlal.com",
     website: raw.contact?.website || null,
   };
 

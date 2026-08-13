@@ -4,7 +4,7 @@ import { AdaptiveDashboardView } from "@/features/dashboard/owner/adaptive-dashb
 import { AlertTriangle } from "lucide-react";
 
 export const metadata = {
-  title: "Owner Dashboard - BrajConnect",
+  title: "Owner Dashboard - BachatLal",
 };
 
 interface DashboardPageProps {

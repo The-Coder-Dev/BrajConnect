@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2 } from "lucide-react";
+import Image from "next/image";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 export function Footer() {
@@ -13,9 +13,7 @@ export function Footer() {
           
           <div className="lg:col-span-5 pr-8">
             <Link href="/" className="flex items-center gap-3 mb-8 group  ">
-              <div className="bg-primary p-2.5 rounded-2xl text-white shadow-lg shadow-blue-600/20 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
-                <Building2 className="h-6 w-6" />
-              </div>
+              <Image src="/logo.webp" height={65} width={65} alt="Logo" priority />
               <span className="text-3xl font-extrabold tracking-tight text-slate-900">
                 BachatLal
               </span>
@@ -40,32 +38,31 @@ export function Footer() {
           </div>
 
           <div className="lg:col-span-2 lg:col-start-7">
-            <h4 className="font-bold text-slate-900 mb-8 text-lg">Quick Links</h4>
-            <ul className="space-y-5">
+            <h4 className="font-bold text-slate-900 mb-8 text-lg">Explore</h4>
+            <ul className="space-y-4">
               <li><Link href="/" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Home</Link></li>
-              <li><Link href="#about" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">About Us</Link></li>
-              <li><Link href="#businesses" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Explore</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Contact</Link></li>
+              <li><Link href="/about" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">About</Link></li>
+              <li><Link href="/pricing" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Pricing</Link></li>
+              <li><Link href="/contact" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Contact</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
-            <h4 className="font-bold text-slate-900 mb-8 text-lg">Categories</h4>
-            <ul className="space-y-5">
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Restaurants</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Hotels</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Hospitals</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Shopping</Link></li>
+            <h4 className="font-bold text-slate-900 mb-8 text-lg">For Businesses</h4>
+            <ul className="space-y-4">
+              <li><Link href="/sign-up" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">List Your Business</Link></li>
+              <li><Link href="/dashboard" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Business Dashboard</Link></li>
+              <li><Link href="/pricing" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Pricing Plans</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
             <h4 className="font-bold text-slate-900 mb-8 text-lg">Legal</h4>
-            <ul className="space-y-5">
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Terms of Service</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Cookie Policy</Link></li>
-              <li><Link href="#" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Disclaimer</Link></li>
+            <ul className="space-y-4">
+              <li><Link href="/privacy-policy" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Privacy Policy</Link></li>
+              <li><Link href="/terms-of-service" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Terms of Service</Link></li>
+              <li><Link href="/disclaimer" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Disclaimer</Link></li>
+              <li><Link href="/cookie-policy" className="text-slate-500 font-medium hover:text-red-600 hover:translate-x-1 inline-block transition-all duration-300">Cookie Policy</Link></li>
             </ul>
           </div>
 
@@ -73,7 +70,7 @@ export function Footer() {
 
         <div className="pt-10 border-t border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-slate-500 font-medium">
-            © {new Date().getFullYear()} BrajConnect. All rights reserved.
+            © {new Date().getFullYear()} BachatLal. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <span className="font-medium text-slate-700 flex items-center bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">

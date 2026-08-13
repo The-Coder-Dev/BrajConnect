@@ -36,7 +36,7 @@ export function CTASection() {
             <h2 className="text-5xl md:text-6xl lg:text-6xl font-extrabold text-white tracking-tight mb-8 leading-[1.1]">
               Grow your business with{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-red-400 to-orange-400">
-                BrajConnect
+                BachatLal
               </span>
             </h2>
 
@@ -47,7 +47,7 @@ export function CTASection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto">
-              <Button render={<Link href="/" />} className="w-full sm:w-auto h-16 px-10 rounded-full bg-red-600 hover:bg-red-500 text-white text-xl font-bold shadow-[0_0_40px_rgba(222, 59, 61,0.4)] hover:shadow-[0_0_60px_rgba(222, 59, 61,0.6)] hover:-translate-y-1 transition-all duration-300 border-none">
+              <Button render={<Link href="/sign-up" />} className="w-full sm:w-auto h-16 px-10 rounded-full bg-red-600 hover:bg-red-500 text-white text-xl font-bold shadow-[0_0_40px_rgba(222, 59, 61,0.4)] hover:shadow-[0_0_60px_rgba(222, 59, 61,0.6)] hover:-translate-y-1 transition-all duration-300 border-none">
                 Register Your Business
               </Button>
               <Button
