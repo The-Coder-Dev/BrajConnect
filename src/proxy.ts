@@ -5,8 +5,9 @@ export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Define protected and auth routes
-    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/setup") || pathname.startsWith("/admin");
-    const isAuthRoute = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
+    const isFranchiseProtected = pathname.startsWith("/franchise/dashboard") || pathname.startsWith("/franchise/applications");
+    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/setup") || pathname.startsWith("/admin") || isFranchiseProtected;
+    const isAuthRoute = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname.startsWith("/login/franchise") || pathname.startsWith("/register/franchise");
 
     // Only look up the session if the route actually needs it
     if (isProtected || isAuthRoute) {
@@ -18,21 +19,29 @@ export async function proxy(request: NextRequest) {
                 headers: request.headers,
             });
 
-            // Redirect unauthenticated users to sign-in
+            // Redirect unauthenticated users
             if (isProtected && !session) {
-                return NextResponse.redirect(new URL("/sign-in", request.url));
+                const loginRedirect = isFranchiseProtected ? "/login/franchise" : "/sign-in";
+                return NextResponse.redirect(new URL(loginRedirect, request.url));
             }
 
-            // Redirect authenticated users away from sign-in/sign-up
+            // Redirect authenticated users away from sign-in/sign-up/login/register
             if (isAuthRoute && session) {
-                const targetUrl = (session.user as { role?: string })?.role === "admin" ? "/admin" : "/dashboard";
+                const role = (session.user as { role?: string })?.role;
+                let targetUrl = "/dashboard";
+                if (role === "admin") {
+                    targetUrl = "/admin";
+                } else if (role === "franchise_partner") {
+                    targetUrl = "/franchise/dashboard";
+                }
                 return NextResponse.redirect(new URL(targetUrl, request.url));
             }
         } catch (error) {
             console.error("Middleware session error:", error);
             // Fail safely: redirect to sign-in if accessing a protected route
             if (isProtected) {
-                return NextResponse.redirect(new URL("/sign-in", request.url));
+                const loginRedirect = isFranchiseProtected ? "/login/franchise" : "/sign-in";
+                return NextResponse.redirect(new URL(loginRedirect, request.url));
             }
         }
     }
@@ -41,5 +50,15 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/dashboard/:path*", "/admin/:path*", "/setup/:path*", "/sign-in", "/sign-up"],
+    matcher: [
+        "/dashboard/:path*", 
+        "/admin/:path*", 
+        "/setup/:path*", 
+        "/franchise/dashboard/:path*",
+        "/franchise/applications/:path*",
+        "/sign-in", 
+        "/sign-up",
+        "/login/franchise",
+        "/register/franchise"
+    ],
 };

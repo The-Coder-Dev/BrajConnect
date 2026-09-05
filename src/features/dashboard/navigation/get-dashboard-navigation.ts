@@ -158,6 +158,8 @@ export function getDashboardNavigation({
         { title: "Edit Business", url: editBaseUrl, icon: Pencil },
         { title: "Gallery", url: `${editBaseUrl}?tab=gallery`, icon: ImageIcon },
         { title: "Business Hours", url: `${editBaseUrl}?tab=hours`, icon: Clock },
+        { title: "Franchise Opportunities", url: "/dashboard/franchise", icon: BriefcaseBusiness },
+        { title: "Franchise Applicants", url: "/dashboard/franchise/applications", icon: MessageSquare },
         { title: "Leads", url: "/dashboard", icon: MessageSquare },
         { title: "Reviews", url: "/dashboard", icon: Star },
         helperBuildItem({

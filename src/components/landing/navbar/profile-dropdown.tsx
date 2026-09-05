@@ -54,34 +54,69 @@ export function ProfileDropdown({ session }: { session: any }) {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="cursor-pointer flex items-center"
-            onClick={() => router.push("/dashboard")}
-          >
-            <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer flex items-center"
-            onClick={() => router.push("/dashboard/profile")}
-          >
-            <User className="mr-2 h-4 w-4" />
-            <span>My Profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer flex items-center"
-            onClick={() => router.push("/sign-up")}
-          >
-            <Building2 className="mr-2 h-4 w-4" />
-            <span>Register Business</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer flex items-center"
-            onClick={() => router.push("/dashboard/businesses")}
-          >
-            <Building2 className="mr-2 h-4 w-4" />
-            <span>My Businesses</span>
-          </DropdownMenuItem>
+          {session.user.role === "franchise_partner" ? (
+            <>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push("/franchise/dashboard")}
+              >
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <span>Franchise Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push("/franchise/opportunities")}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>Opportunities</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push("/franchise/applications")}
+              >
+                <User className="mr-2 h-4 w-4" />
+                <span>My Applications</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push("/franchise/profile")}
+              >
+                <User className="mr-2 h-4 w-4" />
+                <span>Franchise Profile</span>
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push(session.user.role === "admin" ? "/admin" : "/dashboard")}
+              >
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <span>Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push("/dashboard/profile")}
+              >
+                <User className="mr-2 h-4 w-4" />
+                <span>My Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push("/sign-up")}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>Register Business</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center"
+                onClick={() => router.push("/dashboard/businesses")}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>My Businesses</span>
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950/50"

@@ -20,11 +20,20 @@ import { notifications } from "./notifications";
 import { businessAnalytics } from "./analytics";
 import { businessCategoryDetails } from "./category-details";
 import { emailLogs } from "./email-logs";
+import { franchiseProfile } from "./franchise-profile";
+import { franchiseOpportunity } from "./franchise-opportunity";
+import { franchiseApplication } from "./franchise-application";
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ one, many }) => ({
   sessions: many(session),
   accounts: many(account),
   businesses: many(business),
+  franchiseProfile: one(franchiseProfile, {
+    fields: [user.id],
+    references: [franchiseProfile.userId],
+  }),
+  franchiseOpportunities: many(franchiseOpportunity),
+  franchiseApplications: many(franchiseApplication),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -71,6 +80,8 @@ export const businessRelations = relations(business, ({ one, many }) => ({
     fields: [business.id],
     references: [businessCategoryDetails.businessId],
   }),
+  franchiseOpportunities: many(franchiseOpportunity),
+  franchiseApplications: many(franchiseApplication),
 }));
 
 
@@ -229,6 +240,44 @@ export const emailLogsRelations = relations(emailLogs, ({ one }) => ({
   business: one(business, {
     fields: [emailLogs.businessId],
     references: [business.id],
+  }),
+}));
+
+export const franchiseProfileRelations = relations(franchiseProfile, ({ one }) => ({
+  user: one(user, {
+    fields: [franchiseProfile.userId],
+    references: [user.id],
+  }),
+}));
+
+export const franchiseOpportunityRelations = relations(franchiseOpportunity, ({ one, many }) => ({
+  business: one(business, {
+    fields: [franchiseOpportunity.businessId],
+    references: [business.id],
+  }),
+  owner: one(user, {
+    fields: [franchiseOpportunity.ownerId],
+    references: [user.id],
+  }),
+  applications: many(franchiseApplication),
+}));
+
+export const franchiseApplicationRelations = relations(franchiseApplication, ({ one }) => ({
+  opportunity: one(franchiseOpportunity, {
+    fields: [franchiseApplication.opportunityId],
+    references: [franchiseOpportunity.id],
+  }),
+  business: one(business, {
+    fields: [franchiseApplication.businessId],
+    references: [business.id],
+  }),
+  franchisePartner: one(user, {
+    fields: [franchiseApplication.franchisePartnerId],
+    references: [user.id],
+  }),
+  reviewer: one(user, {
+    fields: [franchiseApplication.reviewedBy],
+    references: [user.id],
   }),
 }));
 

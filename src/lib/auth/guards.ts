@@ -24,7 +24,14 @@ export async function requireGuest() {
   const session = await getSession();
 
   if (session) {
-    redirect(DEFAULT_AUTHENTICATED_REDIRECT);
+    const role = (session.user as { role?: string })?.role;
+    if (role === "admin") {
+      redirect("/admin");
+    } else if (role === "franchise_partner") {
+      redirect("/franchise/dashboard");
+    } else {
+      redirect(DEFAULT_AUTHENTICATED_REDIRECT);
+    }
   }
 }
 
@@ -63,6 +70,30 @@ export async function requireAdmin() {
 
   if ((sessionData.user as { role?: string })?.role !== "admin") {
     redirect("/unauthorized");
+  }
+
+  return sessionData;
+}
+
+/**
+ * Ensures the user is authenticated and has the 'franchise_partner' role.
+ * Redirects to /login/franchise if unauthenticated, or /unauthorized if not a franchise partner.
+ * Returns the session and user if authorized.
+ */
+export async function requireFranchisePartner() {
+  const sessionData = await getSession();
+
+  if (!sessionData || !sessionData.session) {
+    redirect("/login/franchise");
+  }
+
+  const role = (sessionData.user as { role?: string })?.role;
+  if (role !== "franchise_partner") {
+    if (role === "admin") {
+      redirect("/admin");
+    } else {
+      redirect("/dashboard");
+    }
   }
 
   return sessionData;

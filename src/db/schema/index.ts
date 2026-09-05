@@ -23,4 +23,7 @@ export * from "./activity-logs";
 export * from "./reviews";
 export * from "./category-details";
 export * from "./email-logs";
+export * from "./franchise-profile";
+export * from "./franchise-opportunity";
+export * from "./franchise-application";
 
