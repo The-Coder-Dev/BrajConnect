@@ -1,6 +1,7 @@
 export const USER_ROLES = [
   "visitor",
   "business_owner",
+  "franchise_partner",
   "admin",
 ] as const;
 

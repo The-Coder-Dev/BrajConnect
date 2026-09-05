@@ -31,7 +31,16 @@ export default async function SignUpPage() {
         
         <SocialLoginButtons />
         
-        <p className="mt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-6 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-center">
+          <p className="text-xs text-amber-900 dark:text-amber-200">
+            Looking for franchise opportunities?{" "}
+            <Link href="/register/franchise" className="font-bold text-amber-700 dark:text-amber-400 hover:underline">
+              Join as a Franchise Partner &rarr;
+            </Link>
+          </p>
+        </div>
+
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/sign-in" className="font-medium text-primary hover:underline underline-offset-4">
             Back to Login

@@ -32,6 +32,7 @@ import {
   HelpCircle,
   LogOut,
   ShieldAlert,
+  Briefcase,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
@@ -71,6 +72,20 @@ const businessNavItems = [
     title: "All Businesses",
     url: "/admin/businesses",
     icon: Building2,
+  },
+];
+
+const franchiseNavItems = [
+  {
+    title: "Opportunities",
+    url: "/admin/franchise/opportunities",
+    icon: Briefcase,
+    badge: "Review",
+  },
+  {
+    title: "Applications",
+    url: "/admin/franchise/applications",
+    icon: Users,
   },
 ];
 
@@ -218,6 +233,20 @@ export function AdminSidebar({ user }: { user: any }) {
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
               {businessNavItems.map(renderMenuItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Franchise Hub */}
+        <SidebarGroup className="p-0">
+          {state !== "collapsed" && (
+            <SidebarGroupLabel className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground/70 px-2 mb-1">
+              Franchise Hub
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-1">
+              {franchiseNavItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
