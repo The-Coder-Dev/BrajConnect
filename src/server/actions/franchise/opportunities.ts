@@ -182,12 +182,15 @@ export async function getApprovedFranchiseOpportunities(params?: {
 }
 
 /**
- * Public & Partner: Get single opportunity by slug
+ * Public & Partner: Get single opportunity by slug (only approved opportunities are publicly accessible)
  */
 export async function getFranchiseOpportunityBySlug(slug: string) {
   try {
     const item = await db.query.franchiseOpportunity.findFirst({
-      where: eq(franchiseOpportunity.slug, slug),
+      where: and(
+        eq(franchiseOpportunity.slug, slug),
+        eq(franchiseOpportunity.status, "approved")
+      ),
       with: {
         business: {
           columns: {
@@ -205,7 +208,7 @@ export async function getFranchiseOpportunityBySlug(slug: string) {
     });
 
     if (!item) {
-      return { success: false, error: "Opportunity not found" };
+      return { success: false, error: "Opportunity not found or not currently available." };
     }
 
     return { success: true, data: item };

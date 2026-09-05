@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, pgEnum, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, pgEnum, index, uniqueIndex } from "drizzle-orm/pg-core";
 import { franchiseOpportunity } from "./franchise-opportunity";
 import { business } from "./business";
 import { user } from "./auth";
@@ -49,5 +49,6 @@ export const franchiseApplication = pgTable("franchise_applications", {
     businessIdIdx: index("fa_business_id_idx").on(table.businessId),
     partnerIdIdx: index("fa_partner_id_idx").on(table.franchisePartnerId),
     statusIdx: index("fa_status_idx").on(table.status),
+    uniquePartnerOpportunity: uniqueIndex("fa_partner_opportunity_unique_idx").on(table.franchisePartnerId, table.opportunityId),
   };
 });

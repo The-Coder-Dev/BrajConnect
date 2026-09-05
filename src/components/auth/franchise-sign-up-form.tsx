@@ -100,7 +100,12 @@ export function FranchiseSignUpForm() {
       });
 
       if (authError) {
-        toast.error(authError.message || "Failed to create account. Please check your details.");
+        const isDuplicate = authError.message?.toLowerCase().includes("already") || 
+                            authError.message?.toLowerCase().includes("exist");
+        const msg = isDuplicate 
+          ? "An account with this email already exists." 
+          : authError.message || "Failed to create account. Please check your details.";
+        toast.error(msg);
         setIsSubmitting(false);
         return;
       }
@@ -108,13 +113,13 @@ export function FranchiseSignUpForm() {
       // 2. Complete Franchise Partner Registration (sets role & creates profile)
       const res = await completeFranchiseRegistration(values);
       if (!res.success) {
-        toast.error(res.error || "Failed to complete franchise profile.");
+        toast.error(res.message || res.error || "Failed to complete franchise profile.");
         setIsSubmitting(false);
         return;
       }
 
-      toast.success("Welcome! Your Franchise Partner account is ready.");
-      router.push("/franchise/dashboard");
+      toast.success(res.message || "Franchise account created successfully.");
+      router.push(res.redirectTo || "/franchise/dashboard");
       router.refresh();
     } catch (err: any) {
       console.error("Individual registration error:", err);
@@ -134,7 +139,12 @@ export function FranchiseSignUpForm() {
       });
 
       if (authError) {
-        toast.error(authError.message || "Failed to create company account. Please check your details.");
+        const isDuplicate = authError.message?.toLowerCase().includes("already") || 
+                            authError.message?.toLowerCase().includes("exist");
+        const msg = isDuplicate 
+          ? "An account with this email already exists." 
+          : authError.message || "Failed to create company account. Please check your details.";
+        toast.error(msg);
         setIsSubmitting(false);
         return;
       }
@@ -142,13 +152,13 @@ export function FranchiseSignUpForm() {
       // 2. Complete Franchise Partner Registration
       const res = await completeFranchiseRegistration(values);
       if (!res.success) {
-        toast.error(res.error || "Failed to complete company franchise profile.");
+        toast.error(res.message || res.error || "Failed to complete company franchise profile.");
         setIsSubmitting(false);
         return;
       }
 
-      toast.success("Welcome! Your Company Franchise account is ready.");
-      router.push("/franchise/dashboard");
+      toast.success(res.message || "Franchise account created successfully.");
+      router.push(res.redirectTo || "/franchise/dashboard");
       router.refresh();
     } catch (err: any) {
       console.error("Company registration error:", err);

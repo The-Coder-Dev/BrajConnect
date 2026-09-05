@@ -37,11 +37,19 @@ export async function submitFranchiseApplication(rawInput: FranchiseApplicationI
       where: eq(franchiseOpportunity.id, data.opportunityId),
     });
 
-    if (!opp || opp.status !== "approved") {
+    if (!opp) {
+      return { success: false, error: "Franchise opportunity not found." };
+    }
+
+    if (opp.status === "closed") {
+      return { success: false, error: "This franchise opportunity is no longer accepting applications." };
+    }
+
+    if (opp.status !== "approved") {
       return { success: false, error: "This franchise opportunity is not currently available for applications." };
     }
 
-    // 3. Check for existing active application
+    // 3. Check for existing application
     const existing = await db.query.franchiseApplication.findFirst({
       where: and(
         eq(franchiseApplication.opportunityId, data.opportunityId),
@@ -50,7 +58,7 @@ export async function submitFranchiseApplication(rawInput: FranchiseApplicationI
     });
 
     if (existing) {
-      return { success: false, error: "You have already submitted an application for this opportunity." };
+      return { success: false, error: "You have already applied for this franchise opportunity." };
     }
 
     // 4. Determine applicant display details based on applicantType
@@ -89,7 +97,56 @@ export async function submitFranchiseApplication(rawInput: FranchiseApplicationI
     return { success: true, applicationId };
   } catch (error: any) {
     console.error("Failed to submit franchise application:", error);
+    if (error?.code === "23505" || error?.message?.includes("unique") || error?.message?.includes("fa_partner_opportunity_unique_idx")) {
+      return { success: false, error: "You have already applied for this franchise opportunity." };
+    }
     return { success: false, error: getFriendlyErrorMessage(error, "Failed to submit application.") };
+  }
+}
+
+/**
+ * Franchise Partner: Withdraw an application (partner can only withdraw their own application)
+ */
+export async function withdrawFranchiseApplication(applicationId: string) {
+  try {
+    const { user: authUser } = await requireFranchisePartner();
+
+    const app = await db.query.franchiseApplication.findFirst({
+      where: eq(franchiseApplication.id, applicationId),
+    });
+
+    if (!app) {
+      return { success: false, error: "Application not found." };
+    }
+
+    // Enforce ownership: partner can only withdraw their own application
+    if (app.franchisePartnerId !== authUser.id) {
+      return { success: false, error: "You don't have permission to perform this action." };
+    }
+
+    if (app.status === "approved" || app.status === "rejected") {
+      return { success: false, error: `Cannot withdraw an application that has already been ${app.status}.` };
+    }
+
+    if (app.status === "withdrawn") {
+      return { success: false, error: "Application has already been withdrawn." };
+    }
+
+    await db.update(franchiseApplication)
+      .set({
+        status: "withdrawn",
+        updatedAt: new Date(),
+      })
+      .where(eq(franchiseApplication.id, applicationId));
+
+    revalidatePath("/franchise/applications");
+    revalidatePath("/franchise/dashboard");
+    revalidatePath("/dashboard/franchise/applications");
+
+    return { success: true, message: "Application withdrawn successfully." };
+  } catch (error: any) {
+    console.error("Failed to withdraw application:", error);
+    return { success: false, error: getFriendlyErrorMessage(error, "Failed to withdraw application.") };
   }
 }
 

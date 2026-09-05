@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { user, franchiseProfile } from "@/db/schema";
+import { user, franchiseProfile, session as sessionTable, account as accountTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -9,13 +9,27 @@ import { randomUUID } from "crypto";
 import { franchiseRegisterSchema, type FranchiseRegisterInput } from "@/lib/validations/auth/franchise-register";
 import { getFriendlyErrorMessage } from "@/lib/utils";
 
-export async function completeFranchiseRegistration(rawInput: FranchiseRegisterInput) {
+export type FranchiseAuthResponse = {
+  success: boolean;
+  message: string;
+  redirectTo?: string;
+  profileId?: string;
+  error?: string;
+};
+
+export async function completeFranchiseRegistration(rawInput: FranchiseRegisterInput): Promise<FranchiseAuthResponse> {
+  let createdUserId: string | null = null;
+
   try {
     // 1. Validate payload server-side
     const parsed = franchiseRegisterSchema.safeParse(rawInput);
     if (!parsed.success) {
-      const errorMsg = parsed.error.issues[0]?.message || "Invalid registration data";
-      return { success: false, error: errorMsg };
+      const errorMsg = parsed.error.issues[0]?.message || "Please check the highlighted fields.";
+      return { 
+        success: false, 
+        message: "Please check the highlighted fields.", 
+        error: errorMsg 
+      };
     }
 
     const data = parsed.data;
@@ -23,10 +37,14 @@ export async function completeFranchiseRegistration(rawInput: FranchiseRegisterI
     // 2. Ensure user is authenticated via Better Auth session
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
-      return { success: false, error: "Session expired or unauthorized. Please try again." };
+      return { 
+        success: false, 
+        message: "Session expired or unauthorized. Please try again." 
+      };
     }
 
     const userId = session.user.id;
+    createdUserId = userId;
 
     // 3. Check if user already has a franchise profile
     const existingProfile = await db.query.franchiseProfile.findFirst({
@@ -39,12 +57,17 @@ export async function completeFranchiseRegistration(rawInput: FranchiseRegisterI
         .set({ role: "franchise_partner", updatedAt: new Date() })
         .where(eq(user.id, userId));
 
-      return { success: true, profileId: existingProfile.id };
+      return { 
+        success: true, 
+        message: "Franchise account created successfully.", 
+        redirectTo: "/franchise/dashboard",
+        profileId: existingProfile.id 
+      };
     }
 
     const profileId = `fp_${Date.now()}_${randomUUID().split("-")[0]}`;
 
-    // 4. Update user role to franchise_partner and create profile
+    // 4. Update user role to franchise_partner and create profile inside an atomic transaction
     await db.transaction(async (tx) => {
       // Server strictly assigns the role 'franchise_partner'
       await tx.update(user)
@@ -91,12 +114,32 @@ export async function completeFranchiseRegistration(rawInput: FranchiseRegisterI
       }
     });
 
-    return { success: true, profileId };
+    return { 
+      success: true, 
+      message: "Franchise account created successfully.", 
+      redirectTo: "/franchise/dashboard",
+      profileId 
+    };
   } catch (error: any) {
     console.error("Failed to complete franchise registration:", error);
+
+    // Rollback cleanup: Prevent orphaned partial user accounts if profile creation failed
+    if (createdUserId) {
+      try {
+        console.warn(`Rolling back partial franchise account for user ${createdUserId}`);
+        await db.delete(franchiseProfile).where(eq(franchiseProfile.userId, createdUserId));
+        await db.delete(sessionTable).where(eq(sessionTable.userId, createdUserId));
+        await db.delete(accountTable).where(eq(accountTable.userId, createdUserId));
+        await db.delete(user).where(eq(user.id, createdUserId));
+      } catch (cleanupErr) {
+        console.error("Error during partial account cleanup rollback:", cleanupErr);
+      }
+    }
+
     return {
       success: false,
-      error: getFriendlyErrorMessage(error, "Failed to complete franchise registration. Please try again."),
+      message: "We couldn't create your account right now. Please try again.",
+      error: getFriendlyErrorMessage(error, "We couldn't create your account right now. Please try again."),
     };
   }
 }

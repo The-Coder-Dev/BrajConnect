@@ -5,9 +5,17 @@ export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Define protected and auth routes
-    const isFranchiseProtected = pathname.startsWith("/franchise/dashboard") || pathname.startsWith("/franchise/applications");
-    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/setup") || pathname.startsWith("/admin") || isFranchiseProtected;
-    const isAuthRoute = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname.startsWith("/login/franchise") || pathname.startsWith("/register/franchise");
+    const isFranchiseProtected = pathname.startsWith("/franchise/dashboard") || 
+                                 pathname.startsWith("/franchise/applications") || 
+                                 pathname.startsWith("/franchise/profile");
+    const isProtected = pathname.startsWith("/dashboard") || 
+                        pathname.startsWith("/setup") || 
+                        pathname.startsWith("/admin") || 
+                        isFranchiseProtected;
+    const isAuthRoute = pathname.startsWith("/sign-in") || 
+                        pathname.startsWith("/sign-up") || 
+                        pathname.startsWith("/login/franchise") || 
+                        pathname.startsWith("/register/franchise");
 
     // Only look up the session if the route actually needs it
     if (isProtected || isAuthRoute) {
@@ -25,8 +33,19 @@ export async function proxy(request: NextRequest) {
                 return NextResponse.redirect(new URL(loginRedirect, request.url));
             }
 
-            // Redirect authenticated users away from sign-in/sign-up/login/register
-            if (isAuthRoute && session) {
+            // Role guard for Franchise Portal routes: only franchise_partner allowed
+            if (isFranchiseProtected && session) {
+                const role = (session.user as { role?: string })?.role;
+                if (role !== "franchise_partner") {
+                    const fallback = role === "admin" ? "/admin" : "/dashboard";
+                    return NextResponse.redirect(new URL(fallback, request.url));
+                }
+            }
+
+            // Redirect authenticated users away from sign-in/sign-up/login/register (GET direct navigation only)
+            // DO NOT intercept Server Actions or POST requests!
+            const isServerActionOrApi = request.method !== "GET" || request.headers.has("next-action") || request.headers.has("rsc");
+            if (isAuthRoute && session && !isServerActionOrApi) {
                 const role = (session.user as { role?: string })?.role;
                 let targetUrl = "/dashboard";
                 if (role === "admin") {
@@ -56,6 +75,7 @@ export const config = {
         "/setup/:path*", 
         "/franchise/dashboard/:path*",
         "/franchise/applications/:path*",
+        "/franchise/profile/:path*",
         "/sign-in", 
         "/sign-up",
         "/login/franchise",
