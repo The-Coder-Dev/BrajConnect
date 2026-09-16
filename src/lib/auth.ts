@@ -4,9 +4,30 @@ import { db } from '@/db';
 import * as schema from '@/db/schema';
 import { DEFAULT_USER_ROLE } from '@/lib/auth/roles';
 
+const getTrustedOrigins = (): string[] => {
+  const origins = new Set<string>([
+    "https://bachatlal.in",
+    "https://www.bachatlal.in",
+  ]);
+
+  if (process.env.BETTER_AUTH_URL) {
+    origins.add(process.env.BETTER_AUTH_URL.replace(/\/$/, ""));
+  }
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    origins.add(process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, ""));
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    origins.add("http://localhost:3000");
+    origins.add("http://127.0.0.1:3000");
+  }
+
+  return Array.from(origins);
+};
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://bachatlal.in",
-  trustedOrigins: ["https://bachatlal.in", "https://www.bachatlal.in"],
+  trustedOrigins: getTrustedOrigins(),
   account: {
     accountLinking: {
       enabled: true,
@@ -21,7 +42,7 @@ export const auth = betterAuth({
   }),
   session: {
     // Cache the session in a signed cookie so the DB is NOT hit on every
-    // request. The session is re-validated from the DB at most once pergenerates and sends this exact URI to
+    // request. The session is re-validated from the DB at most once per
     // maxAge window (5 minutes). This dramatically reduces PG round-trips.
     cookieCache: {
       enabled: true,
