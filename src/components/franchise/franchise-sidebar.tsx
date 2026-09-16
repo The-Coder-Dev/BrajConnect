@@ -22,6 +22,10 @@ import {
   Settings,
   LogOut,
   Briefcase,
+  Store,
+  Building2,
+  PlusCircle,
+  ArrowUpRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
@@ -43,6 +47,11 @@ const franchiseNavItems = [
     icon: FileText,
   },
   {
+    title: "My Franchise Units",
+    url: "/franchise/units",
+    icon: Store,
+  },
+  {
     title: "Profile",
     url: "/franchise/profile",
     icon: User,
@@ -54,7 +63,13 @@ const franchiseNavItems = [
   },
 ];
 
-export function FranchiseSidebar({ user }: { user: any }) {
+export function FranchiseSidebar({
+  user,
+  hasBusiness = false,
+}: {
+  user: any;
+  hasBusiness?: boolean;
+}) {
   const pathname = usePathname();
   const { state } = useSidebar();
 
@@ -124,6 +139,55 @@ export function FranchiseSidebar({ user }: { user: any }) {
                 );
               })}
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Bi-Directional Workspace Switcher Card */}
+        <SidebarGroup className="p-0 pt-3 border-t border-border/40">
+          <SidebarGroupContent>
+            {hasBusiness ? (
+              <div className="p-1">
+                <Link
+                  href="/dashboard"
+                  title="Switch to Business Portal"
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/15 text-blue-700 dark:text-blue-300 transition-colors text-xs font-semibold group cursor-pointer"
+                >
+                  <Building2 className="h-4 w-4 text-blue-600 shrink-0" />
+                  {state !== "collapsed" && (
+                    <div className="flex flex-col flex-1 overflow-hidden text-left">
+                      <span className="truncate flex items-center justify-between">
+                        Business Portal
+                        <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-normal truncate">
+                        Switch to owned businesses
+                      </span>
+                    </div>
+                  )}
+                </Link>
+              </div>
+            ) : (
+              <div className="p-1">
+                <Link
+                  href="/setup/business"
+                  title="Register a Business"
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 transition-colors text-xs font-semibold group cursor-pointer"
+                >
+                  <PlusCircle className="h-4 w-4 text-emerald-600 shrink-0" />
+                  {state !== "collapsed" && (
+                    <div className="flex flex-col flex-1 overflow-hidden text-left">
+                      <span className="truncate flex items-center justify-between">
+                        Register a Business
+                        <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-normal truncate">
+                        List your own brand
+                      </span>
+                    </div>
+                  )}
+                </Link>
+              </div>
+            )}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
