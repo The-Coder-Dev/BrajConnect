@@ -10,23 +10,32 @@ import { franchiseRegisterSchema, type FranchiseRegisterInput } from "@/lib/vali
 import { getFriendlyErrorMessage } from "@/lib/utils";
 
 export async function completeFranchiseRegistration(rawInput: FranchiseRegisterInput) {
+  const startTime = Date.now();
+  console.log(`[FRANCHISE_REGISTRATION_START] Processing ${rawInput?.applicantType || "unknown"} franchise registration...`);
+
   try {
     // 1. Validate payload server-side
     const parsed = franchiseRegisterSchema.safeParse(rawInput);
     if (!parsed.success) {
       const errorMsg = parsed.error.issues[0]?.message || "Invalid registration data";
+      console.warn("[FRANCHISE_REGISTRATION_VALIDATION_FAILED]", errorMsg);
       return { success: false, error: errorMsg };
     }
 
     const data = parsed.data;
 
     // 2. Ensure user is authenticated via Better Auth session
-    const session = await auth.api.getSession({ headers: await headers() });
+    console.log("[FRANCHISE_SESSION_CHECK] Verifying active Better Auth session...");
+    const reqHeaders = await headers();
+    const session = await auth.api.getSession({ headers: reqHeaders });
+    
     if (!session?.user?.id) {
-      return { success: false, error: "Session expired or unauthorized. Please try again." };
+      console.warn("[FRANCHISE_SESSION_MISSING] No active session found during franchise profile completion.");
+      return { success: false, error: "Session expired or unauthorized. Please log in and try again." };
     }
 
     const userId = session.user.id;
+    console.log(`[FRANCHISE_SESSION_SUCCESS] User session active for ID: ${userId}`);
 
     // 3. Check if user already has a franchise profile
     const existingProfile = await db.query.franchiseProfile.findFirst({
@@ -34,7 +43,7 @@ export async function completeFranchiseRegistration(rawInput: FranchiseRegisterI
     });
 
     if (existingProfile) {
-      // Profile already created, just ensure role is franchise_partner
+      console.log(`[FRANCHISE_PROFILE_EXISTS] Profile already exists for user ${userId}. Ensuring role is franchise_partner...`);
       await db.update(user)
         .set({ role: "franchise_partner", updatedAt: new Date() })
         .where(eq(user.id, userId));
@@ -44,7 +53,8 @@ export async function completeFranchiseRegistration(rawInput: FranchiseRegisterI
 
     const profileId = `fp_${Date.now()}_${randomUUID().split("-")[0]}`;
 
-    // 4. Update user role to franchise_partner and create profile
+    // 4. Update user role to franchise_partner and create profile in transaction
+    console.log(`[FRANCHISE_USER_ROLE_UPDATE] Setting role to franchise_partner and inserting profile ${profileId}...`);
     await db.transaction(async (tx) => {
       // Server strictly assigns the role 'franchise_partner'
       await tx.update(user)
@@ -91,9 +101,10 @@ export async function completeFranchiseRegistration(rawInput: FranchiseRegisterI
       }
     });
 
+    console.log(`[FRANCHISE_REGISTRATION_SUCCESS] Profile ${profileId} created successfully in ${Date.now() - startTime}ms`);
     return { success: true, profileId };
-  } catch (error: any) {
-    console.error("Failed to complete franchise registration:", error);
+  } catch (error: unknown) {
+    console.error("[FRANCHISE_REGISTRATION_ERROR]", error);
     return {
       success: false,
       error: getFriendlyErrorMessage(error, "Failed to complete franchise registration. Please try again."),

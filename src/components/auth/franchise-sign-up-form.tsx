@@ -93,11 +93,22 @@ export function FranchiseSignUpForm() {
     setIsSubmitting(true);
     try {
       // 1. Sign up user account with Better Auth
-      const { error: authError } = await authClient.signUp.email({
+      let { error: authError } = await authClient.signUp.email({
         email: values.email,
         password: values.password,
         name: values.fullName,
       });
+
+      // If user account already exists (e.g. from prior partial attempt), try signing in
+      if (authError && (authError.status === 422 || authError.status === 400 || authError.message?.toLowerCase().includes("already exists"))) {
+        const { error: signInError } = await authClient.signIn.email({
+          email: values.email,
+          password: values.password,
+        });
+        if (!signInError) {
+          authError = null;
+        }
+      }
 
       if (authError) {
         toast.error(authError.message || "Failed to create account. Please check your details.");
@@ -127,11 +138,22 @@ export function FranchiseSignUpForm() {
     setIsSubmitting(true);
     try {
       // 1. Sign up user account with Better Auth using authorized person's email & credentials
-      const { error: authError } = await authClient.signUp.email({
+      let { error: authError } = await authClient.signUp.email({
         email: values.authorizedPersonEmail,
         password: values.password,
         name: values.companyName,
       });
+
+      // If user account already exists (e.g. from prior partial attempt), try signing in
+      if (authError && (authError.status === 422 || authError.status === 400 || authError.message?.toLowerCase().includes("already exists"))) {
+        const { error: signInError } = await authClient.signIn.email({
+          email: values.authorizedPersonEmail,
+          password: values.password,
+        });
+        if (!signInError) {
+          authError = null;
+        }
+      }
 
       if (authError) {
         toast.error(authError.message || "Failed to create company account. Please check your details.");
