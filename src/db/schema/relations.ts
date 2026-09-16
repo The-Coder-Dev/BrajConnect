@@ -23,6 +23,7 @@ import { emailLogs } from "./email-logs";
 import { franchiseProfile } from "./franchise-profile";
 import { franchiseOpportunity } from "./franchise-opportunity";
 import { franchiseApplication } from "./franchise-application";
+import { franchiseUnit } from "./franchise-unit";
 
 export const userRelations = relations(user, ({ one, many }) => ({
   sessions: many(session),
@@ -34,6 +35,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   }),
   franchiseOpportunities: many(franchiseOpportunity),
   franchiseApplications: many(franchiseApplication),
+  franchiseUnits: many(franchiseUnit),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -82,6 +84,7 @@ export const businessRelations = relations(business, ({ one, many }) => ({
   }),
   franchiseOpportunities: many(franchiseOpportunity),
   franchiseApplications: many(franchiseApplication),
+  franchiseUnits: many(franchiseUnit),
 }));
 
 
@@ -260,6 +263,7 @@ export const franchiseOpportunityRelations = relations(franchiseOpportunity, ({ 
     references: [user.id],
   }),
   applications: many(franchiseApplication),
+  units: many(franchiseUnit),
 }));
 
 export const franchiseApplicationRelations = relations(franchiseApplication, ({ one }) => ({
@@ -277,6 +281,26 @@ export const franchiseApplicationRelations = relations(franchiseApplication, ({ 
   }),
   reviewer: one(user, {
     fields: [franchiseApplication.reviewedBy],
+    references: [user.id],
+  }),
+  unit: one(franchiseUnit),
+}));
+
+export const franchiseUnitRelations = relations(franchiseUnit, ({ one }) => ({
+  business: one(business, {
+    fields: [franchiseUnit.businessId],
+    references: [business.id],
+  }),
+  opportunity: one(franchiseOpportunity, {
+    fields: [franchiseUnit.opportunityId],
+    references: [franchiseOpportunity.id],
+  }),
+  application: one(franchiseApplication, {
+    fields: [franchiseUnit.applicationId],
+    references: [franchiseApplication.id],
+  }),
+  franchisePartner: one(user, {
+    fields: [franchiseUnit.franchisePartnerId],
     references: [user.id],
   }),
 }));

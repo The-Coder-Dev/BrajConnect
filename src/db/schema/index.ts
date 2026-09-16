@@ -26,4 +26,5 @@ export * from "./email-logs";
 export * from "./franchise-profile";
 export * from "./franchise-opportunity";
 export * from "./franchise-application";
+export * from "./franchise-unit";
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { franchiseApplication, franchiseOpportunity, franchiseProfile, business, user } from "@/db/schema";
+import { franchiseApplication, franchiseOpportunity, franchiseProfile, franchiseUnit, business, user } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { requireAuth, requireAdmin, requireFranchisePartner } from "@/lib/auth/guards";
 import { randomUUID } from "crypto";
@@ -187,7 +187,10 @@ export async function updateApplicationStatus(params: {
       where: eq(franchiseApplication.id, params.applicationId),
       with: {
         business: {
-          columns: { ownerId: true },
+          columns: { id: true, name: true, ownerId: true },
+        },
+        opportunity: {
+          columns: { id: true, title: true, availableCity: true, availableState: true },
         },
       },
     });
@@ -203,18 +206,51 @@ export async function updateApplicationStatus(params: {
       return { success: false, error: "Unauthorized to update this application." };
     }
 
-    await db.update(franchiseApplication)
-      .set({
-        status: params.status,
-        reviewNotes: params.reviewNotes || null,
-        reviewedBy: authUser.id,
-        reviewedAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(eq(franchiseApplication.id, params.applicationId));
+    const previousStatus = app.status;
+
+    // Atomic transaction: Status update + idempotent unit provisioning
+    await db.transaction(async (tx) => {
+      await tx.update(franchiseApplication)
+        .set({
+          status: params.status,
+          reviewNotes: params.reviewNotes || null,
+          reviewedBy: authUser.id,
+          reviewedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(franchiseApplication.id, params.applicationId));
+
+      // Only transition to provision unit if changing from non-approved to approved
+      if (params.status === "approved" && previousStatus !== "approved") {
+        const existingUnit = await tx.query.franchiseUnit.findFirst({
+          where: eq(franchiseUnit.applicationId, app.id),
+        });
+
+        if (!existingUnit) {
+          const unitId = `fu_${Date.now()}_${randomUUID().split("-")[0]}`;
+          const confirmedCity = app.opportunity?.availableCity || "Mathura";
+          const confirmedState = app.opportunity?.availableState || "Uttar Pradesh";
+          const unitName = `${app.business?.name || "Franchise Brand"} - ${app.opportunity?.title || "Territory Outlet"} (${confirmedCity})`;
+
+          await tx.insert(franchiseUnit).values({
+            id: unitId,
+            businessId: app.businessId,
+            opportunityId: app.opportunityId,
+            applicationId: app.id,
+            franchisePartnerId: app.franchisePartnerId,
+            name: unitName,
+            address: null, // Actual physical address confirmed during store onboarding
+            city: confirmedCity,
+            state: confirmedState,
+            status: "setup_in_progress",
+          });
+        }
+      }
+    });
 
     revalidatePath("/dashboard/franchise/applications");
     revalidatePath("/franchise/applications");
+    revalidatePath("/franchise/units");
     revalidatePath("/admin/franchise/applications");
 
     return { success: true };

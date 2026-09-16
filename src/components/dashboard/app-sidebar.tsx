@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { LogOut, Lock } from "lucide-react";
+import { LogOut, Lock, Briefcase, ArrowUpRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
 import { getDashboardNavigation } from "@/features/dashboard/navigation/get-dashboard-navigation";
@@ -123,6 +123,28 @@ export function AppSidebar({ user, activeBusiness }: { user: any; activeBusiness
       </SidebarContent>
 
       <SidebarFooter className="p-4">
+        {user?.role === "franchise_partner" && (
+          <div className="mb-2">
+            <Link
+              href="/franchise/dashboard"
+              title="Switch to Franchise Partner Hub"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15 text-amber-700 dark:text-amber-300 transition-colors text-xs font-semibold group cursor-pointer"
+            >
+              <Briefcase className="h-4 w-4 text-amber-600 shrink-0" />
+              {state !== "collapsed" && (
+                <div className="flex flex-col flex-1 overflow-hidden text-left">
+                  <span className="truncate flex items-center justify-between">
+                    Franchise Hub
+                    <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </span>
+                  <span className="text-[10px] text-muted-foreground font-normal truncate">
+                    Switch to Partner Portal
+                  </span>
+                </div>
+              )}
+            </Link>
+          </div>
+        )}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton

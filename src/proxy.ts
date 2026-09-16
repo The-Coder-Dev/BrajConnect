@@ -5,9 +5,25 @@ export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Define protected and auth routes
-    const isFranchiseProtected = pathname.startsWith("/franchise/dashboard") || pathname.startsWith("/franchise/applications");
-    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/setup") || pathname.startsWith("/admin") || isFranchiseProtected;
-    const isAuthRoute = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname.startsWith("/login/franchise") || pathname.startsWith("/register/franchise");
+    const isFranchiseProtected =
+        pathname.startsWith("/franchise/dashboard") ||
+        pathname.startsWith("/franchise/applications") ||
+        pathname.startsWith("/franchise/opportunities") ||
+        pathname.startsWith("/franchise/units") ||
+        pathname.startsWith("/franchise/profile") ||
+        pathname.startsWith("/franchise/settings");
+
+    const isProtected =
+        pathname.startsWith("/dashboard") ||
+        pathname.startsWith("/setup") ||
+        pathname.startsWith("/admin") ||
+        isFranchiseProtected;
+
+    const isAuthRoute =
+        pathname.startsWith("/sign-in") ||
+        pathname.startsWith("/sign-up") ||
+        pathname.startsWith("/login/franchise") ||
+        pathname.startsWith("/register/franchise");
 
     // Never intercept Server Actions or mutation requests with navigation redirects
     const isServerAction = request.headers.has("next-action");
@@ -68,6 +84,10 @@ export const config = {
         "/setup/:path*", 
         "/franchise/dashboard/:path*",
         "/franchise/applications/:path*",
+        "/franchise/opportunities/:path*",
+        "/franchise/units/:path*",
+        "/franchise/profile/:path*",
+        "/franchise/settings/:path*",
         "/sign-in", 
         "/sign-up",
         "/login/franchise",
