@@ -114,10 +114,10 @@ export function FranchiseSignUpForm() {
       }
 
       toast.success("Welcome! Your Franchise Partner account is ready.");
-      router.push("/franchise/dashboard");
-      router.refresh();
+      // Hard navigation ensures fresh session cookies and layout authorization are re-evaluated
+      window.location.href = "/franchise/dashboard";
     } catch (err: any) {
-      console.error("Individual registration error:", err);
+      console.error("Individual franchise registration error:", err);
       toast.error(err?.message || "An unexpected error occurred. Please try again.");
       setIsSubmitting(false);
     }
@@ -148,10 +148,10 @@ export function FranchiseSignUpForm() {
       }
 
       toast.success("Welcome! Your Company Franchise account is ready.");
-      router.push("/franchise/dashboard");
-      router.refresh();
+      // Hard navigation ensures fresh session cookies and layout authorization are re-evaluated
+      window.location.href = "/franchise/dashboard";
     } catch (err: any) {
-      console.error("Company registration error:", err);
+      console.error("Company franchise registration error:", err);
       toast.error(err?.message || "An unexpected error occurred. Please try again.");
       setIsSubmitting(false);
     }

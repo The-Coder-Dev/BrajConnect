@@ -81,7 +81,10 @@ export async function requireAdmin() {
  * Returns the session and user if authorized.
  */
 export async function requireFranchisePartner() {
-  const sessionData = await getSession();
+  const sessionData = await auth.api.getSession({
+    headers: await headers(),
+    query: { disableCookieCache: true },
+  });
 
   if (!sessionData || !sessionData.session) {
     redirect("/login/franchise");

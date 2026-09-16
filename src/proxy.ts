@@ -9,6 +9,12 @@ export async function proxy(request: NextRequest) {
     const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/setup") || pathname.startsWith("/admin") || isFranchiseProtected;
     const isAuthRoute = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname.startsWith("/login/franchise") || pathname.startsWith("/register/franchise");
 
+    // Never intercept Server Actions or mutation requests with navigation redirects
+    const isServerAction = request.headers.has("next-action");
+    if (isServerAction || request.method !== "GET") {
+        return NextResponse.next();
+    }
+
     // Only look up the session if the route actually needs it
     if (isProtected || isAuthRoute) {
         try {
@@ -28,6 +34,12 @@ export async function proxy(request: NextRequest) {
             // Redirect authenticated users away from sign-in/sign-up/login/register
             if (isAuthRoute && session) {
                 const role = (session.user as { role?: string })?.role;
+                
+                // Allow logged-in users who are NOT franchise partners to access /register/franchise
+                if (pathname.startsWith("/register/franchise") && role !== "franchise_partner" && role !== "admin") {
+                    return NextResponse.next();
+                }
+
                 let targetUrl = "/dashboard";
                 if (role === "admin") {
                     targetUrl = "/admin";
